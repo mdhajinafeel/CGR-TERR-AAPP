@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- MARGINS -->
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_36">36dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+
+    <!-- PADDINGS -->
+    <dimen name="padding_6">6dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_14">14dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+
+    <!-- HEIGHT & WIDTH-->
+    <dimen name="width_80">80dp</dimen>
+    <dimen name="width_100">100dp</dimen>
+    <dimen name="width_200">200dp</dimen>
+    <dimen name="width_300">300dp</dimen>
+    <dimen name="height_100">100dp</dimen>
+    <dimen name="height_80">80dp</dimen>
+    <dimen name="view_height">0.8dp</dimen>
+    <dimen name="button_height">48dp</dimen>
+
+    <!-- TEXT SIZE -->
+    <dimen name="text_10">10sp</dimen>
+    <dimen name="text_12">12sp</dimen>
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_20">20sp</dimen>
+    <dimen name="text_24">24sp</dimen>
+
+    <!-- ELEVATION -->
+    <dimen name="corner_elevation_0">0dp</dimen>
+    <dimen name="corner_elevation_2">2dp</dimen>
+    <dimen name="corner_elevation_8">8dp</dimen>
+
+    <!-- CORNER RADIUS -->
+    <dimen name="corner_radius_4">4dp</dimen>
+    <dimen name="corner_radius_8">8dp</dimen>
+    <dimen name="corner_radius_10">10dp</dimen>
+    <dimen name="corner_radius_12">12dp</dimen>
+    <dimen name="corner_radius_16">16dp</dimen>
+    <dimen name="corner_radius_20">20dp</dimen>
+
+    <!-- STROKE WIDTH -->
+    <dimen name="box_stroke">1.5dp</dimen>
+
+</resources>

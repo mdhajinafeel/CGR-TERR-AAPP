@@ -1,0 +1,1000 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "c26cf7cfc90cf287b8cfebdab93a9d1b",
+    "entities": [
+      {
+        "tableName": "origins",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`originId` INTEGER NOT NULL, `originName` TEXT, PRIMARY KEY(`originId`))",
+        "fields": [
+          {
+            "fieldPath": "originId",
+            "columnName": "originId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "originName",
+            "columnName": "originName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "originId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_origin_id",
+            "unique": false,
+            "columnNames": [
+              "originId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_origin_id` ON `${TABLE_NAME}` (`originId`)"
+          },
+          {
+            "name": "idx_origin_name",
+            "unique": false,
+            "columnNames": [
+              "originName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_origin_name` ON `${TABLE_NAME}` (`originName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "api_logs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `endpoint` TEXT, `method` TEXT, `requestBody` TEXT, `responseBody` TEXT, `statusCode` INTEGER NOT NULL, `success` INTEGER NOT NULL, `errorMessage` TEXT, `createdAt` INTEGER NOT NULL, `durationMs` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endpoint",
+            "columnName": "endpoint",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "method",
+            "columnName": "method",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "requestBody",
+            "columnName": "requestBody",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "responseBody",
+            "columnName": "responseBody",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "statusCode",
+            "columnName": "statusCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "success",
+            "columnName": "success",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "errorMessage",
+            "columnName": "errorMessage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationMs",
+            "columnName": "durationMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_endpoint",
+            "unique": false,
+            "columnNames": [
+              "endpoint"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_endpoint` ON `${TABLE_NAME}` (`endpoint`)"
+          },
+          {
+            "name": "idx_method",
+            "unique": false,
+            "columnNames": [
+              "method"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_method` ON `${TABLE_NAME}` (`method`)"
+          },
+          {
+            "name": "idx_created_at",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_created_at` ON `${TABLE_NAME}` (`createdAt`)"
+          }
+        ]
+      },
+      {
+        "tableName": "suppliers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`supplierId` INTEGER NOT NULL, `supplierName` TEXT, PRIMARY KEY(`supplierId`))",
+        "fields": [
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierName",
+            "columnName": "supplierName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "supplierId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_supplier_id_suppliers",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id_suppliers` ON `${TABLE_NAME}` (`supplierId`)"
+          },
+          {
+            "name": "idx_supplier_name",
+            "unique": false,
+            "columnNames": [
+              "supplierName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_name` ON `${TABLE_NAME}` (`supplierName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "supplier_products",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`supplierProductId` INTEGER NOT NULL, `supplierId` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `productName` TEXT, PRIMARY KEY(`supplierProductId`))",
+        "fields": [
+          {
+            "fieldPath": "supplierProductId",
+            "columnName": "supplierProductId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productName",
+            "columnName": "productName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "supplierProductId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_supplier_product_id",
+            "unique": false,
+            "columnNames": [
+              "supplierProductId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_product_id` ON `${TABLE_NAME}` (`supplierProductId`)"
+          },
+          {
+            "name": "idx_supplier_id_products",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id_products` ON `${TABLE_NAME}` (`supplierId`)"
+          },
+          {
+            "name": "idx_product_id_products",
+            "unique": false,
+            "columnNames": [
+              "productId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_id_products` ON `${TABLE_NAME}` (`productId`)"
+          },
+          {
+            "name": "idx_product_name_products",
+            "unique": false,
+            "columnNames": [
+              "productName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_name_products` ON `${TABLE_NAME}` (`productName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "supplier_product_types",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `typeId` INTEGER NOT NULL, `supplierProductId` INTEGER NOT NULL, `supplierId` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `productTypeName` TEXT, `productTypeId` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "typeId",
+            "columnName": "typeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierProductId",
+            "columnName": "supplierProductId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productTypeName",
+            "columnName": "productTypeName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "productTypeId",
+            "columnName": "productTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_type_id",
+            "unique": false,
+            "columnNames": [
+              "typeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_type_id` ON `${TABLE_NAME}` (`typeId`)"
+          },
+          {
+            "name": "idx_supplier_product_id_types",
+            "unique": false,
+            "columnNames": [
+              "supplierProductId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_product_id_types` ON `${TABLE_NAME}` (`supplierProductId`)"
+          },
+          {
+            "name": "idx_supplier_id_types",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id_types` ON `${TABLE_NAME}` (`supplierId`)"
+          },
+          {
+            "name": "idx_product_id_types",
+            "unique": false,
+            "columnNames": [
+              "productId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_id_types` ON `${TABLE_NAME}` (`productId`)"
+          },
+          {
+            "name": "idx_product_type_name_types",
+            "unique": false,
+            "columnNames": [
+              "productTypeName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_type_name_types` ON `${TABLE_NAME}` (`productTypeName`)"
+          },
+          {
+            "name": "idx_product_type_id_types",
+            "unique": false,
+            "columnNames": [
+              "productTypeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_type_id_types` ON `${TABLE_NAME}` (`productTypeId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "measurement_systems",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `measurementName` TEXT, `productTypeId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measurementName",
+            "columnName": "measurementName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "productTypeId",
+            "columnName": "productTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id_measurement",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id_measurement` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_measurement_name",
+            "unique": false,
+            "columnNames": [
+              "measurementName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_measurement_name` ON `${TABLE_NAME}` (`measurementName`)"
+          },
+          {
+            "name": "idx_product_type_id_measurement",
+            "unique": false,
+            "columnNames": [
+              "productTypeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_type_id_measurement` ON `${TABLE_NAME}` (`productTypeId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "purchase_contracts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contractId` INTEGER NOT NULL, `supplierId` INTEGER NOT NULL, `contractCode` TEXT, `product` INTEGER NOT NULL, `productType` INTEGER NOT NULL, `purchaseUnit` TEXT, `purchaseUnitId` INTEGER NOT NULL, `currency` TEXT, `purchaseAllowance` REAL NOT NULL, `purchaseAllowanceLength` REAL NOT NULL, `description` TEXT, PRIMARY KEY(`contractId`))",
+        "fields": [
+          {
+            "fieldPath": "contractId",
+            "columnName": "contractId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contractCode",
+            "columnName": "contractCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "product",
+            "columnName": "product",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productType",
+            "columnName": "productType",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "purchaseUnit",
+            "columnName": "purchaseUnit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "purchaseUnitId",
+            "columnName": "purchaseUnitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "purchaseAllowance",
+            "columnName": "purchaseAllowance",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "purchaseAllowanceLength",
+            "columnName": "purchaseAllowanceLength",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "contractId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_contract_id",
+            "unique": false,
+            "columnNames": [
+              "contractId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_contract_id` ON `${TABLE_NAME}` (`contractId`)"
+          },
+          {
+            "name": "idx_supplier_id",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id` ON `${TABLE_NAME}` (`supplierId`)"
+          },
+          {
+            "name": "idx_contract_code",
+            "unique": false,
+            "columnNames": [
+              "contractCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_contract_code` ON `${TABLE_NAME}` (`contractCode`)"
+          },
+          {
+            "name": "idx_product",
+            "unique": false,
+            "columnNames": [
+              "product"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product` ON `${TABLE_NAME}` (`product`)"
+          },
+          {
+            "name": "idx_product_type",
+            "unique": false,
+            "columnNames": [
+              "productType"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_type` ON `${TABLE_NAME}` (`productType`)"
+          },
+          {
+            "name": "idx_purchase_unit",
+            "unique": false,
+            "columnNames": [
+              "purchaseUnit"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_purchase_unit` ON `${TABLE_NAME}` (`purchaseUnit`)"
+          },
+          {
+            "name": "idx_purchase_unit_id",
+            "unique": false,
+            "columnNames": [
+              "purchaseUnitId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_purchase_unit_id` ON `${TABLE_NAME}` (`purchaseUnitId`)"
+          },
+          {
+            "name": "idx_currency",
+            "unique": false,
+            "columnNames": [
+              "currency"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_currency` ON `${TABLE_NAME}` (`currency`)"
+          },
+          {
+            "name": "idx_purchase_allowance",
+            "unique": false,
+            "columnNames": [
+              "purchaseAllowance"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_purchase_allowance` ON `${TABLE_NAME}` (`purchaseAllowance`)"
+          },
+          {
+            "name": "idx_purchase_allowance_length",
+            "unique": false,
+            "columnNames": [
+              "purchaseAllowanceLength"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_purchase_allowance_length` ON `${TABLE_NAME}` (`purchaseAllowanceLength`)"
+          },
+          {
+            "name": "idx_description",
+            "unique": false,
+            "columnNames": [
+              "description"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_description` ON `${TABLE_NAME}` (`description`)"
+          }
+        ]
+      },
+      {
+        "tableName": "shipping_lines",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `shippingLine` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shippingLine",
+            "columnName": "shippingLine",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_shipping_line",
+            "unique": false,
+            "columnNames": [
+              "shippingLine"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_shipping_line` ON `${TABLE_NAME}` (`shippingLine`)"
+          }
+        ]
+      },
+      {
+        "tableName": "warehouses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `warehouseName` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "warehouseName",
+            "columnName": "warehouseName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id_warehouse",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id_warehouse` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_warehouse_name",
+            "unique": false,
+            "columnNames": [
+              "warehouseName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_warehouse_name` ON `${TABLE_NAME}` (`warehouseName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "farm_inventory_orders",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`inventoryOrder` TEXT NOT NULL, `supplierId` INTEGER NOT NULL, PRIMARY KEY(`inventoryOrder`))",
+        "fields": [
+          {
+            "fieldPath": "inventoryOrder",
+            "columnName": "inventoryOrder",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "inventoryOrder"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_inventory_order_farm",
+            "unique": false,
+            "columnNames": [
+              "inventoryOrder"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_inventory_order_farm` ON `${TABLE_NAME}` (`inventoryOrder`)"
+          },
+          {
+            "name": "idx_supplier_id_farm",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id_farm` ON `${TABLE_NAME}` (`supplierId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "reception_inventory_orders",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`inventoryOrder` TEXT NOT NULL, `supplierId` INTEGER NOT NULL, PRIMARY KEY(`inventoryOrder`))",
+        "fields": [
+          {
+            "fieldPath": "inventoryOrder",
+            "columnName": "inventoryOrder",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "inventoryOrder"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_inventory_order_reception",
+            "unique": false,
+            "columnNames": [
+              "inventoryOrder"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_inventory_order_reception` ON `${TABLE_NAME}` (`inventoryOrder`)"
+          },
+          {
+            "name": "idx_supplier_id_inventory",
+            "unique": false,
+            "columnNames": [
+              "supplierId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_supplier_id_inventory` ON `${TABLE_NAME}` (`supplierId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "dispatch_containers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`containerNumber` TEXT NOT NULL, `shippingLineId` INTEGER NOT NULL, PRIMARY KEY(`containerNumber`))",
+        "fields": [
+          {
+            "fieldPath": "containerNumber",
+            "columnName": "containerNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shippingLineId",
+            "columnName": "shippingLineId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "containerNumber"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_container_number",
+            "unique": false,
+            "columnNames": [
+              "containerNumber"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_container_number` ON `${TABLE_NAME}` (`containerNumber`)"
+          },
+          {
+            "name": "idx_shipping_line_id",
+            "unique": false,
+            "columnNames": [
+              "shippingLineId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_shipping_line_id` ON `${TABLE_NAME}` (`shippingLineId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "products",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` INTEGER NOT NULL, `productName` TEXT, PRIMARY KEY(`productId`))",
+        "fields": [
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productName",
+            "columnName": "productName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "productId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_product_id_product",
+            "unique": false,
+            "columnNames": [
+              "productId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_id_product` ON `${TABLE_NAME}` (`productId`)"
+          },
+          {
+            "name": "idx_product_name_product",
+            "unique": false,
+            "columnNames": [
+              "productName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_name_product` ON `${TABLE_NAME}` (`productName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "product_types",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` INTEGER NOT NULL, `productTypeName` TEXT, PRIMARY KEY(`typeId`))",
+        "fields": [
+          {
+            "fieldPath": "typeId",
+            "columnName": "typeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productTypeName",
+            "columnName": "productTypeName",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "typeId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_type_id_product_type",
+            "unique": false,
+            "columnNames": [
+              "typeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_type_id_product_type` ON `${TABLE_NAME}` (`typeId`)"
+          },
+          {
+            "name": "idx_product_type_name_product_type",
+            "unique": false,
+            "columnNames": [
+              "productTypeName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_product_type_name_product_type` ON `${TABLE_NAME}` (`productTypeName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "girth_classification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `girthClassification` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "girthClassification",
+            "columnName": "girthClassification",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id_girth_classification",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id_girth_classification` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_girth_classification",
+            "unique": false,
+            "columnNames": [
+              "girthClassification"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_girth_classification` ON `${TABLE_NAME}` (`girthClassification`)"
+          }
+        ]
+      },
+      {
+        "tableName": "length_classification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `lengthClassification` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lengthClassification",
+            "columnName": "lengthClassification",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id_length_classification",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id_length_classification` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_length_classification",
+            "unique": false,
+            "columnNames": [
+              "lengthClassification"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_length_classification` ON `${TABLE_NAME}` (`lengthClassification`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c26cf7cfc90cf287b8cfebdab93a9d1b')"
+    ]
+  }
+}

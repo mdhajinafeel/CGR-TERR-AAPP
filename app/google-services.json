@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "224155572910",
+    "project_id": "codrin-terra-erp",
+    "storage_bucket": "codrin-terra-erp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224155572910:android:63f50cdd9d8164b7d52b3f",
+        "android_client_info": {
+          "package_name": "com.cgr.codrinterraerp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPJxdvlJwGP9baxhiHIfA77JDajLEx_xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224155572910:android:6f31ca22dd88e292d52b3f",
+        "android_client_info": {
+          "package_name": "com.cgr.codrinterraerp.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPJxdvlJwGP9baxhiHIfA77JDajLEx_xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

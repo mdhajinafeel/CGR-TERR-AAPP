@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.CodrinTerraERP" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryStart</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryEnd</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
+        <item name="colorOnSurface">@color/colorDarkGrey</item>
+
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorHighlight</item>
+        <item name="colorOnSecondary">@color/colorBlack</item>
+
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <!-- Status bar background -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- THIS makes icons WHITE -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+
+    <style name="RoundedImageStyle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomErrorText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/exo2_semibold</item>
+        <item name="android:textSize">@dimen/text_14</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/colorErrorRed</item>
+    </style>
+
+    <style name="DialogTheme">
+        <item name="windowFixedWidthMajor">70%</item>
+        <item name="windowFixedWidthMinor">70%</item>
+    </style>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <!-- WIFI BARS -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgWifi"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="@dimen/margin_6"
+        android:src="@drawable/ic_wifi_0"/>
+
+    <!-- SPEED -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_0_kb_s"
+        app:fontFamily="@font/exo2_medium"
+        android:textSize="@dimen/text_12"
+        android:textColor="@color/colorWhite"/>
+</LinearLayout>

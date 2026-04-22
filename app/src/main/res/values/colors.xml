@@ -1,0 +1,35 @@
+<resources>
+    <color name="colorPrimaryStart">#FF008000</color>
+    <color name="colorPrimaryEnd">#FF06402B</color>
+    <color name="colorAccent">#FF05472A</color>
+    <color name="colorHighlight">#FF84B067</color>
+
+    <color name="colorBlack">#FF000000</color>
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorBackground">#FFFFFF</color>
+
+    <color name="colorErrorOrange">#FFA500</color>
+    <color name="colorErrorRed">#D32F2F</color>
+    <color name="colorDarkGrey">#565656</color>
+    <color name="colorGrey">#9E9E9E</color>
+    <color name="colorLightGrey">#E9E9E9</color>
+    <color name="colorCharcoal">#2A2929</color>
+
+    <color name="colorVeryLightGreen">#D2FFD2</color>
+    <color name="colorLightGreen">#88E788</color>
+    <color name="colorDarkGreen">#2C5F34</color>
+    <color name="colorKellyGreen">#1B3C0B</color>
+    <color name="colorMilkWhite">#F8F8FF</color>
+    <color name="colorHoneyDew">#F0FFF0</color>
+    <color name="colorRed">#fa4d15</color>
+    <color name="colorMildGreen">#E8F5E9</color>
+
+    <color name="grey">#BDBDBD</color>
+    <color name="red">#F44336</color>
+    <color name="orange">#FF9800</color>
+    <color name="green">#4CAF50</color>
+    <color name="darkGreen">#409E45</color>
+    <color name="textColor">#475159</color>
+    <color name="notificationBarColor">#254117</color>
+    <color name="primaryGreenLight">#e8f4ed</color>
+</resources>

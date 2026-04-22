@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/notificationBarColor"
+    android:elevation="10dp"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical|center_horizontal|center|start"
+        android:layout_marginStart="@dimen/margin_4"
+        android:src="@drawable/ic_back"
+        tools:ignore="RtlHardcoded" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/margin_20"
+            android:fontFamily="@font/exo2_medium"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_18" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/margin_20"
+            android:fontFamily="@font/exo2_semibold"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_16"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.appcompat.widget.Toolbar>
