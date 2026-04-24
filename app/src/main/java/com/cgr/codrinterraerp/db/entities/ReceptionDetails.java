@@ -22,9 +22,11 @@ public class ReceptionDetails implements Serializable {
     public Integer receptionId;
     @NonNull
     public String ica = "";
-    public int supplier;
+    public int supplierId;
     public int supplierProductId;
+    public int productId;
     public int supplierProductTypeId;
+    public int productTypeId;
     public int measurementSystem;
     public int warehouse;
     public String receptionDate;
@@ -71,12 +73,12 @@ public class ReceptionDetails implements Serializable {
         this.ica = ica;
     }
 
-    public int getSupplier() {
-        return supplier;
+    public int getSupplierId() {
+        return supplierId;
     }
 
-    public void setSupplier(int supplier) {
-        this.supplier = supplier;
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
     }
 
     public int getSupplierProductId() {
@@ -181,5 +183,21 @@ public class ReceptionDetails implements Serializable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getProductTypeId() {
+        return productTypeId;
+    }
+
+    public void setProductTypeId(int productTypeId) {
+        this.productTypeId = productTypeId;
     }
 }

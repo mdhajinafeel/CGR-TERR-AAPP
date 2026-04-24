@@ -5,6 +5,7 @@ import android.content.Context;
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
+import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
@@ -15,6 +16,7 @@ import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
@@ -139,5 +141,17 @@ public class DBModule {
     @Singleton
     public ReceptionDetailsDao provideReceptionDetailsDao(CGRTerraERPDatabase db) {
         return db.receptionDetailsDao();
+    }
+
+    @Provides
+    @Singleton
+    public DispatchDetailsDao provideDispatchDetailsDao(CGRTerraERPDatabase db) {
+        return db.dispatchDetailsDao();
+    }
+
+    @Provides
+    @Singleton
+    public ReceptionViewDao provideReceptionViewDao(CGRTerraERPDatabase db) {
+        return db.receptionViewDao();
     }
 }

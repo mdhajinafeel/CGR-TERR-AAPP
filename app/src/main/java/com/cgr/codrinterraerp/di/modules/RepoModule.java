@@ -3,6 +3,7 @@ package com.cgr.codrinterraerp.di.modules;
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
+import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
@@ -13,6 +14,7 @@ import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
@@ -20,6 +22,7 @@ import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.repository.AppMaintenanceRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
+import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.repository.MasterRepository;
 import com.cgr.codrinterraerp.repository.ReceptionRepository;
 import com.cgr.codrinterraerp.services.IAuthApiService;
@@ -60,7 +63,13 @@ public class RepoModule {
 
     @Provides
     @Singleton
-    ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao) {
-        return new ReceptionRepository(receptionDetailsDao);
+    ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao, ReceptionViewDao receptionViewDao) {
+        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao);
+    }
+
+    @Provides
+    @Singleton
+    DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao) {
+        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao);
     }
 }

@@ -97,4 +97,7 @@
     <string name="data_added_failed">Failed to add the data</string>
     <string name="data_updated_successfully">Data has been updated successfully</string>
     <string name="data_updated_failed">Failed to update the data</string>
+    <string name="ica_exists">ICA already exists. Please verify and try again.</string>
+    <string name="container_exists">Container already exists. Please verify and try again.</string>
+    <string name="measurement">Measurement</string>
 </resources>

@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -133,7 +134,7 @@ public class ReceptionActivity extends BaseActivity {
             actionListeners();
 
             receptionViewModel.getProgressState().observe(this, aBoolean -> {
-                if(aBoolean) {
+                if (aBoolean) {
                     showProgress(progressBar);
                 } else {
                     hideProgress(progressBar);
@@ -217,8 +218,8 @@ public class ReceptionActivity extends BaseActivity {
 
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
             layoutParams.copyFrom(dialog.getWindow().getAttributes());
-            layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            layoutParams.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.8);
             layoutParams.gravity = Gravity.CENTER;
             dialog.getWindow().setAttributes(layoutParams);
             dialog.setContentView(R.layout.list_dialog);
@@ -283,8 +284,10 @@ public class ReceptionActivity extends BaseActivity {
 
                         etSupplierProduct.setText("");
                         etSupplierProductType.setText("");
-                        etSupplierProduct.setTag("");
-                        etSupplierProductType.setTag("");
+                        etSupplierProduct.setTag(R.id.tag_supplier_product_id, "");
+                        etSupplierProduct.setTag(R.id.tag_product_id, "");
+                        etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, "");
+                        etSupplierProductType.setTag(R.id.tag_product_type_id, "");
                         etMeasurementSystem.setText("");
                         etMeasurementSystem.setTag("");
                         etPurchaseContract.setText("");
@@ -292,7 +295,7 @@ public class ReceptionActivity extends BaseActivity {
 
                         supplierProductsList = masterViewModel.fetchSupplierProducts(selected.getSupplierId());
 
-                        dialog.dismiss(); // optional
+                        dialog.dismiss();
                     });
                 }
             } else if (tag.equalsIgnoreCase("Warehouse")) {
@@ -339,7 +342,7 @@ public class ReceptionActivity extends BaseActivity {
                     etWarehouse.setText(selected.getWarehouseName());
                     etWarehouse.setTag(selected.getId());
 
-                    dialog.dismiss(); // optional
+                    dialog.dismiss();
                 });
             } else if (tag.equalsIgnoreCase("SupplierProduct")) {
 
@@ -383,10 +386,12 @@ public class ReceptionActivity extends BaseActivity {
                     SupplierProducts selected = supplierProductsRecyclerViewAdapter.getItem(position);
 
                     etSupplierProduct.setText(selected.getProductName());
-                    etSupplierProduct.setTag(selected.getSupplierProductId());
+                    etSupplierProduct.setTag(R.id.tag_supplier_product_id, selected.getSupplierProductId());
+                    etSupplierProduct.setTag(R.id.tag_product_id, selected.getProductId());
 
                     etSupplierProductType.setText("");
-                    etSupplierProductType.setTag("");
+                    etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, "");
+                    etSupplierProductType.setTag(R.id.tag_product_type_id, "");
                     etMeasurementSystem.setText("");
                     etMeasurementSystem.setTag("");
                     etPurchaseContract.setText("");
@@ -398,7 +403,7 @@ public class ReceptionActivity extends BaseActivity {
 
                     supplierProductTypesList = masterViewModel.fetchSupplierProductTypes(selected.getSupplierId(), selected.getProductId());
 
-                    dialog.dismiss(); // optional
+                    dialog.dismiss();
                 });
             } else if (tag.equalsIgnoreCase("SupplierProductType")) {
 
@@ -442,7 +447,8 @@ public class ReceptionActivity extends BaseActivity {
                     SupplierProductTypes selected = supplierProductTypesRecyclerViewAdapter.getItem(position);
 
                     etSupplierProductType.setText(selected.getProductTypeName());
-                    etSupplierProductType.setTag(selected.getProductTypeId());
+                    etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, selected.getTypeId());
+                    etSupplierProductType.setTag(R.id.tag_product_type_id, selected.getProductTypeId());
 
                     etMeasurementSystem.setText("");
                     etMeasurementSystem.setTag("");
@@ -455,7 +461,7 @@ public class ReceptionActivity extends BaseActivity {
                     measurementSystemsList = masterViewModel.fetchMeasurementSystems(selected.getProductTypeId());
                     purchaseContractsList = masterViewModel.fetchPurchaseContracts(selected.getSupplierId(), selected.getProductId(), selected.getProductTypeId());
 
-                    dialog.dismiss(); // optional
+                    dialog.dismiss();
                 });
             } else if (tag.equalsIgnoreCase("MeasurementSystem")) {
 
@@ -500,7 +506,7 @@ public class ReceptionActivity extends BaseActivity {
                         etMeasurementSystem.setText(selected.getMeasurementName());
                         etMeasurementSystem.setTag(selected.getId());
 
-                        dialog.dismiss(); // optional
+                        dialog.dismiss();
                     });
                 }
             } else if (tag.equalsIgnoreCase("PurchaseContract")) {
@@ -550,7 +556,7 @@ public class ReceptionActivity extends BaseActivity {
                         etPurchaseContract.setText(selected.getContractCode());
                         etPurchaseContract.setTag(selected.getContractId());
 
-                        dialog.dismiss(); // optional
+                        dialog.dismiss();
                     });
                 }
             }
@@ -575,7 +581,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (suppliersRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -591,7 +596,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (warehousesRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -607,7 +611,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (supplierProductsRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -623,7 +626,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (supplierProductTypesRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -639,7 +641,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (measurementSystemsRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -656,7 +657,6 @@ public class ReceptionActivity extends BaseActivity {
                             );
                         }
 
-                        // Optional: Show "No Data Found"
                         if (purchaseContractsRecyclerViewAdapter.getItemCount() == 0) {
                             tvNoDataFound.setVisibility(View.VISIBLE);
                         } else {
@@ -680,6 +680,8 @@ public class ReceptionActivity extends BaseActivity {
 
     private void saveOrUpdateReceptionDetails() {
         try {
+            hideKeyboard(this);
+
             boolean isValid = true;
 
             if (Objects.requireNonNull(etSupplier.getText()).toString().trim().isEmpty()) {
@@ -775,37 +777,55 @@ public class ReceptionActivity extends BaseActivity {
             }
 
             if (isValid) {
-                ReceptionDetails receptionDetail = new ReceptionDetails();
-                receptionDetail.setSupplier((int) etSupplier.getTag());
-                receptionDetail.setSupplierProductId((int) etSupplierProduct.getTag());
-                receptionDetail.setSupplierProductTypeId((int) etSupplierProductType.getTag());
-                receptionDetail.setIca(etIca.getText().toString());
-                receptionDetail.setMeasurementSystem((int) etMeasurementSystem.getTag());
-                receptionDetail.setWarehouse((int) etWarehouse.getTag());
-                receptionDetail.setReceptionDate(etReceptionDate.getText().toString());
-                receptionDetail.setFarmEnabled(cbEnableFarm.isChecked());
-                receptionDetail.setPurchaseContract((int) etPurchaseContract.getTag());
-                receptionDetail.setTruckNumber(Objects.requireNonNull(etTruckNumber.getText()).toString());
-                receptionDetail.setTruckDriverName(Objects.requireNonNull(etPurchaseContract.getText()).toString());
-                receptionDetail.setTempReceptionId("R_" + CommonUtils.getCurrentLocalDateTimeStamp());
-                receptionDetail.setReceptionId(null);
-                receptionDetail.setSynced(false);
-                receptionDetail.setDeleted(false);
-                receptionDetail.setEdited(false);
-                receptionDetail.setUpdatedAt(System.currentTimeMillis());
 
-                receptionViewModel.saveReceptionDetails(receptionDetail);
+                int icaCount = receptionViewModel.getReceptionInventoryOrdersCount(etIca.getText().toString(), (int) etSupplier.getTag());
 
-                receptionViewModel.getReceptionStatus().observe(this, aBoolean -> {
-                    if(aBoolean) {
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("key", "Hello from Second Activity");
-                        setResult(RESULT_OK, resultIntent);
-                        finish();
+                if (icaCount > 0) {
+                    Toast.makeText(getApplicationContext(), R.string.ica_exists, Toast.LENGTH_SHORT).show();
+                } else {
+
+                    ReceptionDetails receptionDetail = new ReceptionDetails();
+                    receptionDetail.setSupplierId((int) etSupplier.getTag());
+                    receptionDetail.setSupplierProductId((int) etSupplierProduct.getTag(R.id.tag_supplier_product_id));
+                    receptionDetail.setProductId((int) etSupplierProduct.getTag(R.id.tag_product_id));
+                    receptionDetail.setSupplierProductTypeId((int) etSupplierProductType.getTag(R.id.tag_supplier_product_type_id));
+                    receptionDetail.setProductTypeId((int) etSupplierProductType.getTag(R.id.tag_product_type_id));
+                    receptionDetail.setIca(etIca.getText().toString());
+                    receptionDetail.setMeasurementSystem((int) etMeasurementSystem.getTag());
+                    receptionDetail.setWarehouse((int) etWarehouse.getTag());
+                    receptionDetail.setReceptionDate(etReceptionDate.getText().toString());
+                    receptionDetail.setFarmEnabled(cbEnableFarm.isChecked());
+
+                    if (cbEnableFarm.isChecked()) {
+                        receptionDetail.setPurchaseContract((int) etPurchaseContract.getTag());
+                        receptionDetail.setTruckNumber(Objects.requireNonNull(etTruckNumber.getText()).toString());
+                        receptionDetail.setTruckDriverName(Objects.requireNonNull(etPurchaseContract.getText()).toString());
                     } else {
-                        showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
+                        receptionDetail.setPurchaseContract(0);
+                        receptionDetail.setTruckNumber("");
+                        receptionDetail.setTruckDriverName("");
                     }
-                });
+
+                    receptionDetail.setTempReceptionId("R_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                    receptionDetail.setReceptionId(null);
+                    receptionDetail.setSynced(false);
+                    receptionDetail.setDeleted(false);
+                    receptionDetail.setEdited(false);
+                    receptionDetail.setUpdatedAt(System.currentTimeMillis());
+
+                    receptionViewModel.saveReceptionDetails(receptionDetail);
+
+                    receptionViewModel.getReceptionStatus().observe(this, aBoolean -> {
+                        if (aBoolean) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("savedReceptionId", receptionViewModel.getReceptionSavedId());
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
+                        } else {
+                            showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
+                        }
+                    });
+                }
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "saveOrUpdateReceptionDetails", e);

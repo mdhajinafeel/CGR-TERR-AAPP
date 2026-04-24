@@ -15,7 +15,10 @@ public interface ReceptionInventoryOrdersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReceptionInventoryOrders(List<ReceptionInventoryOrders> receptionInventoryOrdersList);
 
-    @Query("SELECT COUNT(inventoryOrder) FROM reception_inventory_orders WHERE inventoryOrder = :inventoryOrder AND supplierId = :supplierId")
+    @Query("SELECT COUNT(*) FROM reception_inventory_orders " +
+            "WHERE REPLACE(REPLACE(inventoryOrder, '-', ''), ' ', '') = " +
+            "REPLACE(REPLACE(:inventoryOrder, '-', ''), ' ', '') " +
+            "AND supplierId = :supplierId")
     int getReceptionInventoryOrdersCount(String inventoryOrder, int supplierId);
 
     @Query("DELETE FROM reception_inventory_orders")

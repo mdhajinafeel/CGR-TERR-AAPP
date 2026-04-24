@@ -4,11 +4,11 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
-import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
+import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 
 @Dao
-public interface ReceptionDetailsDao {
+public interface DispatchDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertOrUpdateReceptionDetails(ReceptionDetails receptionDetails);
+    long insertOrUpdateDispatchDetails(DispatchDetails dispatchDetails);
 }

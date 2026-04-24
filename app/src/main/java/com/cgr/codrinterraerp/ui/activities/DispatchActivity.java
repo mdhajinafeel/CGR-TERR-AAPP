@@ -1,6 +1,7 @@
 package com.cgr.codrinterraerp.ui.activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,6 +9,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.GirthClassification;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
@@ -29,6 +33,7 @@ import com.cgr.codrinterraerp.ui.common.BaseActivity;
 import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.utils.CommonUtils;
 import com.cgr.codrinterraerp.utils.DividerItemDecoration;
+import com.cgr.codrinterraerp.viewmodel.DispatchViewModel;
 import com.cgr.codrinterraerp.viewmodel.MasterViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -57,6 +62,8 @@ public class DispatchActivity extends BaseActivity {
     private RecyclerViewAdapter<Warehouses> warehousesRecyclerViewAdapter;
     private RecyclerViewAdapter<GirthClassification> girthClassificationRecyclerViewAdapter;
     private MasterViewModel masterViewModel;
+    private DispatchViewModel dispatchViewModel;
+    private FrameLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +93,11 @@ public class DispatchActivity extends BaseActivity {
             etWarehouse = findViewById(R.id.etWarehouse);
             etDispatchDate = findViewById(R.id.etDispatchDate);
             etGirthClassification = findViewById(R.id.etGirthClassification);
+            btnSubmit = findViewById(R.id.btnSubmit);
+            progressBar = findViewById(R.id.progressBar);
 
             masterViewModel = new ViewModelProvider(this).get(MasterViewModel.class);
+            dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
 
             txtTitle.setText(getString(R.string.add_dispatch));
             imgBack.setOnClickListener(v -> finish());
@@ -102,6 +112,14 @@ public class DispatchActivity extends BaseActivity {
 
             fetchData();
             actionListeners();
+
+            dispatchViewModel.getProgressState().observe(this, aBoolean -> {
+                if(aBoolean) {
+                    showProgress(progressBar);
+                } else {
+                    hideProgress(progressBar);
+                }
+            });
         } catch (Exception e) {
             AppLogger.e(getClass(), "initComponents", e);
         }
@@ -167,8 +185,8 @@ public class DispatchActivity extends BaseActivity {
 
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
             layoutParams.copyFrom(dialog.getWindow().getAttributes());
-            layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            layoutParams.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.8);
             layoutParams.gravity = Gravity.CENTER;
             dialog.getWindow().setAttributes(layoutParams);
             dialog.setContentView(R.layout.list_dialog);
@@ -524,6 +542,8 @@ public class DispatchActivity extends BaseActivity {
 
     private void saveOrUpdateDispatchDetails() {
         try {
+            hideKeyboard(this);
+
             boolean isValid = true;
 
             if (Objects.requireNonNull(etContainerNumber.getText()).toString().trim().isEmpty()) {
@@ -591,6 +611,40 @@ public class DispatchActivity extends BaseActivity {
 
             if (isValid) {
 
+                int containerCount = dispatchViewModel.getDispatchContainersCount(etContainerNumber.getText().toString(), (int) etShippingLine.getTag());
+
+                if (containerCount > 0) {
+                    Toast.makeText(getApplicationContext(), R.string.container_exists, Toast.LENGTH_SHORT).show();
+                } else {
+
+                    DispatchDetails dispatchDetail = new DispatchDetails();
+                    dispatchDetail.setContainerNumber(etContainerNumber.getText().toString());
+                    dispatchDetail.setTempDispatchId("D_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                    dispatchDetail.setDispatchId(0);
+                    dispatchDetail.setProductId((int) etProduct.getTag());
+                    dispatchDetail.setProductTypeId((int) etProductType.getTag());
+                    dispatchDetail.setWarehouseId((int) etWarehouse.getTag());
+                    dispatchDetail.setShippingLineId((int) etShippingLine.getTag());
+                    dispatchDetail.setDispatchDate(etDispatchDate.getText().toString());
+                    dispatchDetail.setGirthClassificationId((int) etGirthClassification.getTag());
+                    dispatchDetail.setSynced(false);
+                    dispatchDetail.setDeleted(false);
+                    dispatchDetail.setEdited(false);
+                    dispatchDetail.setUpdatedAt(System.currentTimeMillis());
+
+                    dispatchViewModel.saveDispatchDetails(dispatchDetail);
+
+                    dispatchViewModel.getDispatchStatus().observe(this, aBoolean -> {
+                        if (aBoolean) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("savedDispatchId", dispatchViewModel.getDispatchSavedId());
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
+                        } else {
+                            showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
+                        }
+                    });
+                }
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "saveOrUpdateDispatchDetails", e);

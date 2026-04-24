@@ -137,4 +137,15 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHo
     public interface FilterCondition<T> {
         boolean apply(T item);
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setItems(List<T> items) {
+        mDataList.clear();
+        mDataList.addAll(items);
+
+        mFullList.clear();          // 🔥 important for filter
+        mFullList.addAll(items);
+
+        notifyDataSetChanged();
+    }
 }

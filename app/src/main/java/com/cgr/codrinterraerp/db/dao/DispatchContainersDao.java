@@ -15,7 +15,10 @@ public interface DispatchContainersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDispatchContainers(List<DispatchContainers> dispatchContainersList);
 
-    @Query("SELECT COUNT(containerNumber) FROM dispatch_containers WHERE containerNumber = :containerNumber AND shippingLineId = :shippingLineId")
+    @Query("SELECT COUNT(*) FROM dispatch_containers " +
+            "WHERE REPLACE(REPLACE(containerNumber, '-', ''), ' ', '') = " +
+            "REPLACE(REPLACE(:containerNumber, '-', ''), ' ', '') " +
+            "AND shippingLineId = :shippingLineId")
     int getDispatchContainersCount(String containerNumber, int shippingLineId);
 
     @Query("DELETE FROM dispatch_containers")

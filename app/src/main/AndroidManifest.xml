@@ -106,7 +106,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Reception Screen -->
+        <!-- Dispatch Screen -->
         <activity
             android:name=".ui.activities.DispatchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

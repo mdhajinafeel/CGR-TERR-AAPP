@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c26cf7cfc90cf287b8cfebdab93a9d1b",
+    "identityHash": "8dbe8eec4b76bbb07db5e8b100dfb531",
     "entities": [
       {
         "tableName": "origins",
@@ -990,11 +990,255 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `idx_length_classification` ON `${TABLE_NAME}` (`lengthClassification`)"
           }
         ]
+      },
+      {
+        "tableName": "reception_details",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionId` TEXT NOT NULL, `receptionId` INTEGER, `ica` TEXT NOT NULL, `supplierId` INTEGER NOT NULL, `supplierProductId` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `supplierProductTypeId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `measurementSystem` INTEGER NOT NULL, `warehouse` INTEGER NOT NULL, `receptionDate` TEXT, `isFarmEnabled` INTEGER NOT NULL, `purchaseContract` INTEGER NOT NULL, `truckNumber` TEXT, `truckDriverName` TEXT, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tempReceptionId",
+            "columnName": "tempReceptionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receptionId",
+            "columnName": "receptionId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "ica",
+            "columnName": "ica",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierId",
+            "columnName": "supplierId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierProductId",
+            "columnName": "supplierProductId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supplierProductTypeId",
+            "columnName": "supplierProductTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productTypeId",
+            "columnName": "productTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measurementSystem",
+            "columnName": "measurementSystem",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "warehouse",
+            "columnName": "warehouse",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receptionDate",
+            "columnName": "receptionDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isFarmEnabled",
+            "columnName": "isFarmEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "purchaseContract",
+            "columnName": "purchaseContract",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "truckNumber",
+            "columnName": "truckNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "truckDriverName",
+            "columnName": "truckDriverName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "isDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEdited",
+            "columnName": "isEdited",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_ica_reception",
+            "unique": true,
+            "columnNames": [
+              "ica"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `idx_ica_reception` ON `${TABLE_NAME}` (`ica`)"
+          }
+        ]
+      },
+      {
+        "tableName": "dispatch_details",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempDispatchId` TEXT NOT NULL, `dispatchId` INTEGER, `containerNumber` TEXT NOT NULL, `productId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `warehouseId` INTEGER NOT NULL, `shippingLineId` INTEGER NOT NULL, `dispatchDate` TEXT, `girthClassificationId` INTEGER NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tempDispatchId",
+            "columnName": "tempDispatchId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dispatchId",
+            "columnName": "dispatchId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "containerNumber",
+            "columnName": "containerNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productTypeId",
+            "columnName": "productTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "warehouseId",
+            "columnName": "warehouseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shippingLineId",
+            "columnName": "shippingLineId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dispatchDate",
+            "columnName": "dispatchDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "girthClassificationId",
+            "columnName": "girthClassificationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "isDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEdited",
+            "columnName": "isEdited",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_container_number_dispatch",
+            "unique": true,
+            "columnNames": [
+              "containerNumber"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `idx_container_number_dispatch` ON `${TABLE_NAME}` (`containerNumber`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c26cf7cfc90cf287b8cfebdab93a9d1b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8dbe8eec4b76bbb07db5e8b100dfb531')"
     ]
   }
 }
