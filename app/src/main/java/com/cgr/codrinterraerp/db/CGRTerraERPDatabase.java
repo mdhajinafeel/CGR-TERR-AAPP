@@ -11,6 +11,7 @@ import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
+import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
@@ -45,12 +46,13 @@ import com.cgr.codrinterraerp.db.entities.SupplierProductTypes;
 import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
+import com.cgr.codrinterraerp.db.views.DispatchView;
 import com.cgr.codrinterraerp.db.views.ReceptionView;
 
 @Database(entities = {Origins.class, ApiLogs.class, Suppliers.class, SupplierProducts.class, SupplierProductTypes.class, MeasurementSystems.class, PurchaseContracts.class,
         ShippingLines.class, Warehouses.class, FarmInventoryOrders.class, ReceptionInventoryOrders.class, DispatchContainers.class, Products.class, ProductTypes.class,
         GirthClassification.class, LengthClassification.class, ReceptionDetails.class, DispatchDetails.class},
-        views = {ReceptionView.class},
+        views = {ReceptionView.class, DispatchView.class},
         version = 1)
 public abstract class CGRTerraERPDatabase extends RoomDatabase {
 
@@ -77,6 +79,7 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
 
     //VIEWS
     public abstract ReceptionViewDao receptionViewDao();
+    public abstract DispatchViewDao dispatchViewDao();
 
     public static CGRTerraERPDatabase getInstance(Context context) {
         if (INSTANCE == null) {

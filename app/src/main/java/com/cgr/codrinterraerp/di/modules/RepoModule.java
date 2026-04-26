@@ -4,6 +4,7 @@ import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
+import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
@@ -63,13 +64,14 @@ public class RepoModule {
 
     @Provides
     @Singleton
-    ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao, ReceptionViewDao receptionViewDao) {
-        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao);
+    ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao,
+                                                   ReceptionViewDao receptionViewDao, FarmInventoryOrdersDao farmInventoryOrdersDao) {
+        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao, farmInventoryOrdersDao);
     }
 
     @Provides
     @Singleton
-    DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao) {
-        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao);
+    DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao, DispatchViewDao dispatchViewDao) {
+        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao);
     }
 }

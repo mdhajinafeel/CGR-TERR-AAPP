@@ -41,29 +41,25 @@ public class WarehouseActivity extends BaseActivity {
             txtTitle.setText(getString(R.string.warehouse));
             imgBack.setOnClickListener(v -> finish());
 
-            // Set Adapter
-            viewPager.setAdapter(new TabPagerAdapter(this));
+            // ✅ Adapter
+            TabPagerAdapter adapter = new TabPagerAdapter(this);
+            viewPager.setAdapter(adapter);
 
-            // Fix initial icon state
-            tabLayout.post(() -> {
-                TabLayout.Tab firstTab = tabLayout.getTabAt(0);
-                if (firstTab != null) {
-                    firstTab.select(); // force trigger
-                }
-            });
+            // ✅ IMPORTANT FIX (prevents overlap)
+            viewPager.setOffscreenPageLimit(1);
 
-            // Attach TabLayout with ViewPager2
+            // ✅ Attach TabLayout
             new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
                 if (position == 0) {
                     tab.setText(getString(R.string.reception));
-                    tab.setIcon(R.drawable.ic_warehouse); // default selected
+                    tab.setIcon(R.drawable.ic_warehouse);
                 } else {
                     tab.setText(getString(R.string.dispatch));
                     tab.setIcon(R.drawable.ic_dispatch_unselected);
                 }
             }).attach();
 
-            // 🔥 ICON SWITCH + ANIMATION
+            // ✅ Tab icon handling
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
                 @Override
@@ -75,7 +71,7 @@ public class WarehouseActivity extends BaseActivity {
                         tab.setIcon(R.drawable.ic_dispatch);
                     }
 
-                    // 🔥 Bounce Animation
+                    // 🔥 Animation
                     View tabView = ((ViewGroup) tabLayout.getChildAt(0))
                             .getChildAt(tab.getPosition());
 
@@ -105,23 +101,10 @@ public class WarehouseActivity extends BaseActivity {
                 }
             });
 
-            // 🎬 ViewPager Animation
-            viewPager.setPageTransformer((page, position) -> {
-
-                float absPos = Math.abs(position);
-
-                // Fade
-                page.setAlpha(1 - absPos);
-
-                // Zoom
-                page.setScaleY(0.9f + (1 - absPos) * 0.1f);
-                page.setScaleX(0.9f + (1 - absPos) * 0.1f);
-
-                // Slide
-                page.setTranslationX(-position * page.getWidth());
-            });
-
+            viewPager.setPageTransformer(null);
+            viewPager.setOffscreenPageLimit(1);
             viewPager.setUserInputEnabled(true);
+
         } catch (Exception e) {
             AppLogger.e(getClass(), "Error in initComponents", e);
         }

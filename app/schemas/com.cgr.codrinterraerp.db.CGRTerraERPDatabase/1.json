@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8dbe8eec4b76bbb07db5e8b100dfb531",
+    "identityHash": "7def6dba048e7f044ae0ddedcefd552e",
     "entities": [
       {
         "tableName": "origins",
@@ -1236,9 +1236,19 @@
         ]
       }
     ],
+    "views": [
+      {
+        "viewName": "reception_view",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, s.supplierName, m.measurementName, r.receptionDate, 0 AS totalPieces, 0 AS totalGrossVolume, 0 AS totalNetVolume FROM reception_details r INNER JOIN suppliers s ON s.supplierId = r.supplierId INNER JOIN measurement_systems m ON m.id = r.measurementSystem WHERE r.isDeleted = 0"
+      },
+      {
+        "viewName": "dispatch_view",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, 0 as totalPieces, 0 as totalGrossVolume, 0 as totalNetVolume, 0 as avgGirth FROM dispatch_details d INNER JOIN shipping_lines s ON s.id = d.shippingLineId WHERE isDeleted = 0"
+      }
+    ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8dbe8eec4b76bbb07db5e8b100dfb531')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7def6dba048e7f044ae0ddedcefd552e')"
     ]
   }
 }

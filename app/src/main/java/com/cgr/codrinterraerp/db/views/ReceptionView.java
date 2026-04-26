@@ -20,7 +20,7 @@ public class ReceptionView implements Serializable {
 
     public int id;
     public String tempReceptionId;
-    public String receptionId;
+    public int receptionId;
     public String ica;
     public String supplierName;
     public String measurementName;

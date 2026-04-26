@@ -15,6 +15,9 @@ public interface FarmInventoryOrdersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFarmInventoryOrders(List<FarmInventoryOrders> farmInventoryOrdersList);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFarmInventoryOrder(FarmInventoryOrders farmInventoryOrder);
+
     @Query("SELECT COUNT(inventoryOrder) FROM farm_inventory_orders WHERE inventoryOrder = :inventoryOrder AND supplierId = :supplierId")
     int getFarmInventoryOrdersCount(String inventoryOrder, int supplierId);
 

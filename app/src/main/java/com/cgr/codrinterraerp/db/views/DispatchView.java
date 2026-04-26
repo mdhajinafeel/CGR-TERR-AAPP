@@ -1,0 +1,27 @@
+package com.cgr.codrinterraerp.db.views;
+
+import androidx.room.DatabaseView;
+
+import java.io.Serializable;
+
+@DatabaseView(
+        viewName = "dispatch_view",
+        value = "SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, " +
+                "0 as totalPieces, 0 as totalGrossVolume, 0 as totalNetVolume, 0 as avgGirth " +
+                "FROM dispatch_details d " +
+                "INNER JOIN shipping_lines s ON s.id = d.shippingLineId " +
+                "WHERE isDeleted = 0"
+)
+public class DispatchView implements Serializable {
+
+    public int id;
+    public String tempDispatchId;
+    public int dispatchId;
+    public String containerNumber;
+    public String dispatchDate;
+    public String shippingLine;
+    public int totalPieces;
+    public double totalGrossVolume;
+    public double totalNetVolume;
+    public double avgGirth;
+}

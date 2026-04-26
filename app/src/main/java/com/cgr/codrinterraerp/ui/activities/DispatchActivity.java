@@ -176,6 +176,9 @@ public class DispatchActivity extends BaseActivity {
 
     private void showDataDialog(String tag) {
         try {
+
+            hideKeyboard(this);
+
             Dialog dialog = new Dialog(this, R.style.DialogTheme);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
@@ -407,7 +410,7 @@ public class DispatchActivity extends BaseActivity {
 
                         boolean isSelected = false;
                         if (etGirthClassification.getTag() != null) {
-                            isSelected = Objects.equals(girthClassification.getId(), etShippingLine.getTag());
+                            isSelected = Objects.equals(girthClassification.getId(), etGirthClassification.getTag());
                         }
 
                         ivSelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);

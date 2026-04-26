@@ -6,6 +6,7 @@ import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
+import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
@@ -153,5 +154,11 @@ public class DBModule {
     @Singleton
     public ReceptionViewDao provideReceptionViewDao(CGRTerraERPDatabase db) {
         return db.receptionViewDao();
+    }
+
+    @Provides
+    @Singleton
+    public DispatchViewDao provideDispatchViewDao(CGRTerraERPDatabase db) {
+        return db.dispatchViewDao();
     }
 }

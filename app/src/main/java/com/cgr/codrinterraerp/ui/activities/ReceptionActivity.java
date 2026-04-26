@@ -208,7 +208,7 @@ public class ReceptionActivity extends BaseActivity {
 
     private void showDataDialog(String tag) {
         try {
-
+            hideKeyboard(this);
             Dialog dialog = new Dialog(this, R.style.DialogTheme);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);

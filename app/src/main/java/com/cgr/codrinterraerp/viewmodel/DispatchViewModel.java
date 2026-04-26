@@ -1,34 +1,34 @@
 package com.cgr.codrinterraerp.viewmodel;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
+import com.cgr.codrinterraerp.db.views.DispatchView;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.wrapper.SingleLiveEvent;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import dagger.hilt.android.qualifiers.ApplicationContext;
 
 @HiltViewModel
 public class DispatchViewModel extends ViewModel {
 
-    private final DispatchRepository dispatchRepository;
-    private final Context context;
-    private String errorTitle, errorMessage;
+    private DispatchRepository dispatchRepository;
     private long dispatchSavedId;
     private final SingleLiveEvent<Boolean> dispatchStatus = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
+    private final MutableLiveData<Boolean> dispatchDataTrigger = new MutableLiveData<>();
 
     @Inject
-    public DispatchViewModel(DispatchRepository dispatchRepository, @ApplicationContext Context context) {
+    public DispatchViewModel(DispatchRepository dispatchRepository) {
         this.dispatchRepository = dispatchRepository;
-        this.context = context;
     }
 
     public void saveDispatchDetails(DispatchDetails dispatchDetails) {
@@ -36,18 +36,34 @@ public class DispatchViewModel extends ViewModel {
         long dispatch = dispatchRepository.saveDispatchDetails(dispatchDetails);
         progressState.postValue(false);
         if(dispatch > 0) {
+
+            DispatchContainers dispatchContainers = new DispatchContainers();
+            dispatchContainers.setContainerNumber(dispatchDetails.getContainerNumber());
+            dispatchContainers.setShippingLineId(dispatchDetails.getShippingLineId());
+
             setDispatchSavedId(dispatch);
             dispatchStatus.postValue(true);
         } else {
             setDispatchSavedId(0);
             dispatchStatus.postValue(false);
-            setErrorTitle(context.getString(R.string.error));
-            setErrorMessage(context.getString(R.string.common_error));
         }
     }
 
     public int getDispatchContainersCount(String containerNumber, int shippingLineId) {
         return dispatchRepository.getDispatchContainersCount(containerNumber, shippingLineId);
+    }
+
+    private final LiveData<List<DispatchView>> dispatchList =
+            Transformations.switchMap(dispatchDataTrigger, input ->
+                    dispatchRepository.getDispatchList()
+            );
+
+    public LiveData<List<DispatchView>> getDispatchList() {
+        return dispatchList;
+    }
+
+    public void load() {
+        dispatchDataTrigger.setValue(true);
     }
 
     public LiveData<Boolean> getProgressState() {
@@ -56,22 +72,6 @@ public class DispatchViewModel extends ViewModel {
 
     public LiveData<Boolean> getDispatchStatus() {
         return dispatchStatus;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public String getErrorTitle() {
-        return errorTitle;
-    }
-
-    public void setErrorTitle(String errorTitle) {
-        this.errorTitle = errorTitle;
     }
 
     public long getDispatchSavedId() {

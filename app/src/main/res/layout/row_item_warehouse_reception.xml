@@ -42,7 +42,7 @@
                     android:text="@string/ica"
                     android:textAllCaps="true"
                     android:textColor="@color/colorDarkGrey"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvIca"
@@ -51,7 +51,7 @@
                     android:layout_marginTop="@dimen/margin_2"
                     android:fontFamily="@font/exo2_bold"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_16" />
             </LinearLayout>
 
             <!-- Supplier Column -->
@@ -71,7 +71,7 @@
                     android:text="@string/supplier"
                     android:textAllCaps="true"
                     android:textColor="@color/colorDarkGrey"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvSupplier"
@@ -81,7 +81,7 @@
                     android:fontFamily="@font/exo2_bold"
                     android:gravity="end"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_16" />
 
             </LinearLayout>
         </LinearLayout>
@@ -259,7 +259,7 @@
 
                 <!-- Edit Button -->
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/btnEditItem"
+                    android:id="@+id/btnEditReception"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -270,7 +270,7 @@
 
                 <!-- Delete Button -->
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/btnDeleteItem"
+                    android:id="@+id/btnDeleteReception"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_10"

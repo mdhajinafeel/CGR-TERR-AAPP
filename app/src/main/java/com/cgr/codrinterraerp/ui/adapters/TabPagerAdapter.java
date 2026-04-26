@@ -13,6 +13,7 @@ public class TabPagerAdapter extends FragmentStateAdapter {
     public TabPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -26,5 +27,16 @@ public class TabPagerAdapter extends FragmentStateAdapter {
     @Override
     public int getItemCount() {
         return 2;
+    }
+
+    // ✅ Prevent fragment reuse issues
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        return itemId == 0 || itemId == 1;
     }
 }

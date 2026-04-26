@@ -39,6 +39,7 @@ public class ReceptionFragment extends Fragment {
     private RecyclerView rvReceptionLists;
     private LinearLayout llNoData;
     private RecyclerViewAdapter<ReceptionView> receptionViewRecyclerViewAdapter;
+    private ReceptionViewModel receptionViewModel;
 
     @Nullable
     @Override
@@ -49,14 +50,14 @@ public class ReceptionFragment extends Fragment {
             rvReceptionLists = view.findViewById(R.id.rvReceptionLists);
             llNoData = view.findViewById(R.id.llNoData);
 
-            ReceptionViewModel receptionViewModel = new ViewModelProvider(this).get(ReceptionViewModel.class);
+            receptionViewModel = new ViewModelProvider(this).get(ReceptionViewModel.class);
 
             btnAddReception.setOnClickListener(v -> {
 
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
                 Intent intent = new Intent(requireActivity(), ReceptionActivity.class);
                 intent.putExtra("isEdit", false);
-                expenseResultLauncher.launch(intent, options);
+                receptionResultLauncher.launch(intent, options);
             });
 
             // ✅ Setup RecyclerView
@@ -67,6 +68,7 @@ public class ReceptionFragment extends Fragment {
 
             // ✅ Observe data (auto updates)
             receptionViewModel.getReceptionList().observe(getViewLifecycleOwner(), this::bindReceptionData);
+            receptionViewModel.load();
         } catch (Exception e) {
             AppLogger.e(getClass(), "onCreateView", e);
         }
@@ -77,28 +79,33 @@ public class ReceptionFragment extends Fragment {
 
         receptionViewRecyclerViewAdapter = new RecyclerViewAdapter<>(getContext(), new ArrayList<>(), R.layout.row_item_warehouse_reception) {
             @Override
-            public void onPostBindViewHolder(ViewHolder holder, ReceptionView item) {
-                if (item != null) {
-                    holder.setViewText(R.id.tvIca, item.ica);
-                    holder.setViewText(R.id.tvSupplier, item.supplierName);
-                    holder.setViewText(R.id.tvPieces, String.valueOf(item.totalPieces));
-                    holder.setViewText(R.id.tvGrossVolume, String.valueOf(item.totalGrossVolume));
-                    holder.setViewText(R.id.tvNetVolume, String.valueOf(item.totalNetVolume));
-                    holder.setViewText(R.id.tvDate, item.receptionDate);
-                    holder.setViewText(R.id.tvMeasurement, item.measurementName);
+            public void onPostBindViewHolder(ViewHolder holder, ReceptionView receptionView) {
+                if (receptionView != null) {
+                    holder.setViewText(R.id.tvIca, receptionView.ica);
+                    holder.setViewText(R.id.tvSupplier, receptionView.supplierName);
+                    holder.setViewText(R.id.tvPieces, String.valueOf(receptionView.totalPieces));
+                    holder.setViewText(R.id.tvGrossVolume, String.valueOf(receptionView.totalGrossVolume));
+                    holder.setViewText(R.id.tvNetVolume, String.valueOf(receptionView.totalNetVolume));
+                    holder.setViewText(R.id.tvDate, receptionView.receptionDate);
+                    holder.setViewText(R.id.tvMeasurement, receptionView.measurementName);
+
+                    holder.getView(R.id.btnEditReception).setTag(receptionView);
+                    holder.getView(R.id.btnDeleteReception).setTag(receptionView);
+
+                    holder.itemView.setOnClickListener(v -> Toast.makeText(getContext(), "ID - " + receptionView.ica, Toast.LENGTH_SHORT).show());
+
+                    holder.getView(R.id.btnEditReception).setOnClickListener(v -> {
+                        ReceptionView clickedItem = (ReceptionView) v.getTag();
+                        Toast.makeText(getContext(), "Edit - " + clickedItem.ica, Toast.LENGTH_SHORT).show();
+                    });
+
+                    holder.getView(R.id.btnDeleteReception).setOnClickListener(v -> {
+                        ReceptionView clickedItem = (ReceptionView) v.getTag();
+                        Toast.makeText(getContext(), "Delete - " + clickedItem.ica, Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
         };
-
-        receptionViewRecyclerViewAdapter.setOnItemClickListener((view, position) -> {
-            ReceptionView item = receptionViewRecyclerViewAdapter.getItem(position);
-            Intent intent = new Intent(requireActivity(), ReceptionActivity.class);
-            intent.putExtra("isEdit", true);
-            intent.putExtra("id", item.id);
-            intent.putExtra("ica", item.ica);
-
-            expenseResultLauncher.launch(intent);
-        });
 
         rvReceptionLists.setAdapter(receptionViewRecyclerViewAdapter);
     }
@@ -120,18 +127,16 @@ public class ReceptionFragment extends Fragment {
     }
 
     // ✅ Activity result launcher
-    private final ActivityResultLauncher<Intent> expenseResultLauncher =
+    private final ActivityResultLauncher<Intent> receptionResultLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
 
                             // 🔥 Optional: You DON'T need this if Room works correctly
-                            // receptionViewModel.refresh();
+                            receptionViewModel.load();
 
-                            Toast.makeText(requireContext(),
-                                    "Reception saved",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
             );

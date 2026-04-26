@@ -42,16 +42,16 @@
                     android:text="@string/container"
                     android:textAllCaps="true"
                     android:textColor="@color/colorDarkGrey"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_invoice_number"
+                    android:id="@+id/tvContainerNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
                     android:fontFamily="@font/exo2_bold"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_16" />
             </LinearLayout>
 
             <!-- Supplier Column -->
@@ -71,17 +71,17 @@
                     android:text="@string/shipping_line"
                     android:textAllCaps="true"
                     android:textColor="@color/colorDarkGrey"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_supplier_name"
+                    android:id="@+id/tvShippingLine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
                     android:fontFamily="@font/exo2_bold"
                     android:gravity="end"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_16" />
 
             </LinearLayout>
         </LinearLayout>
@@ -116,7 +116,7 @@
                     android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_date"
+                    android:id="@+id/tvPieces"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
@@ -146,6 +146,7 @@
                     android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvGrossVolume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
@@ -175,6 +176,7 @@
                     android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNetVolume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
@@ -203,6 +205,7 @@
                     android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
@@ -232,6 +235,7 @@
                     android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvAvgGirth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_2"
@@ -255,7 +259,7 @@
 
                 <!-- Edit Button -->
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/btnEditItem"
+                    android:id="@+id/btnEditDispatch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -266,7 +270,7 @@
 
                 <!-- Delete Button -->
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/btnDeleteItem"
+                    android:id="@+id/btnDeleteDispatch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_10"
