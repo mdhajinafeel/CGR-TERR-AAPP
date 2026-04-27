@@ -43,6 +43,8 @@ public class ReceptionViewModel extends ViewModel {
             receptionInventoryOrders.setSupplierId(receptionDetails.getSupplierId());
             receptionRepository.insertReceptionInventoryOrder(receptionInventoryOrders);
 
+            receptionRepository.updateSummary(receptionDetails.getReceptionId(), receptionDetails.getTempReceptionId());
+
             if(receptionDetails.isFarmEnabled) {
                 FarmInventoryOrders farmInventoryOrders = new FarmInventoryOrders();
                 farmInventoryOrders.setInventoryOrder(receptionDetails.getIca());

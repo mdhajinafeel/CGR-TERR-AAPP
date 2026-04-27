@@ -5,6 +5,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(tableName = "measurement_systems",
         indices = {
@@ -19,6 +20,7 @@ public class MeasurementSystems implements Serializable {
     private int id;
     private String measurementName;
     private int productTypeId;
+    private List<MeasurementSystemFormulas> formulas;
 
     public int getId() {
         return id;
@@ -42,5 +44,13 @@ public class MeasurementSystems implements Serializable {
 
     public void setProductTypeId(int productTypeId) {
         this.productTypeId = productTypeId;
+    }
+
+    public List<MeasurementSystemFormulas> getFormulas() {
+        return formulas;
+    }
+
+    public void setFormulas(List<MeasurementSystemFormulas> formulas) {
+        this.formulas = formulas;
     }
 }

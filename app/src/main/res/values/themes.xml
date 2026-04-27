@@ -37,6 +37,10 @@
         <item name="android:textColor">@color/colorErrorRed</item>
     </style>
 
+    <style name="HintTextAppearance" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
     <style name="DialogTheme">
         <item name="windowFixedWidthMajor">90%</item>
         <item name="windowFixedWidthMinor">90%</item>

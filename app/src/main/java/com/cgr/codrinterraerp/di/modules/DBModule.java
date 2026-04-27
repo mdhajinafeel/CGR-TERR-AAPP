@@ -7,10 +7,13 @@ import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
+import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
 import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulaVariablesDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulasDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemsDao;
 import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
@@ -19,6 +22,7 @@ import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
@@ -154,18 +158,6 @@ public class DBModule {
 
     @Provides
     @Singleton
-    public ReceptionViewDao provideReceptionViewDao(CGRTerraERPDatabase db) {
-        return db.receptionViewDao();
-    }
-
-    @Provides
-    @Singleton
-    public DispatchViewDao provideDispatchViewDao(CGRTerraERPDatabase db) {
-        return db.dispatchViewDao();
-    }
-
-    @Provides
-    @Singleton
     public ReceptionDataDao provideReceptionDataDao(CGRTerraERPDatabase db) {
         return db.receptionDataDao();
     }
@@ -174,5 +166,42 @@ public class DBModule {
     @Singleton
     public ContainerDataDao provideContainerDataDao(CGRTerraERPDatabase db) {
         return db.containerDataDao();
+    }
+
+    @Provides
+    @Singleton
+    public DispatchSummaryDao provideDispatchSummaryDao(CGRTerraERPDatabase db) {
+        return db.dispatchSummaryDao();
+    }
+
+    @Provides
+    @Singleton
+    public ReceptionSummaryDao provideReceptionSummaryDao(CGRTerraERPDatabase db) {
+        return db.receptionSummaryDao();
+    }
+
+    @Provides
+    @Singleton
+    public MeasurementSystemFormulasDao provideMeasurementSystemFormulasDao(CGRTerraERPDatabase db) {
+        return db.measurementSystemFormulasDao();
+    }
+
+    @Provides
+    @Singleton
+    public MeasurementSystemFormulaVariablesDao provideMeasurementSystemFormulaVariablesDao(CGRTerraERPDatabase db) {
+        return db.measurementSystemFormulaVariablesDao();
+    }
+
+    // VIEWS
+    @Provides
+    @Singleton
+    public ReceptionViewDao provideReceptionViewDao(CGRTerraERPDatabase db) {
+        return db.receptionViewDao();
+    }
+
+    @Provides
+    @Singleton
+    public DispatchViewDao provideDispatchViewDao(CGRTerraERPDatabase db) {
+        return db.dispatchViewDao();
     }
 }

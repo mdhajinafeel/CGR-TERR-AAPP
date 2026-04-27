@@ -25,6 +25,7 @@ public class DispatchViewModel extends ViewModel {
     private final SingleLiveEvent<Boolean> dispatchStatus = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
     private final MutableLiveData<Boolean> dispatchDataTrigger = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> availableContainerTrigger = new MutableLiveData<>();
 
     @Inject
     public DispatchViewModel(DispatchRepository dispatchRepository) {
@@ -40,6 +41,9 @@ public class DispatchViewModel extends ViewModel {
             DispatchContainers dispatchContainers = new DispatchContainers();
             dispatchContainers.setContainerNumber(dispatchDetails.getContainerNumber());
             dispatchContainers.setShippingLineId(dispatchDetails.getShippingLineId());
+            dispatchRepository.insertDispatchContainer(dispatchContainers);
+
+            dispatchRepository.updateSummary(dispatchDetails.getDispatchId(), dispatchDetails.getTempDispatchId());
 
             setDispatchSavedId(dispatch);
             dispatchStatus.postValue(true);
@@ -64,6 +68,19 @@ public class DispatchViewModel extends ViewModel {
 
     public void load() {
         dispatchDataTrigger.setValue(true);
+    }
+
+    private final LiveData<List<DispatchView>> availableContainerList =
+            Transformations.switchMap(availableContainerTrigger, input ->
+                    dispatchRepository.getAvailableContainers()
+            );
+
+    public LiveData<List<DispatchView>> getAvailableContainerList() {
+        return availableContainerList;
+    }
+
+    public void availableContainerload() {
+        availableContainerTrigger.setValue(true);
     }
 
     public LiveData<Boolean> getProgressState() {

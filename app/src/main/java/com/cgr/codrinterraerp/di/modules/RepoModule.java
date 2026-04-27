@@ -4,6 +4,7 @@ import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
+import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
 import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
@@ -15,12 +16,15 @@ import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
+import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
+import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 import com.cgr.codrinterraerp.repository.AppMaintenanceRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
@@ -65,13 +69,15 @@ public class RepoModule {
     @Provides
     @Singleton
     ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao,
-                                                   ReceptionViewDao receptionViewDao, FarmInventoryOrdersDao farmInventoryOrdersDao) {
-        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao, farmInventoryOrdersDao);
+                                                   ReceptionViewDao receptionViewDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
+                                                   ReceptionSummaryDao receptionSummaryDao, ReceptionSummaryHelper receptionSummaryHelper) {
+        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao, farmInventoryOrdersDao, receptionSummaryDao, receptionSummaryHelper);
     }
 
     @Provides
     @Singleton
-    DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao, DispatchViewDao dispatchViewDao) {
-        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao);
+    DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao, DispatchViewDao dispatchViewDao,
+                                                 DispatchSummaryDao dispatchSummaryDao, DispatchSummaryHelper dispatchSummaryHelper) {
+        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao, dispatchSummaryDao, dispatchSummaryHelper);
     }
 }

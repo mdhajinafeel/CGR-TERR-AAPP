@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <include
         android:id="@+id/toolbar"
@@ -103,20 +104,24 @@
                 android:layout_marginStart="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_8"
                 android:layout_marginEnd="@dimen/margin_10"
+                android:baselineAligned="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <!-- Input 1 -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiCircumference"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:hint="@string/circ"
                     app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
                     app:boxStrokeWidth="@dimen/box_stroke"
                     app:errorEnabled="false"
                     app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
                     app:hintTextColor="@color/colorDarkGrey">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -134,15 +139,18 @@
 
                 <!-- Input 2 -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiLength"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:hint="@string/length"
                     app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
                     app:boxStrokeWidth="@dimen/box_stroke"
                     app:errorEnabled="false"
                     app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
                     app:hintTextColor="@color/colorDarkGrey">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -160,15 +168,18 @@
 
                 <!-- Input 3 -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiPieces"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:hint="@string/pieces"
                     app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
                     app:boxStrokeWidth="@dimen/box_stroke"
                     app:errorEnabled="false"
                     app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
                     app:hintTextColor="@color/colorDarkGrey">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -183,26 +194,58 @@
                         android:textColorHint="@color/colorDarkGrey"
                         android:textSize="@dimen/text_18" />
                 </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-                <!-- Submit Button -->
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivDone"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="@dimen/margin_6"
-                    android:layout_marginEnd="@dimen/margin_6"
-                    android:contentDescription="@string/submit"
-                    android:src="@drawable/ic_submit" />
+            <!-- Bottom Action Bar -->
+            <LinearLayout
+                android:id="@+id/llBottomActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <!-- Clear Button -->
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivClear"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="@dimen/margin_6"
-                    android:layout_marginEnd="@dimen/margin_6"
-                    android:contentDescription="@string/delete"
-                    android:src="@drawable/ic_clear" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mbClear"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="@dimen/margin_20"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/margin_20"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:paddingStart="@dimen/padding_16"
+                    android:paddingEnd="@dimen/padding_16"
+                    android:text="@string/clear"
+                    android:textSize="@dimen/text_16"
+                    app:backgroundTint="@color/colorErrorRed"
+                    app:cornerRadius="@dimen/corner_radius_12"
+                    app:icon="@drawable/ic_clear"
+                    app:iconGravity="textStart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Submit Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mbSubmit"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="@dimen/margin_20"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:paddingStart="@dimen/padding_16"
+                    android:paddingEnd="@dimen/padding_16"
+                    android:text="@string/submit"
+                    android:textSize="@dimen/text_16"
+                    app:backgroundTint="@color/colorDarkGreen"
+                    app:cornerRadius="@dimen/corner_radius_12"
+                    app:icon="@drawable/ic_submit"
+                    app:iconGravity="textStart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

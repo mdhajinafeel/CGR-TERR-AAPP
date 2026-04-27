@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="210dp"
+    android:layout_width="250dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/margin_4"
     android:layout_marginTop="@dimen/margin_6"
@@ -26,13 +26,13 @@
             <!-- Container Number -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvContainerNumber"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="@font/exo2_semibold"
                 android:maxLines="1"
                 android:textColor="@color/textColor"
-                android:textSize="@dimen/text_14" />
+                android:textSize="@dimen/text_18" />
 
             <!-- Shipping Line -->
             <LinearLayout
@@ -50,7 +50,7 @@
                     android:fontFamily="@font/exo2_medium"
                     android:text="@string/shipping_line"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvShippingLine"
@@ -60,7 +60,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="end"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
 
             <!-- Pieces -->
@@ -79,7 +79,7 @@
                     android:fontFamily="@font/exo2_medium"
                     android:text="@string/pieces"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvPieces"
@@ -89,7 +89,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="end"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
 
             <!-- Gross Volume -->
@@ -108,7 +108,7 @@
                     android:fontFamily="@font/exo2_medium"
                     android:text="@string/gross_volume"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvGrossVolume"
@@ -118,7 +118,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="end"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
 
             <!-- Net Volume -->
@@ -137,7 +137,7 @@
                     android:fontFamily="@font/exo2_medium"
                     android:text="@string/net_volume"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvNetVolume"
@@ -147,7 +147,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="end"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
 
             <!-- Avg Girth -->
@@ -166,7 +166,7 @@
                     android:fontFamily="@font/exo2_medium"
                     android:text="@string/avg_girth"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_12" />
+                    android:textSize="@dimen/text_14" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvAvgGirth"
@@ -176,7 +176,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="end"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/text_14" />
+                    android:textSize="@dimen/text_18" />
             </LinearLayout>
         </LinearLayout>
 

@@ -167,6 +167,9 @@ public class SyncViewModel extends ViewModel {
         List<MeasurementSystemsResponse> measurement = data.getMeasurementSystems();
         if (measurement != null && !measurement.isEmpty()) {
             masterRepository.deleteMeasurementSystems();
+
+
+
             masterRepository.insertMeasurementSystems(getMeasurementSystems(measurement));
         }
 

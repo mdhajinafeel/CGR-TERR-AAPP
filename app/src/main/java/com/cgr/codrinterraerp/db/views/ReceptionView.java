@@ -8,12 +8,12 @@ import java.io.Serializable;
         viewName = "reception_view",
         value = "SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, " +
                 "s.supplierName, m.measurementName, r.receptionDate, " +
-                "0 AS totalPieces, " +
-                "0 AS totalGrossVolume, " +
-                "0 AS totalNetVolume " +
+                "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, " +
+                "IFNULL(ds.totalNetVolume,0) as totalNetVolume " +
                 "FROM reception_details r " +
                 "INNER JOIN suppliers s ON s.supplierId = r.supplierId " +
                 "INNER JOIN measurement_systems m ON m.id = r.measurementSystem " +
+                "LEFT JOIN reception_summary ds ON (ds.receptionId = r.receptionId OR ds.tempReceptionId = r.tempReceptionId) " +
                 "WHERE r.isDeleted = 0"
 )
 public class ReceptionView implements Serializable {
