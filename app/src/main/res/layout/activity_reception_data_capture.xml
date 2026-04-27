@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Containers Section -->
+    <LinearLayout
+        android:id="@+id/llContainerSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_12"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.02"
+            android:text="@string/available_containers"
+            android:textAllCaps="true"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_16"
+            app:fontFamily="@font/exo2_semibold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAvailableContainers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_4"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_item_available_containers" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNoDataFound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin_20"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:fontFamily="@font/exo2_bold"
+            android:letterSpacing="0.02"
+            android:text="@string/no_data_available"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_20"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewSection"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/margin_4"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:background="@color/colorLightGrey"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llContainerSection" />
+
+    <!-- ScrollView for Form Section -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_6"
+        android:layout_weight="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewSection">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Form Title -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_12"
+                android:fontFamily="@font/exo2_semibold"
+                android:letterSpacing="0.03"
+                android:text="@string/input_measurements"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/text_16" />
+
+            <!-- Input Fields Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_8"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Input 1 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/circ"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCircumference"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Input 2 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/length"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Input 3 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/pieces"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPieces"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Submit Button -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivDone"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/margin_6"
+                    android:layout_marginEnd="@dimen/margin_6"
+                    android:contentDescription="@string/submit"
+                    android:src="@drawable/ic_submit" />
+
+                <!-- Clear Button -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivClear"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/margin_6"
+                    android:layout_marginEnd="@dimen/margin_6"
+                    android:contentDescription="@string/delete"
+                    android:src="@drawable/ic_clear" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

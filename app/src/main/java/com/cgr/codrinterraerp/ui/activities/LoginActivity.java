@@ -234,12 +234,12 @@ public class LoginActivity extends BaseActivity {
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setOriginId(Integer.parseInt(etOriginLogin.getTag().toString()));
-        loginRequest.setUsername(Objects.requireNonNull(etUsernameLogin.getText()).toString());
-        loginRequest.setPassword(Objects.requireNonNull(etPasswordLogin.getText()).toString());
+        loginRequest.setUsername(Objects.requireNonNull(etUsernameLogin.getText()).toString().trim());
+        loginRequest.setPassword(Objects.requireNonNull(etPasswordLogin.getText()).toString().trim());
         loginRequest.setDeviceId(CommonUtils.getDeviceId(getApplicationContext()));
         loginRequest.setAndroidVersion(CommonUtils.getAndroidVersion());
         loginRequest.setAppVersion(CommonUtils.getVersionCode(getApplicationContext()));
-        loginRequest.setFcmToken(fcmToken);
+        loginRequest.setFcmToken(fcmToken.trim());
         loginRequest.setDeviceModel(CommonUtils.getDeviceModel(getApplicationContext()));
 
         Gson gson = new Gson();

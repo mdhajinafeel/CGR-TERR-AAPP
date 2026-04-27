@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import com.cgr.codrinterraerp.BuildConfig;
 import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
@@ -20,6 +21,7 @@ import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
@@ -29,6 +31,7 @@ import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
+import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
@@ -39,6 +42,7 @@ import com.cgr.codrinterraerp.db.entities.Origins;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
 import com.cgr.codrinterraerp.db.entities.PurchaseContracts;
+import com.cgr.codrinterraerp.db.entities.ReceptionData;
 import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
 import com.cgr.codrinterraerp.db.entities.ReceptionInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.ShippingLines;
@@ -51,7 +55,7 @@ import com.cgr.codrinterraerp.db.views.ReceptionView;
 
 @Database(entities = {Origins.class, ApiLogs.class, Suppliers.class, SupplierProducts.class, SupplierProductTypes.class, MeasurementSystems.class, PurchaseContracts.class,
         ShippingLines.class, Warehouses.class, FarmInventoryOrders.class, ReceptionInventoryOrders.class, DispatchContainers.class, Products.class, ProductTypes.class,
-        GirthClassification.class, LengthClassification.class, ReceptionDetails.class, DispatchDetails.class},
+        GirthClassification.class, LengthClassification.class, ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class},
         views = {ReceptionView.class, DispatchView.class},
         version = 1)
 public abstract class CGRTerraERPDatabase extends RoomDatabase {
@@ -76,6 +80,8 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
     public abstract LengthClassificationDao lengthClassificationDao();
     public abstract ReceptionDetailsDao receptionDetailsDao();
     public abstract DispatchDetailsDao dispatchDetailsDao();
+    public abstract ReceptionDataDao receptionDataDao();
+    public abstract ContainerDataDao containerDataDao();
 
     //VIEWS
     public abstract ReceptionViewDao receptionViewDao();

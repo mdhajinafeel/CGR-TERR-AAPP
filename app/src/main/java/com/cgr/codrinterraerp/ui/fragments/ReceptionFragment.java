@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cgr.codrinterraerp.R;
 import com.cgr.codrinterraerp.db.views.ReceptionView;
 import com.cgr.codrinterraerp.ui.activities.ReceptionActivity;
+import com.cgr.codrinterraerp.ui.activities.ReceptionDataCaptureActivity;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.utils.AppLogger;
@@ -92,11 +93,21 @@ public class ReceptionFragment extends Fragment {
                     holder.getView(R.id.btnEditReception).setTag(receptionView);
                     holder.getView(R.id.btnDeleteReception).setTag(receptionView);
 
-                    holder.itemView.setOnClickListener(v -> Toast.makeText(getContext(), "ID - " + receptionView.ica, Toast.LENGTH_SHORT).show());
+                    holder.itemView.setOnClickListener(v -> {
+
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
+                        Intent intent = new Intent(requireActivity(), ReceptionDataCaptureActivity.class);
+                        intent.putExtra("ica", receptionView.ica);
+                        receptionDataCaptureResultLauncher.launch(intent, options);
+                    });
 
                     holder.getView(R.id.btnEditReception).setOnClickListener(v -> {
                         ReceptionView clickedItem = (ReceptionView) v.getTag();
-                        Toast.makeText(getContext(), "Edit - " + clickedItem.ica, Toast.LENGTH_SHORT).show();
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
+                        Intent intent = new Intent(requireActivity(), ReceptionActivity.class);
+                        intent.putExtra("isEdit", true);
+                        intent.putExtra("receptionDetails", clickedItem);
+                        receptionResultLauncher.launch(intent, options);
                     });
 
                     holder.getView(R.id.btnDeleteReception).setOnClickListener(v -> {
@@ -128,6 +139,20 @@ public class ReceptionFragment extends Fragment {
 
     // ✅ Activity result launcher
     private final ActivityResultLauncher<Intent> receptionResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+
+                            // 🔥 Optional: You DON'T need this if Room works correctly
+                            receptionViewModel.load();
+
+                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+
+    private final ActivityResultLauncher<Intent> receptionDataCaptureResultLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {

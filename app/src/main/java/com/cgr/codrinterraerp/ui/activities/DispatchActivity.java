@@ -621,14 +621,14 @@ public class DispatchActivity extends BaseActivity {
                 } else {
 
                     DispatchDetails dispatchDetail = new DispatchDetails();
-                    dispatchDetail.setContainerNumber(etContainerNumber.getText().toString());
+                    dispatchDetail.setContainerNumber(etContainerNumber.getText().toString().trim());
                     dispatchDetail.setTempDispatchId("D_" + CommonUtils.getCurrentLocalDateTimeStamp());
-                    dispatchDetail.setDispatchId(0);
+                    dispatchDetail.setDispatchId(null);
                     dispatchDetail.setProductId((int) etProduct.getTag());
                     dispatchDetail.setProductTypeId((int) etProductType.getTag());
                     dispatchDetail.setWarehouseId((int) etWarehouse.getTag());
                     dispatchDetail.setShippingLineId((int) etShippingLine.getTag());
-                    dispatchDetail.setDispatchDate(etDispatchDate.getText().toString());
+                    dispatchDetail.setDispatchDate(etDispatchDate.getText().toString().trim());
                     dispatchDetail.setGirthClassificationId((int) etGirthClassification.getTag());
                     dispatchDetail.setSynced(false);
                     dispatchDetail.setDeleted(false);

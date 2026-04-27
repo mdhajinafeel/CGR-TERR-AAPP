@@ -94,7 +94,11 @@ public class DispatchFragment extends Fragment {
 
                     holder.getView(R.id.btnEditDispatch).setOnClickListener(v -> {
                         DispatchView clickedItem = (DispatchView) v.getTag();
-                        Toast.makeText(getContext(), "Edit - " + clickedItem.containerNumber, Toast.LENGTH_SHORT).show();
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
+                        Intent intent = new Intent(requireActivity(), DispatchActivity.class);
+                        intent.putExtra("isEdit", true);
+                        intent.putExtra("dispatchDetails", clickedItem);
+                        dispatchResultLauncher.launch(intent, options);
                     });
 
                     holder.getView(R.id.btnDeleteDispatch).setOnClickListener(v -> {

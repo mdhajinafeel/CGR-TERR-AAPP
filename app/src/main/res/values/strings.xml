@@ -100,4 +100,9 @@
     <string name="ica_exists">ICA already exists. Please verify and try again.</string>
     <string name="container_exists">Container already exists. Please verify and try again.</string>
     <string name="measurement">Measurement</string>
+    <string name="available_containers">Available Containers</string>
+    <string name="length">Length</string>
+    <string name="circ">Circ</string>
+    <string name="input_measurements">Input Measurements</string>
+    <string name="measurement_data">Measurement Data</string>
 </resources>

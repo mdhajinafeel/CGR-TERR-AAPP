@@ -29,7 +29,7 @@
     <color name="orange">#FF9800</color>
     <color name="green">#4CAF50</color>
     <color name="darkGreen">#409E45</color>
-    <color name="textColor">#475159</color>
+    <color name="textColor">#212121</color>
     <color name="notificationBarColor">#254117</color>
     <color name="primaryGreenLight">#e8f4ed</color>
 </resources>

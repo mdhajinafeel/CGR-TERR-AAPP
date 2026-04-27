@@ -790,10 +790,10 @@ public class ReceptionActivity extends BaseActivity {
                     receptionDetail.setProductId((int) etSupplierProduct.getTag(R.id.tag_product_id));
                     receptionDetail.setSupplierProductTypeId((int) etSupplierProductType.getTag(R.id.tag_supplier_product_type_id));
                     receptionDetail.setProductTypeId((int) etSupplierProductType.getTag(R.id.tag_product_type_id));
-                    receptionDetail.setIca(etIca.getText().toString());
+                    receptionDetail.setIca(etIca.getText().toString().trim());
                     receptionDetail.setMeasurementSystem((int) etMeasurementSystem.getTag());
                     receptionDetail.setWarehouse((int) etWarehouse.getTag());
-                    receptionDetail.setReceptionDate(etReceptionDate.getText().toString());
+                    receptionDetail.setReceptionDate(etReceptionDate.getText().toString().trim());
                     receptionDetail.setFarmEnabled(cbEnableFarm.isChecked());
 
                     if (cbEnableFarm.isChecked()) {
