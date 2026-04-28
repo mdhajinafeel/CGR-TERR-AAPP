@@ -18,8 +18,9 @@ retrofit = "3.0.0"
 stetho = "1.6.0"
 firebaseBom = "34.12.0"
 firebaseMessaging = "25.0.1"
-glide = "5.0.5"
+glide = "5.0.7"
 workRunTime = "2.11.2"
+exp4j = "0.4.8"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -53,6 +54,7 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRunTime" }
+expresson4j = { module = "net.objecthunter:exp4j", version.ref = "exp4j" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

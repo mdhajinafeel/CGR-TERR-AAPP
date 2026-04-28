@@ -11,19 +11,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
+import com.cgr.codrinterraerp.db.relations.FormulaWithVariables;
 import com.cgr.codrinterraerp.db.views.DispatchView;
+import com.cgr.codrinterraerp.db.views.ReceptionView;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.ui.common.BaseActivity;
 import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.utils.CommonUtils;
+import com.cgr.codrinterraerp.utils.FormulaEngine;
 import com.cgr.codrinterraerp.viewmodel.DispatchViewModel;
+import com.cgr.codrinterraerp.viewmodel.ReceptionDataViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -37,6 +44,9 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
     private RecyclerView rvAvailableContainers;
     private RecyclerViewAdapter<DispatchView> dispatchViewRecyclerViewAdapter;
     private int normalColor, errorColor;
+    private ReceptionDataViewModel receptionDataViewModel;
+    private ReceptionView receptionView;
+    private FormulaWithVariables formulaData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +81,9 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 imgBack.setOnClickListener(v -> finish());
 
                 DispatchViewModel dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
+                receptionDataViewModel = new ViewModelProvider(this).get(ReceptionDataViewModel.class);
+
+                receptionView = (ReceptionView) bundle.getSerializable("receptionDetails");
 
                 normalColor = getColor(R.color.colorDarkGreen);
                 errorColor = getColor(R.color.colorErrorOrange);
@@ -93,14 +106,13 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
 
                 mbSubmit.setOnClickListener(v -> {
                     if (validateInputs()) {
-
                         submitMeasurementData();
-
                         clearFields();
                     }
                 });
 
                 clearFields();
+                fetchFormulas();
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
                 finish();
@@ -200,9 +212,47 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
         etCircumference.requestFocus();
     }
 
+    private void fetchFormulas() {
+        try {
+            formulaData = receptionDataViewModel.getFormulasWithVariables(receptionView.measurementSystem);
+        } catch (Exception e) {
+            AppLogger.e(getClass(), "fetchFormulas", e);
+        }
+    }
+
     private void submitMeasurementData() {
         try {
+            double c = Double.parseDouble(Objects.requireNonNull(etCircumference.getText()).toString());
+            double l = Double.parseDouble(Objects.requireNonNull(etLength.getText()).toString());
+            int pieces = Integer.parseInt(Objects.requireNonNull(etPieces.getText()).toString());
 
+            // ✅ Build variable map dynamically
+            Map<String, Double> inputValues = new HashMap<>();
+
+            for (MeasurementSystemFormulaVariables v : formulaData.variables) {
+                String key = v.getVarName();
+                switch (key) {
+                    case "c":
+                        inputValues.put("c", c);
+                        break;
+
+                    case "l":
+                        inputValues.put("l", l);
+                        break;
+                }
+            }
+
+            // ✅ Evaluate
+            double value = FormulaEngine.evaluate(formulaData.formula.getFormula(), inputValues);
+
+            // ✅ Apply rounding
+            double finalValue = FormulaEngine.applyRounding(value, formulaData.formula.getRoundPrecision(), formulaData.formula.getRoundingType());
+
+            // ✅ Multiply pieces
+            double total = finalValue * pieces;
+
+            // ✅ Display
+            Toast.makeText(getApplicationContext(), "Per Piece: " + finalValue + "\nTotal: " + total, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             AppLogger.e(getClass(), "submitMeasurementData", e);
         }

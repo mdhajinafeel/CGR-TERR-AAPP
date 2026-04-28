@@ -34,6 +34,14 @@ public class MeasurementSystemFormulaVariables implements Serializable {
         this.id = id;
     }
 
+    public int getMeasurementSystemId() {
+        return measurementSystemId;
+    }
+
+    public void setMeasurementSystemId(int measurementSystemId) {
+        this.measurementSystemId = measurementSystemId;
+    }
+
     public int getFormulaMasterId() {
         return formulaMasterId;
     }

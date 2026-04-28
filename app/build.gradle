@@ -135,4 +135,7 @@ dependencies {
 
     // Work Runtime
     implementation libs.work.runtime
+
+    // Exp4j
+    implementation libs.expresson4j
 }

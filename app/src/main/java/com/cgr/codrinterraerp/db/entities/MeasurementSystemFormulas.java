@@ -5,11 +5,11 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(
         tableName = "measurement_system_formulas",
         indices = {
+                @Index(name = "idx_master_id_formula", value = {"formulaMasterId"}),
                 @Index(name = "idx_mid_formula", value = {"measurementSystemId"}),
                 @Index(name = "idx_formula", value = {"formula"}),
                 @Index(name = "idx_round_precision_formula", value = {"roundPrecision"}),
@@ -20,11 +20,11 @@ public class MeasurementSystemFormulas implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private int formulaMasterId;
     private int measurementSystemId;
     private String formula;
     private int roundPrecision;
     private String roundingType;
-    private List<MeasurementSystemFormulaVariables> variables;
 
     public int getId() {
         return id;
@@ -66,11 +66,11 @@ public class MeasurementSystemFormulas implements Serializable {
         this.roundingType = roundingType;
     }
 
-    public List<MeasurementSystemFormulaVariables> getVariables() {
-        return variables;
+    public int getFormulaMasterId() {
+        return formulaMasterId;
     }
 
-    public void setVariables(List<MeasurementSystemFormulaVariables> variables) {
-        this.variables = variables;
+    public void setFormulaMasterId(int formulaMasterId) {
+        this.formulaMasterId = formulaMasterId;
     }
 }

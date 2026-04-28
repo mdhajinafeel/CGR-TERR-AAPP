@@ -5,6 +5,8 @@ import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulaVariablesDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulasDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemsDao;
 import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
@@ -20,6 +22,8 @@ import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.GirthClassification;
 import com.cgr.codrinterraerp.db.entities.LengthClassification;
+import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
+import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulas;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystems;
 import com.cgr.codrinterraerp.db.entities.Origins;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
@@ -50,6 +54,8 @@ public class MasterRepository {
     private final SupplierProductTypesDao supplierProductTypesDao;
     private final WarehousesDao warehousesDao;
     private final MeasurementSystemsDao measurementSystemsDao;
+    private final MeasurementSystemFormulasDao measurementSystemFormulasDao;
+    private final MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao;
     private final ShippingLinesDao shippingLinesDao;
     private final PurchaseContractDao purchaseContractDao;
     private final FarmInventoryOrdersDao farmInventoryOrdersDao;
@@ -62,6 +68,7 @@ public class MasterRepository {
 
     public MasterRepository(CGRTerraERPDatabase database, IMasterApiService iMasterApiService, OriginsDao originsDao, SuppliersDao suppliersDao, SupplierProductsDao supplierProductsDao,
                             SupplierProductTypesDao supplierProductTypesDao, WarehousesDao warehousesDao, MeasurementSystemsDao measurementSystemsDao,
+                            MeasurementSystemFormulasDao measurementSystemFormulasDao, MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao,
                             ShippingLinesDao shippingLinesDao, PurchaseContractDao purchaseContractDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
                             ReceptionInventoryOrdersDao receptionInventoryOrdersDao, DispatchContainersDao dispatchContainersDao, ProductsDao productsDao,
                             ProductTypesDao productTypesDao, GirthClassificationDao girthClassificationDao, LengthClassificationDao lengthClassificationDao) {
@@ -73,6 +80,8 @@ public class MasterRepository {
         this.supplierProductTypesDao = supplierProductTypesDao;
         this.warehousesDao = warehousesDao;
         this.measurementSystemsDao = measurementSystemsDao;
+        this.measurementSystemFormulasDao = measurementSystemFormulasDao;
+        this.measurementSystemFormulaVariablesDao = measurementSystemFormulaVariablesDao;
         this.shippingLinesDao = shippingLinesDao;
         this.purchaseContractDao = purchaseContractDao;
         this.farmInventoryOrdersDao = farmInventoryOrdersDao;
@@ -161,6 +170,22 @@ public class MasterRepository {
 
     public List<MeasurementSystems> fetchMeasurementSystems(int productTypeId) {
         return measurementSystemsDao.getAllMeasurementSystems(productTypeId);
+    }
+
+    public void insertMeasurementSystemsFormula(List<MeasurementSystemFormulas> measurementSystemFormulasList) {
+        measurementSystemFormulasDao.insertMeasurementSystemFormulas(measurementSystemFormulasList);
+    }
+
+    public void insertMeasurementSystemsFormulaVariables(List<MeasurementSystemFormulaVariables> measurementSystemFormulaVariablesList) {
+        measurementSystemFormulaVariablesDao.insertMeasurementSystemFormulaVariables(measurementSystemFormulaVariablesList);
+    }
+
+    public void deleteMeasurementSystemsFormulas() {
+        measurementSystemFormulasDao.clearAll();
+    }
+
+    public void deleteMeasurementSystemsFormulaVariables() {
+        measurementSystemFormulaVariablesDao.clearAll();
     }
 
     // SHIPPING LINES

@@ -98,6 +98,7 @@ public class ReceptionFragment extends Fragment {
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
                         Intent intent = new Intent(requireActivity(), ReceptionDataCaptureActivity.class);
                         intent.putExtra("ica", receptionView.ica);
+                        intent.putExtra("receptionDetails", receptionView);
                         receptionDataCaptureResultLauncher.launch(intent, options);
                     });
 

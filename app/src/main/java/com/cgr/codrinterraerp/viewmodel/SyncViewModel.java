@@ -11,6 +11,8 @@ import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.GirthClassification;
 import com.cgr.codrinterraerp.db.entities.LengthClassification;
+import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
+import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulas;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystems;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
@@ -28,6 +30,8 @@ import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersRespon
 import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.GirthClassificationResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.LengthClassificationResponse;
+import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulaVariablesResponse;
+import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulasResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductTypesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductsResponse;
@@ -121,8 +125,6 @@ public class SyncViewModel extends ViewModel {
         List<SuppliersResponse> suppliersResponseList = data.getSuppliers();
         if (suppliersResponseList != null && !suppliersResponseList.isEmpty()) {
 
-            masterRepository.deleteSupplierData();
-
             List<Suppliers> suppliersList = new ArrayList<>(suppliersResponseList.size());
             List<SupplierProducts> productsList = new ArrayList<>();
             List<SupplierProductTypes> typesList = new ArrayList<>();
@@ -153,6 +155,10 @@ public class SyncViewModel extends ViewModel {
                 suppliersList.add(supplier);
             }
 
+            if(!suppliersList.isEmpty()) {
+                masterRepository.deleteSupplierData();
+            }
+
             masterRepository.insertSuppliers(suppliersList);
             masterRepository.insertSupplierProducts(productsList);
             masterRepository.insertSupplierProductTypes(typesList);
@@ -161,82 +167,174 @@ public class SyncViewModel extends ViewModel {
         // ---------------- WAREHOUSES ----------------
         List<WarehousesResponse> warehouses = data.getWarehouses();
         if (warehouses != null && !warehouses.isEmpty()) {
-            masterRepository.deleteWarehouseData();
+
+            if(!getWarehouses(warehouses).isEmpty()) {
+                masterRepository.deleteWarehouseData();
+            }
+
             masterRepository.insertWarehouses(getWarehouses(warehouses));
         }
 
-        // ---------------- MEASUREMENT ----------------
+        // ---------------- MEASUREMENT SYSTEMS ----------------
         List<MeasurementSystemsResponse> measurement = data.getMeasurementSystems();
         if (measurement != null && !measurement.isEmpty()) {
-            masterRepository.deleteMeasurementSystems();
 
-            // ---------------- MEASUREMENT FORMULA ----------------
+            List<MeasurementSystems> measurementSystemsList = new ArrayList<>();
+            List<MeasurementSystemFormulas> measurementSystemFormulasList = new ArrayList<>();
+            List<MeasurementSystemFormulaVariables> measurementSystemFormulaVariablesList = new ArrayList<>();
 
-            masterRepository.insertMeasurementSystems(getMeasurementSystems(measurement));
+            for (MeasurementSystemsResponse measurementSystemsResponse : measurement) {
+                MeasurementSystems measurementSystem = new MeasurementSystems();
+                measurementSystem.setId(measurementSystemsResponse.getId());
+                measurementSystem.setMeasurementName(measurementSystemsResponse.getMeasurementName());
+                measurementSystem.setProductTypeId(measurementSystemsResponse.getProductTypeId());
+
+                if(measurementSystem.getFormulas()!= null && !measurementSystem.getFormulas().isEmpty()) {
+                    for (MeasurementSystemFormulasResponse measurementSystemFormulasResponse : measurementSystemsResponse.getFormulas()) {
+                        MeasurementSystemFormulas measurementSystemFormula = getMeasurementSystemFormulas(measurementSystemsResponse, measurementSystemFormulasResponse);
+
+                        if(measurementSystemFormulasResponse.getVariables() != null && !measurementSystemFormulasResponse.getVariables().isEmpty()) {
+                            for(MeasurementSystemFormulaVariablesResponse measurementSystemFormulaVariablesResponse : measurementSystemFormulasResponse.getVariables()) {
+                                MeasurementSystemFormulaVariables measurementSystemFormulaVariable = getMeasurementSystemFormulaVariables(measurementSystemsResponse, measurementSystemFormulaVariablesResponse);
+
+                                measurementSystemFormulaVariablesList.add(measurementSystemFormulaVariable);
+                            }
+                        }
+
+                        measurementSystemFormulasList.add(measurementSystemFormula);
+                    }
+                }
+
+                measurementSystemsList.add(measurementSystem);
+            }
+
+            if(!measurementSystemsList.isEmpty()) {
+                masterRepository.deleteMeasurementSystems();
+            }
+
+            if(!measurementSystemFormulasList.isEmpty()) {
+                masterRepository.deleteMeasurementSystemsFormulas();
+            }
+
+            if(!measurementSystemFormulaVariablesList.isEmpty()) {
+                masterRepository.deleteMeasurementSystemsFormulaVariables();
+            }
+
+            masterRepository.insertMeasurementSystems(measurementSystemsList);
+            masterRepository.insertMeasurementSystemsFormula(measurementSystemFormulasList);
+            masterRepository.insertMeasurementSystemsFormulaVariables(measurementSystemFormulaVariablesList);
         }
 
         // ---------------- SHIPPING ----------------
         List<ShippingLinesResponse> shipping = data.getShippingLines();
         if (shipping != null && !shipping.isEmpty()) {
-            masterRepository.deleteShippingLines();
+
+            if(!getShippingLines(shipping).isEmpty()) {
+                masterRepository.deleteShippingLines();
+            }
+
             masterRepository.insertShippingLines(getShippingLines(shipping));
         }
 
         // ---------------- CONTRACTS ----------------
         List<PurchaseContractsResponse> contracts = data.getPurchaseContracts();
         if (contracts != null && !contracts.isEmpty()) {
-            masterRepository.deletePurchaseContract();
+
+            if(!getPurchaseContracts(contracts).isEmpty()) {
+                masterRepository.deletePurchaseContract();
+            }
+
             masterRepository.insertPurchaseContracts(getPurchaseContracts(contracts));
         }
 
         // ---------------- FARM ----------------
         List<FarmInventoryOrdersResponse> farm = data.getFarmInventoryOrders();
         if (farm != null && !farm.isEmpty()) {
-            masterRepository.deleteFarmInventoryOrders();
+
+            if(!getFarmInventoryOrders(farm).isEmpty()) {
+                masterRepository.deleteFarmInventoryOrders();
+            }
+
             masterRepository.insertFarmInventoryOrders(getFarmInventoryOrders(farm));
         }
 
         // ---------------- RECEPTION ----------------
         List<ReceptionInventoryOrdersResponse> reception = data.getReceptionInventoryOrders();
         if (reception != null && !reception.isEmpty()) {
-            masterRepository.deleteReceptionInventoryOrders();
+
+            if(!getReceptionInventoryOrders(reception).isEmpty()) {
+                masterRepository.deleteReceptionInventoryOrders();
+            }
+
             masterRepository.insertReceptionInventoryOrders(getReceptionInventoryOrders(reception));
         }
 
         // ---------------- DISPATCH ----------------
         List<DispatchContainersResponse> dispatch = data.getDispatchContainers();
         if (dispatch != null && !dispatch.isEmpty()) {
-            masterRepository.deleteDispatchContainers();
+
+            if(!getDispatchContainers(dispatch).isEmpty()) {
+                masterRepository.deleteDispatchContainers();
+            }
+
             masterRepository.insertDispatchContainers(getDispatchContainers(dispatch));
         }
 
         // ---------------- PRODUCTS ----------------
         List<ProductsResponse> product = data.getProducts();
         if(product != null && !product.isEmpty()) {
-            masterRepository.deleteProducts();
+
+            if(!getProducts(product).isEmpty()) {
+                masterRepository.deleteProducts();
+            }
+
             masterRepository.insertProducts(getProducts(product));
         }
 
         // ---------------- PRODUCT TYPES ----------------
         List<ProductTypesResponse> productType = data.getProductTypes();
         if(productType != null && !productType.isEmpty()) {
-            masterRepository.deleteProductTypes();
+
+            if(!getProductTypes(productType).isEmpty()) {
+                masterRepository.deleteProductTypes();
+            }
+
             masterRepository.insertProductTypes(getProductTypes(productType));
         }
 
         // ---------------- GIRTH CLASSIFICATION ----------------
         List<GirthClassificationResponse> girthClassification = data.getGirthClassification();
         if(girthClassification != null && !girthClassification.isEmpty()) {
-            masterRepository.deleteGirthClassification();
+
+            if(!getGirthClassification(girthClassification).isEmpty()) {
+                masterRepository.deleteGirthClassification();
+            }
+
             masterRepository.insertGirthClassification(getGirthClassification(girthClassification));
         }
 
         // ---------------- LENGTH CLASSIFICATION ----------------
         List<LengthClassificationResponse> lengthClassification = data.getLengthClassification();
         if(lengthClassification != null && !lengthClassification.isEmpty()) {
-            masterRepository.deleteLengthClassification();
+
+            if(!getLengthClassification(lengthClassification).isEmpty()) {
+                masterRepository.deleteLengthClassification();
+            }
+
             masterRepository.insertLengthClassification(getLengthClassification(lengthClassification));
         }
+    }
+
+    @NonNull
+    private static MeasurementSystemFormulaVariables getMeasurementSystemFormulaVariables(MeasurementSystemsResponse measurementSystemsResponse, MeasurementSystemFormulaVariablesResponse measurementSystemFormulaVariablesResponse) {
+        MeasurementSystemFormulaVariables measurementSystemFormulaVariable = new MeasurementSystemFormulaVariables();
+        measurementSystemFormulaVariable.setMeasurementSystemId(measurementSystemsResponse.getId());
+        measurementSystemFormulaVariable.setFormulaMasterId(measurementSystemFormulaVariablesResponse.getFormulaMasterId());
+        measurementSystemFormulaVariable.setUnit(measurementSystemFormulaVariablesResponse.getUnit());
+        measurementSystemFormulaVariable.setDisplayName(measurementSystemFormulaVariablesResponse.getDisplayName());
+        measurementSystemFormulaVariable.setSortOrder(measurementSystemFormulaVariablesResponse.getSortOrder());
+        measurementSystemFormulaVariable.setVarName(measurementSystemFormulaVariablesResponse.getVarName());
+        return measurementSystemFormulaVariable;
     }
 
     @NonNull
@@ -367,17 +465,14 @@ public class SyncViewModel extends ViewModel {
     }
 
     @NonNull
-    private static List<MeasurementSystems> getMeasurementSystems(List<MeasurementSystemsResponse> measurementSystemsResponseList) {
-        List<MeasurementSystems> measurementSystemsList = new ArrayList<>();
-        for (MeasurementSystemsResponse measurementSystemsResponse : measurementSystemsResponseList) {
-            MeasurementSystems measurementSystem = new MeasurementSystems();
-            measurementSystem.setId(measurementSystemsResponse.getId());
-            measurementSystem.setMeasurementName(measurementSystemsResponse.getMeasurementName());
-            measurementSystem.setProductTypeId(measurementSystemsResponse.getProductTypeId());
-
-            measurementSystemsList.add(measurementSystem);
-        }
-        return measurementSystemsList;
+    private static MeasurementSystemFormulas getMeasurementSystemFormulas(MeasurementSystemsResponse measurementSystemsResponse, MeasurementSystemFormulasResponse measurementSystemFormulasResponse) {
+        MeasurementSystemFormulas measurementSystemFormula = new MeasurementSystemFormulas();
+        measurementSystemFormula.setFormulaMasterId(measurementSystemFormulasResponse.getFormulaMasterId());
+        measurementSystemFormula.setMeasurementSystemId(measurementSystemsResponse.getId());
+        measurementSystemFormula.setFormula(measurementSystemFormulasResponse.getFormula());
+        measurementSystemFormula.setRoundPrecision(measurementSystemFormulasResponse.getRoundPrecision());
+        measurementSystemFormula.setRoundingType(measurementSystemFormulasResponse.getRoundingType());
+        return measurementSystemFormula;
     }
 
     @NonNull
