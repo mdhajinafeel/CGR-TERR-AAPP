@@ -13,7 +13,8 @@ import java.io.Serializable;
                 @Index(name = "idx_mid_formula", value = {"measurementSystemId"}),
                 @Index(name = "idx_formula", value = {"formula"}),
                 @Index(name = "idx_round_precision_formula", value = {"roundPrecision"}),
-                @Index(name = "idx_rounding_type_formula", value = {"roundingType"})
+                @Index(name = "idx_rounding_type_formula", value = {"roundingType"}),
+                @Index(name = "idx_context_formula", value = {"context"})
         }
 )
 public class MeasurementSystemFormulas implements Serializable {
@@ -25,6 +26,7 @@ public class MeasurementSystemFormulas implements Serializable {
     private String formula;
     private int roundPrecision;
     private String roundingType;
+    private String context;
 
     public int getId() {
         return id;
@@ -72,5 +74,13 @@ public class MeasurementSystemFormulas implements Serializable {
 
     public void setFormulaMasterId(int formulaMasterId) {
         this.formulaMasterId = formulaMasterId;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 }

@@ -28,6 +28,7 @@ import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionTransactionDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
@@ -123,6 +124,9 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
     public abstract ReceptionViewDao receptionViewDao();
 
     public abstract DispatchViewDao dispatchViewDao();
+
+    // TRANSACTIONS
+    public abstract ReceptionTransactionDao receptionTransactionDao();
 
     public static CGRTerraERPDatabase getInstance(Context context) {
         if (INSTANCE == null) {

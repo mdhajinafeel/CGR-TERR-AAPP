@@ -3,6 +3,7 @@ package com.cgr.codrinterraerp.helper;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.entities.DispatchSummary;
+import com.cgr.codrinterraerp.utils.CommonUtils;
 
 import javax.inject.Inject;
 
@@ -21,15 +22,15 @@ public class DispatchSummaryHelper {
 
         DispatchSummary s = new DispatchSummary();
 
-        if (dispatchId != null) {
+        if (dispatchId != null && dispatchId > 0) {
             // ✅ ONLY use dispatchId
             s.dispatchId = dispatchId;
             s.tempDispatchId = null;
 
             s.totalPieces = containerDataDao.sumPiecesByDispatchId(dispatchId);
-            s.totalGrossVolume = containerDataDao.sumGrossByDispatchId(dispatchId);
-            s.totalNetVolume = containerDataDao.sumNetByDispatchId(dispatchId);
-            s.avgGirth = receptionDataDao.avgGirthByDispatch(dispatchId);
+            s.totalGrossVolume = CommonUtils.round(containerDataDao.sumGrossByDispatchId(dispatchId), 3);
+            s.totalNetVolume = CommonUtils.round(containerDataDao.sumNetByDispatchId(dispatchId), 3);
+            s.avgGirth = CommonUtils.round(receptionDataDao.avgGirthByDispatch(dispatchId), 2);
 
         } else {
             // ✅ ONLY use tempDispatchId
@@ -37,9 +38,9 @@ public class DispatchSummaryHelper {
             s.tempDispatchId = tempDispatchId;
 
             s.totalPieces = containerDataDao.sumPiecesByTempDispatchId(tempDispatchId);
-            s.totalGrossVolume = containerDataDao.sumGrossByTempDispatchId(tempDispatchId);
-            s.totalNetVolume = containerDataDao.sumNetByTempDispatchId(tempDispatchId);
-            s.avgGirth = receptionDataDao.avgGirthByTempDispatchId(tempDispatchId);
+            s.totalGrossVolume = CommonUtils.round(containerDataDao.sumGrossByTempDispatchId(tempDispatchId), 3);
+            s.totalNetVolume = CommonUtils.round(containerDataDao.sumNetByTempDispatchId(tempDispatchId), 3);
+            s.avgGirth = CommonUtils.round(receptionDataDao.avgGirthByTempDispatchId(tempDispatchId), 2);
         }
 
         s.updatedAt = System.currentTimeMillis();

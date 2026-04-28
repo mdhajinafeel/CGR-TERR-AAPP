@@ -10,7 +10,9 @@ import java.io.Serializable;
         indices = {
                 @Index(name = "idx_dispatch_id_cd", value = {"dispatchId"}),
                 @Index(name = "idx_temp_dispatch_id_cd", value = {"tempDispatchId"}),
+                @Index(name = "idx_reception_data_id_cd", value = {"receptionDataId"}),
                 @Index(name = "idx_reception_id_cd", value = {"receptionId"}),
+                @Index(name = "idx_temp_reception_data_id_cd", value = {"tempReceptionDataId"}),
                 @Index(name = "idx_temp_reception_id_cd", value = {"tempReceptionId"}),
                 @Index(name = "idx_deleted_cd", value = {"isDeleted"})
         })
@@ -18,9 +20,11 @@ public class ContainerData implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private String tempReceptionDataId;
     private String tempDispatchId;
     private Integer dispatchId;
     private String tempReceptionId;
+    private Integer receptionDataId;
     private Integer receptionId;
     private int pieces;
     private double grossVolume;
@@ -124,5 +128,21 @@ public class ContainerData implements Serializable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getReceptionDataId() {
+        return receptionDataId;
+    }
+
+    public void setReceptionDataId(Integer receptionDataId) {
+        this.receptionDataId = receptionDataId;
+    }
+
+    public String getTempReceptionDataId() {
+        return tempReceptionDataId;
+    }
+
+    public void setTempReceptionDataId(String tempReceptionDataId) {
+        this.tempReceptionDataId = tempReceptionDataId;
     }
 }

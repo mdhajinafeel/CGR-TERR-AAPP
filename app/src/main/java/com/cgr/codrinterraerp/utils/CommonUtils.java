@@ -24,6 +24,8 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -265,5 +267,11 @@ public class CommonUtils {
         datePickerDialog.getDatePicker().setMaxDate(maxDateCal.getTimeInMillis());
 
         datePickerDialog.show();
+    }
+
+    public static double round(double value, int precision) {
+        return BigDecimal.valueOf(value)
+                .setScale(precision, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }

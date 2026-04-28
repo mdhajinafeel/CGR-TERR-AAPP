@@ -9,6 +9,8 @@ import com.cgr.codrinterraerp.db.dao.DispatchViewDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.GirthClassificationDao;
 import com.cgr.codrinterraerp.db.dao.LengthClassificationDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulaVariablesDao;
+import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulasDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemsDao;
 import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
@@ -17,6 +19,7 @@ import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionTransactionDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
@@ -29,6 +32,7 @@ import com.cgr.codrinterraerp.repository.AppMaintenanceRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.repository.MasterRepository;
+import com.cgr.codrinterraerp.repository.ReceptionDataRepository;
 import com.cgr.codrinterraerp.repository.ReceptionRepository;
 import com.cgr.codrinterraerp.services.IAuthApiService;
 import com.cgr.codrinterraerp.services.IMasterApiService;
@@ -47,11 +51,13 @@ public class RepoModule {
     @Singleton
     MasterRepository provideMasterRepository(CGRTerraERPDatabase cgrTerraERPDatabase, IMasterApiService iMasterApiService, OriginsDao originsDao, SuppliersDao suppliersDao, SupplierProductsDao supplierProductsDao,
                                              SupplierProductTypesDao supplierProductTypesDao, WarehousesDao warehousesDao, MeasurementSystemsDao measurementSystemsDao,
+                                             MeasurementSystemFormulasDao measurementSystemFormulasDao, MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao,
                                              ShippingLinesDao shippingLinesDao, PurchaseContractDao purchaseContractDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
                                              ReceptionInventoryOrdersDao receptionInventoryOrdersDao, DispatchContainersDao dispatchContainersDao, ProductsDao productsDao,
                                              ProductTypesDao productTypesDao, GirthClassificationDao girthClassificationDao, LengthClassificationDao lengthClassificationDao) {
-        return new MasterRepository(cgrTerraERPDatabase, iMasterApiService, originsDao, suppliersDao, supplierProductsDao, supplierProductTypesDao, warehousesDao, measurementSystemsDao,
-                shippingLinesDao, purchaseContractDao, farmInventoryOrdersDao, receptionInventoryOrdersDao, dispatchContainersDao, productsDao, productTypesDao, girthClassificationDao, lengthClassificationDao);
+        return new MasterRepository(cgrTerraERPDatabase, iMasterApiService, originsDao, suppliersDao, supplierProductsDao, supplierProductTypesDao, warehousesDao,
+                measurementSystemsDao, measurementSystemFormulasDao, measurementSystemFormulaVariablesDao, shippingLinesDao, purchaseContractDao, farmInventoryOrdersDao,
+                receptionInventoryOrdersDao, dispatchContainersDao, productsDao, productTypesDao, girthClassificationDao, lengthClassificationDao);
     }
 
     @Provides
@@ -79,5 +85,12 @@ public class RepoModule {
     DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao, DispatchViewDao dispatchViewDao,
                                                  DispatchSummaryDao dispatchSummaryDao, DispatchSummaryHelper dispatchSummaryHelper) {
         return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao, dispatchSummaryDao, dispatchSummaryHelper);
+    }
+
+    @Provides
+    @Singleton
+    ReceptionDataRepository provideReceptionDataRepository(MeasurementSystemFormulasDao measurementSystemFormulasDao, ReceptionTransactionDao receptionTransactionDao,
+                                                           ReceptionRepository receptionRepository, DispatchRepository dispatchRepository) {
+        return new ReceptionDataRepository(measurementSystemFormulasDao, receptionTransactionDao, receptionRepository, dispatchRepository);
     }
 }

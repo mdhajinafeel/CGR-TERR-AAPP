@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "216d8a2186b7c736ae83368018f7660d",
+    "identityHash": "eae282795e6d1de4c62a42ff770a54f1",
     "entities": [
       {
         "tableName": "origins",
@@ -1243,7 +1243,7 @@
       },
       {
         "tableName": "reception_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionId` TEXT, `receptionId` INTEGER, `circumference` INTEGER NOT NULL, `length` INTEGER NOT NULL, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionDataId` TEXT, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `circumference` REAL NOT NULL, `length` REAL NOT NULL, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1252,9 +1252,19 @@
             "notNull": true
           },
           {
+            "fieldPath": "tempReceptionDataId",
+            "columnName": "tempReceptionDataId",
+            "affinity": "TEXT"
+          },
+          {
             "fieldPath": "tempReceptionId",
             "columnName": "tempReceptionId",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "receptionDataId",
+            "columnName": "receptionDataId",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "receptionId",
@@ -1264,13 +1274,13 @@
           {
             "fieldPath": "circumference",
             "columnName": "circumference",
-            "affinity": "INTEGER",
+            "affinity": "REAL",
             "notNull": true
           },
           {
             "fieldPath": "length",
             "columnName": "length",
-            "affinity": "INTEGER",
+            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -1324,6 +1334,15 @@
         },
         "indices": [
           {
+            "name": "idx_temp_id_reception_did_data",
+            "unique": false,
+            "columnNames": [
+              "tempReceptionDataId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_temp_id_reception_did_data` ON `${TABLE_NAME}` (`tempReceptionDataId`)"
+          },
+          {
             "name": "idx_temp_id_reception_data",
             "unique": false,
             "columnNames": [
@@ -1342,6 +1361,15 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `idx_reception_id_data` ON `${TABLE_NAME}` (`receptionId`)"
           },
           {
+            "name": "idx_reception_data_id_data",
+            "unique": false,
+            "columnNames": [
+              "receptionDataId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_reception_data_id_data` ON `${TABLE_NAME}` (`receptionDataId`)"
+          },
+          {
             "name": "idx_deleted_reception_data",
             "unique": false,
             "columnNames": [
@@ -1354,13 +1382,18 @@
       },
       {
         "tableName": "container_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionDataId` TEXT, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "tempReceptionDataId",
+            "columnName": "tempReceptionDataId",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "tempDispatchId",
@@ -1376,6 +1409,11 @@
             "fieldPath": "tempReceptionId",
             "columnName": "tempReceptionId",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "receptionDataId",
+            "columnName": "receptionDataId",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "receptionId",
@@ -1451,6 +1489,15 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `idx_temp_dispatch_id_cd` ON `${TABLE_NAME}` (`tempDispatchId`)"
           },
           {
+            "name": "idx_reception_data_id_cd",
+            "unique": false,
+            "columnNames": [
+              "receptionDataId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_reception_data_id_cd` ON `${TABLE_NAME}` (`receptionDataId`)"
+          },
+          {
             "name": "idx_reception_id_cd",
             "unique": false,
             "columnNames": [
@@ -1458,6 +1505,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `idx_reception_id_cd` ON `${TABLE_NAME}` (`receptionId`)"
+          },
+          {
+            "name": "idx_temp_reception_data_id_cd",
+            "unique": false,
+            "columnNames": [
+              "tempReceptionDataId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_temp_reception_data_id_cd` ON `${TABLE_NAME}` (`tempReceptionDataId`)"
           },
           {
             "name": "idx_temp_reception_id_cd",
@@ -1628,12 +1684,208 @@
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_reception_summary_tempReceptionId` ON `${TABLE_NAME}` (`tempReceptionId`)"
           }
         ]
+      },
+      {
+        "tableName": "measurement_system_formulas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `formulaMasterId` INTEGER NOT NULL, `measurementSystemId` INTEGER NOT NULL, `formula` TEXT, `roundPrecision` INTEGER NOT NULL, `roundingType` TEXT, `context` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "formulaMasterId",
+            "columnName": "formulaMasterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measurementSystemId",
+            "columnName": "measurementSystemId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "formula",
+            "columnName": "formula",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "roundPrecision",
+            "columnName": "roundPrecision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "roundingType",
+            "columnName": "roundingType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "context",
+            "columnName": "context",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_master_id_formula",
+            "unique": false,
+            "columnNames": [
+              "formulaMasterId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_master_id_formula` ON `${TABLE_NAME}` (`formulaMasterId`)"
+          },
+          {
+            "name": "idx_mid_formula",
+            "unique": false,
+            "columnNames": [
+              "measurementSystemId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_mid_formula` ON `${TABLE_NAME}` (`measurementSystemId`)"
+          },
+          {
+            "name": "idx_formula",
+            "unique": false,
+            "columnNames": [
+              "formula"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_formula` ON `${TABLE_NAME}` (`formula`)"
+          },
+          {
+            "name": "idx_round_precision_formula",
+            "unique": false,
+            "columnNames": [
+              "roundPrecision"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_round_precision_formula` ON `${TABLE_NAME}` (`roundPrecision`)"
+          },
+          {
+            "name": "idx_rounding_type_formula",
+            "unique": false,
+            "columnNames": [
+              "roundingType"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_rounding_type_formula` ON `${TABLE_NAME}` (`roundingType`)"
+          },
+          {
+            "name": "idx_context_formula",
+            "unique": false,
+            "columnNames": [
+              "context"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_context_formula` ON `${TABLE_NAME}` (`context`)"
+          }
+        ]
+      },
+      {
+        "tableName": "measurement_system_formula_variables",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `measurementSystemId` INTEGER NOT NULL, `formulaMasterId` INTEGER NOT NULL, `varName` TEXT, `displayName` TEXT, `unit` TEXT, `sortOrder` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measurementSystemId",
+            "columnName": "measurementSystemId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "formulaMasterId",
+            "columnName": "formulaMasterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "varName",
+            "columnName": "varName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_var_name_variable",
+            "unique": false,
+            "columnNames": [
+              "varName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_var_name_variable` ON `${TABLE_NAME}` (`varName`)"
+          },
+          {
+            "name": "idx_mid_variable",
+            "unique": false,
+            "columnNames": [
+              "measurementSystemId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_mid_variable` ON `${TABLE_NAME}` (`measurementSystemId`)"
+          },
+          {
+            "name": "idx_master_id_variable",
+            "unique": false,
+            "columnNames": [
+              "formulaMasterId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_master_id_variable` ON `${TABLE_NAME}` (`formulaMasterId`)"
+          },
+          {
+            "name": "idx_sort_order_variable",
+            "unique": false,
+            "columnNames": [
+              "sortOrder"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_sort_order_variable` ON `${TABLE_NAME}` (`sortOrder`)"
+          }
+        ]
       }
     ],
     "views": [
       {
         "viewName": "reception_view",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, s.supplierName, m.measurementName, r.receptionDate, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume FROM reception_details r INNER JOIN suppliers s ON s.supplierId = r.supplierId INNER JOIN measurement_systems m ON m.id = r.measurementSystem LEFT JOIN reception_summary ds ON (ds.receptionId = r.receptionId OR ds.tempReceptionId = r.tempReceptionId) WHERE r.isDeleted = 0"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, s.supplierName, m.measurementName, r.receptionDate, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume, r.measurementSystem, r.productTypeId FROM reception_details r INNER JOIN suppliers s ON s.supplierId = r.supplierId INNER JOIN measurement_systems m ON m.id = r.measurementSystem LEFT JOIN reception_summary ds ON (ds.receptionId = r.receptionId OR ds.tempReceptionId = r.tempReceptionId) WHERE r.isDeleted = 0"
       },
       {
         "viewName": "dispatch_view",
@@ -1642,7 +1894,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '216d8a2186b7c736ae83368018f7660d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eae282795e6d1de4c62a42ff770a54f1')"
     ]
   }
 }

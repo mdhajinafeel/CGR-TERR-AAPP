@@ -38,15 +38,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_6"
             android:textColor="@color/colorBlack"
-            android:textSize="@dimen/text_16"
-            app:fontFamily="@font/exo2_medium" />
+            android:textSize="@dimen/text_18"
+            app:fontFamily="@font/exo2_semibold" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSub"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColor"
-            android:textSize="@dimen/text_12"
-            app:fontFamily="@font/exo2_regular" />
+            android:textSize="@dimen/text_14"
+            app:fontFamily="@font/exo2_medium" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

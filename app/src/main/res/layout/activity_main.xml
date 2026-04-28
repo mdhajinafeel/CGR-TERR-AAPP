@@ -96,7 +96,7 @@
                 android:fontFamily="@font/exo2_semibold"
                 android:text="@string/main_menu"
                 android:textColor="@color/colorBlack"
-                android:textSize="@dimen/text_16" />
+                android:textSize="@dimen/text_18" />
 
             <GridLayout
                 android:id="@+id/gridDashboardMenu"

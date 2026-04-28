@@ -2,6 +2,7 @@ package com.cgr.codrinterraerp.helper;
 
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.entities.ReceptionSummary;
+import com.cgr.codrinterraerp.utils.CommonUtils;
 
 import javax.inject.Inject;
 
@@ -18,14 +19,14 @@ public class ReceptionSummaryHelper {
 
         ReceptionSummary s = new ReceptionSummary();
 
-        if (receptionId != null) {
+        if (receptionId != null && receptionId > 0) {
             // ✅ ONLY use receptionId
             s.receptionId = receptionId;
             s.tempReceptionId = null;
 
             s.totalPieces = receptionDataDao.sumPiecesByReceptionId(receptionId);
-            s.totalGrossVolume = receptionDataDao.sumGrossByReceptionId(receptionId);
-            s.totalNetVolume = receptionDataDao.sumNetByReceptionId(receptionId);
+            s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByReceptionId(receptionId), 3);
+            s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByReceptionId(receptionId), 3);
 
         } else {
             // ✅ ONLY use tempReceptionId
@@ -33,8 +34,8 @@ public class ReceptionSummaryHelper {
             s.tempReceptionId = tempReceptionId;
 
             s.totalPieces = receptionDataDao.sumPiecesByTempReceptionId(tempReceptionId);
-            s.totalGrossVolume = receptionDataDao.sumGrossByTempReceptionId(tempReceptionId);
-            s.totalNetVolume = receptionDataDao.sumNetByTempReceptionId(tempReceptionId);
+            s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByTempReceptionId(tempReceptionId), 3);
+            s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByTempReceptionId(tempReceptionId), 3);
         }
 
         s.updatedAt = System.currentTimeMillis();

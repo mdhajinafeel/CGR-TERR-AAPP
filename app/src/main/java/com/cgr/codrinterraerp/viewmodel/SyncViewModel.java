@@ -189,7 +189,7 @@ public class SyncViewModel extends ViewModel {
                 measurementSystem.setMeasurementName(measurementSystemsResponse.getMeasurementName());
                 measurementSystem.setProductTypeId(measurementSystemsResponse.getProductTypeId());
 
-                if(measurementSystem.getFormulas()!= null && !measurementSystem.getFormulas().isEmpty()) {
+                if(measurementSystemsResponse.getFormulas()!= null && !measurementSystemsResponse.getFormulas().isEmpty()) {
                     for (MeasurementSystemFormulasResponse measurementSystemFormulasResponse : measurementSystemsResponse.getFormulas()) {
                         MeasurementSystemFormulas measurementSystemFormula = getMeasurementSystemFormulas(measurementSystemsResponse, measurementSystemFormulasResponse);
 
@@ -472,6 +472,7 @@ public class SyncViewModel extends ViewModel {
         measurementSystemFormula.setFormula(measurementSystemFormulasResponse.getFormula());
         measurementSystemFormula.setRoundPrecision(measurementSystemFormulasResponse.getRoundPrecision());
         measurementSystemFormula.setRoundingType(measurementSystemFormulasResponse.getRoundingType());
+        measurementSystemFormula.setContext(measurementSystemFormulasResponse.getContext());
         return measurementSystemFormula;
     }
 

@@ -64,5 +64,4 @@ public class ReceptionRepository {
             receptionSummaryDao.upsert(s);
         });
     }
-
 }

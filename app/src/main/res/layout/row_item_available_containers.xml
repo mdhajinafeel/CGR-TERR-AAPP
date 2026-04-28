@@ -16,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/card_background"
+            android:id="@+id/cardBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_card"
@@ -178,16 +178,41 @@
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/text_18" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_6"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivContainerData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_10"
+                    android:src="@drawable/ic_container_data" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivContainerImages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_6"
+                    android:src="@drawable/ic_container_images" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <!-- ✅ Tick Image (Top End) -->
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSelected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:visibility="gone"
             android:layout_margin="@dimen/margin_8"
-            android:src="@drawable/ic_selected" />
+            android:src="@drawable/ic_selected"
+            android:visibility="gone" />
 
     </FrameLayout>
 </androidx.cardview.widget.CardView>

@@ -106,4 +106,7 @@
     <string name="input_measurements">Input Measurements</string>
     <string name="measurement_data">Measurement Data</string>
     <string name="clear">Clear</string>
+    <string name="container_select_error">Please select a container to add the pieces</string>
+    <string name="pieces_has_been_added_successfully">Pieces has been added successfully</string>
+    <string name="colon">&#160;:&#160;</string>
 </resources>

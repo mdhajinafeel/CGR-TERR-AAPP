@@ -9,7 +9,7 @@ import java.io.Serializable;
         value = "SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, " +
                 "s.supplierName, m.measurementName, r.receptionDate, " +
                 "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, " +
-                "IFNULL(ds.totalNetVolume,0) as totalNetVolume, r.measurementSystem " +
+                "IFNULL(ds.totalNetVolume,0) as totalNetVolume, r.measurementSystem, r.productTypeId " +
                 "FROM reception_details r " +
                 "INNER JOIN suppliers s ON s.supplierId = r.supplierId " +
                 "INNER JOIN measurement_systems m ON m.id = r.measurementSystem " +
@@ -29,4 +29,5 @@ public class ReceptionView implements Serializable {
     public double totalGrossVolume;
     public double totalNetVolume;
     public int measurementSystem;
+    public int productTypeId;
 }

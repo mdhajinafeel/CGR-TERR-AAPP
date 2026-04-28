@@ -18,12 +18,16 @@ public interface ReceptionDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertReceptionData(ReceptionData receptionData);
 
-    @Query("SELECT IFNULL(AVG(circumference),0) FROM reception_data WHERE receptionId IN (" +
-            "SELECT receptionId FROM container_data WHERE dispatchId = :dispatchId AND isDeleted = 0)")
+    @Query("SELECT IFNULL(ROUND(CASE WHEN SUM(c.pieces) = 0 THEN 0 ELSE SUM(r.circumference * c.pieces) / SUM(c.pieces) END, 3), 0) " +
+            "FROM container_data c " +
+            "JOIN reception_data r ON r.receptionDataId = c.receptionDataId AND r.receptionId = c.receptionId " +
+            "WHERE dispatchId = :dispatchId AND c.isDeleted = 0")
     double avgGirthByDispatch(Integer dispatchId);
 
-    @Query("SELECT IFNULL(AVG(circumference),0) FROM reception_data WHERE receptionId IN (" +
-            "SELECT receptionId FROM container_data WHERE tempDispatchId = :tempDispatchId AND isDeleted = 0)")
+    @Query("SELECT IFNULL(ROUND(CASE WHEN SUM(c.pieces) = 0 THEN 0 ELSE SUM(r.circumference * c.pieces) / SUM(c.pieces) END, 3), 0) " +
+            "FROM container_data c " +
+            "JOIN reception_data r ON r.tempReceptionDataId = c.tempReceptionDataId AND r.tempReceptionId = c.tempReceptionId " +
+            "WHERE tempDispatchId = :tempDispatchId AND c.isDeleted = 0")
     double avgGirthByTempDispatchId(String tempDispatchId);
 
     @Query("SELECT IFNULL(SUM(pieces),0) FROM reception_data WHERE receptionId = :receptionId AND isDeleted = 0")

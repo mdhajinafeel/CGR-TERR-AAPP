@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
+import com.cgr.codrinterraerp.db.entities.ReceptionData;
 import com.cgr.codrinterraerp.db.relations.FormulaWithVariables;
 import com.cgr.codrinterraerp.db.views.DispatchView;
 import com.cgr.codrinterraerp.db.views.ReceptionView;
@@ -27,6 +29,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +48,12 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
     private RecyclerView rvAvailableContainers;
     private RecyclerViewAdapter<DispatchView> dispatchViewRecyclerViewAdapter;
     private int normalColor, errorColor;
+    private DispatchViewModel dispatchViewModel;
     private ReceptionDataViewModel receptionDataViewModel;
     private ReceptionView receptionView;
-    private FormulaWithVariables formulaData;
+    private List<FormulaWithVariables> formulaData;
+    private DispatchView selectedContainer = null;
+    private int selectedPosition = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,7 +87,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 txtSubTitle.setText(bundle.getString("ica"));
                 imgBack.setOnClickListener(v -> finish());
 
-                DispatchViewModel dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
+                dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
                 receptionDataViewModel = new ViewModelProvider(this).get(ReceptionDataViewModel.class);
 
                 receptionView = (ReceptionView) bundle.getSerializable("receptionDetails");
@@ -106,8 +113,19 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
 
                 mbSubmit.setOnClickListener(v -> {
                     if (validateInputs()) {
+
+                        // ✅ NEW: Check container selected
+                        if (selectedContainer == null) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.container_select_error), Toast.LENGTH_SHORT).show();
+                            rvAvailableContainers.smoothScrollToPosition(0);
+                            return;
+                        }
+
+                        //if(receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
+                        //    // TODO SQUARE BLOCKS
+                        //} else {
                         submitMeasurementData();
-                        clearFields();
+                        //}
                     }
                 });
 
@@ -128,12 +146,57 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             @Override
             public void onPostBindViewHolder(ViewHolder holder, DispatchView dispatchView) {
                 if (dispatchView != null) {
+
+                    int position = holder.getBindingAdapterPosition();
+                    boolean isSelected = position == selectedPosition;
+
                     holder.setViewText(R.id.tvContainerNumber, dispatchView.containerNumber);
                     holder.setViewText(R.id.tvShippingLine, dispatchView.shippingLine);
                     holder.setViewText(R.id.tvPieces, String.valueOf(dispatchView.totalPieces));
                     holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
                     holder.setViewText(R.id.tvNetVolume, String.valueOf(dispatchView.totalNetVolume));
                     holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));
+
+                    View cardBg = holder.getView(R.id.cardBackground);
+                    AppCompatImageView tick = (AppCompatImageView) holder.getView(R.id.ivSelected);
+
+                    // ✅ UI update using position
+                    if (isSelected) {
+                        cardBg.setBackgroundResource(R.drawable.bg_card_selected);
+                        tick.setVisibility(View.VISIBLE);
+                    } else {
+                        cardBg.setBackgroundResource(R.drawable.bg_card);
+                        tick.setVisibility(View.GONE);
+                    }
+
+                    // ✅ Click logic (toggle)
+                    holder.itemView.setOnClickListener(v -> {
+
+                        int clickedPosition = holder.getBindingAdapterPosition();
+
+                        // Toggle OFF
+                        if (selectedPosition == clickedPosition) {
+                            int previousPosition = selectedPosition;
+
+                            selectedPosition = -1;
+                            selectedContainer = null;
+
+                            dispatchViewRecyclerViewAdapter.notifyItemChanged(previousPosition);
+                            return;
+                        }
+
+                        // Select new
+                        int previousPosition = selectedPosition;
+
+                        selectedPosition = clickedPosition;
+                        selectedContainer = dispatchView;
+
+                        if (previousPosition != -1) {
+                            dispatchViewRecyclerViewAdapter.notifyItemChanged(previousPosition);
+                        }
+
+                        dispatchViewRecyclerViewAdapter.notifyItemChanged(selectedPosition);
+                    });
                 }
             }
         };
@@ -182,9 +245,9 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             isValid = false;
         }
 
-        if(!length.isEmpty()) {
+        if (!length.isEmpty()) {
             double l = Double.parseDouble(length);
-            if(l <= 100) {
+            if (l <= 100) {
                 Toast.makeText(getApplicationContext(), "Length must be greater than 100", Toast.LENGTH_SHORT).show();
                 isValid = false;
             }
@@ -212,6 +275,19 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
         etCircumference.requestFocus();
     }
 
+    private void resetContainerSelection() {
+        int previousPosition = selectedPosition;
+
+        selectedPosition = -1;
+        selectedContainer = null;
+
+        if (previousPosition != -1) {
+            dispatchViewRecyclerViewAdapter.notifyItemChanged(previousPosition);
+        }
+
+        rvAvailableContainers.smoothScrollToPosition(0); // ✅ smooth
+    }
+
     private void fetchFormulas() {
         try {
             formulaData = receptionDataViewModel.getFormulasWithVariables(receptionView.measurementSystem);
@@ -226,33 +302,97 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             double l = Double.parseDouble(Objects.requireNonNull(etLength.getText()).toString());
             int pieces = Integer.parseInt(Objects.requireNonNull(etPieces.getText()).toString());
 
-            // ✅ Build variable map dynamically
-            Map<String, Double> inputValues = new HashMap<>();
+            double netVolume = 0;
+            double grossVolume = 0;
 
-            for (MeasurementSystemFormulaVariables v : formulaData.variables) {
-                String key = v.getVarName();
-                switch (key) {
-                    case "c":
-                        inputValues.put("c", c);
-                        break;
+            for (FormulaWithVariables f : formulaData) {
+                // ✅ Build variable map
+                Map<String, Double> inputValues = new HashMap<>();
 
-                    case "l":
-                        inputValues.put("l", l);
-                        break;
+                for (MeasurementSystemFormulaVariables v : f.variables) {
+                    switch (v.getVarName()) {
+                        case "c":
+                            inputValues.put("c", c);
+                            break;
+                        case "l":
+                            inputValues.put("l", l);
+                            break;
+                    }
+                }
+
+                // ✅ Evaluate formula
+                double value = FormulaEngine.evaluate(f.formula.getFormula(), inputValues);
+
+                // ✅ Apply rounding
+                double finalValue = FormulaEngine.applyRounding(
+                        value,
+                        f.formula.getRoundPrecision(),
+                        f.formula.getRoundingType()
+                );
+
+                // ✅ Separate by context
+                if ("NET".equalsIgnoreCase(f.formula.getContext())) {
+                    netVolume = finalValue;
+                } else if ("GROSS".equalsIgnoreCase(f.formula.getContext())) {
+                    grossVolume = finalValue;
                 }
             }
 
-            // ✅ Evaluate
-            double value = FormulaEngine.evaluate(formulaData.formula.getFormula(), inputValues);
+            // ✅ Multiply by pieces
+            double totalNet = netVolume * pieces;
+            double totalGross = grossVolume * pieces;
 
-            // ✅ Apply rounding
-            double finalValue = FormulaEngine.applyRounding(value, formulaData.formula.getRoundPrecision(), formulaData.formula.getRoundingType());
+            BigDecimal net = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
+            BigDecimal gross = BigDecimal.valueOf(totalGross).setScale(3, RoundingMode.HALF_UP);
+            double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
+            double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
 
-            // ✅ Multiply pieces
-            double total = finalValue * pieces;
+            // ✅ Show result
+            Toast.makeText(getApplicationContext(), "Total Net: " + net.doubleValue() + " - Total Gross: " + gross.doubleValue(), Toast.LENGTH_LONG).show();
 
-            // ✅ Display
-            Toast.makeText(getApplicationContext(), "Per Piece: " + finalValue + "\nTotal: " + total, Toast.LENGTH_LONG).show();
+            String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
+
+            ReceptionData receptionData = new ReceptionData();
+            receptionData.setTempReceptionDataId(tempReceptionDataId);
+            receptionData.setTempReceptionId(receptionView.tempReceptionId);
+            receptionData.setReceptionId(receptionView.receptionId);
+            receptionData.setReceptionDataId(null);
+            receptionData.setCircumference(c);
+            receptionData.setLength(l);
+            receptionData.setPieces(pieces);
+            receptionData.setGrossVolume(grossToSave);
+            receptionData.setNetVolume(netToSave);
+            receptionData.setSynced(false);
+            receptionData.setDeleted(false);
+            receptionData.setEdited(false);
+            receptionData.setUpdatedAt(System.currentTimeMillis());
+
+            ContainerData containerData = new ContainerData();
+            containerData.setTempReceptionDataId(tempReceptionDataId);
+            containerData.setTempDispatchId(selectedContainer.tempDispatchId);
+            containerData.setDispatchId(selectedContainer.dispatchId);
+            containerData.setReceptionId(receptionView.receptionId);
+            containerData.setTempReceptionId(receptionView.tempReceptionId);
+            containerData.setReceptionDataId(null);
+            containerData.setPieces(pieces);
+            containerData.setGrossVolume(grossToSave);
+            containerData.setNetVolume(netToSave);
+            containerData.setSynced(false);
+            containerData.setDeleted(false);
+            containerData.setEdited(false);
+            containerData.setUpdatedAt(System.currentTimeMillis());
+
+            receptionDataViewModel.saveMeasurementData(receptionData, containerData, success ->
+                    runOnUiThread(() -> {
+                        if (success) {
+                            Toast.makeText(this, getString(R.string.pieces_has_been_added_successfully), Toast.LENGTH_SHORT).show();
+                            resetContainerSelection();
+                            clearFields();
+                            dispatchViewModel.availableContainerload();
+                        } else {
+                            Toast.makeText(this, getString(R.string.data_added_failed), Toast.LENGTH_SHORT).show();
+                        }
+                    }));
         } catch (Exception e) {
             AppLogger.e(getClass(), "submitMeasurementData", e);
         }

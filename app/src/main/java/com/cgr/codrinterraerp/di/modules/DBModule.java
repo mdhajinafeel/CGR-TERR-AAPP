@@ -23,6 +23,7 @@ import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionTransactionDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
 import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
@@ -203,5 +204,11 @@ public class DBModule {
     @Singleton
     public DispatchViewDao provideDispatchViewDao(CGRTerraERPDatabase db) {
         return db.dispatchViewDao();
+    }
+
+    @Provides
+    @Singleton
+    public ReceptionTransactionDao provideReceptionTransactionDao(CGRTerraERPDatabase db) {
+        return db.receptionTransactionDao();
     }
 }

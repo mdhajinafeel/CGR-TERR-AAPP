@@ -18,8 +18,8 @@ public interface MeasurementSystemFormulasDao {
     void insertMeasurementSystemFormulas(List<MeasurementSystemFormulas> measurementSystemFormulasList);
 
     @Transaction
-    @Query("SELECT * FROM measurement_system_formulas WHERE measurementSystemId = :msId LIMIT 1")
-    FormulaWithVariables getFormulasWithVariables(int msId);
+    @Query("SELECT * FROM measurement_system_formulas WHERE measurementSystemId = :msId")
+    List<FormulaWithVariables> getFormulasWithVariables(int msId);
 
     @Query("DELETE FROM measurement_system_formulas")
     void clearAll();

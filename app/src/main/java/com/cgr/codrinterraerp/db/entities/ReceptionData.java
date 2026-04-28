@@ -8,18 +8,22 @@ import java.io.Serializable;
 
 @Entity(tableName = "reception_data",
         indices = {
+                @Index(name = "idx_temp_id_reception_did_data", value = {"tempReceptionDataId"}),
                 @Index(name = "idx_temp_id_reception_data", value = {"tempReceptionId"}),
                 @Index(name = "idx_reception_id_data", value = {"receptionId"}),
+                @Index(name = "idx_reception_data_id_data", value = {"receptionDataId"}),
                 @Index(name = "idx_deleted_reception_data", value = {"isDeleted"})
         })
 public class ReceptionData implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private String tempReceptionDataId;
     private String tempReceptionId;
+    private Integer receptionDataId;
     private Integer receptionId;
-    private int circumference;
-    private int length;
+    private double circumference;
+    private double length;
     private int pieces;
     private double grossVolume;
     private double netVolume;
@@ -52,19 +56,19 @@ public class ReceptionData implements Serializable {
         this.receptionId = receptionId;
     }
 
-    public int getCircumference() {
+    public double getCircumference() {
         return circumference;
     }
 
-    public void setCircumference(int circumference) {
+    public void setCircumference(double circumference) {
         this.circumference = circumference;
     }
 
-    public int getLength() {
+    public double getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(double length) {
         this.length = length;
     }
 
@@ -122,5 +126,21 @@ public class ReceptionData implements Serializable {
 
     public void setNetVolume(double netVolume) {
         this.netVolume = netVolume;
+    }
+
+    public Integer getReceptionDataId() {
+        return receptionDataId;
+    }
+
+    public void setReceptionDataId(Integer receptionDataId) {
+        this.receptionDataId = receptionDataId;
+    }
+
+    public String getTempReceptionDataId() {
+        return tempReceptionDataId;
+    }
+
+    public void setTempReceptionDataId(String tempReceptionDataId) {
+        this.tempReceptionDataId = tempReceptionDataId;
     }
 }
