@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +31,7 @@ import com.cgr.codrinterraerp.db.entities.SupplierProductTypes;
 import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
+import com.cgr.codrinterraerp.db.views.ReceptionView;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.ui.common.BaseActivity;
@@ -73,6 +76,8 @@ public class ReceptionActivity extends BaseActivity {
     private MasterViewModel masterViewModel;
     private ReceptionViewModel receptionViewModel;
     private FrameLayout progressBar;
+    private boolean isReceptionEdit = false;
+    private ReceptionDetails existingReceptionDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,50 +118,148 @@ public class ReceptionActivity extends BaseActivity {
             btnSubmit = findViewById(R.id.btnSubmit);
             progressBar = findViewById(R.id.progressBar);
 
-            masterViewModel = new ViewModelProvider(this).get(MasterViewModel.class);
-            receptionViewModel = new ViewModelProvider(this).get(ReceptionViewModel.class);
+            Bundle bundle = getIntent().getExtras();
 
-            txtTitle.setText(getString(R.string.add_reception));
-            imgBack.setOnClickListener(v -> finish());
+            if (bundle != null) {
+                masterViewModel = new ViewModelProvider(this).get(MasterViewModel.class);
+                receptionViewModel = new ViewModelProvider(this).get(ReceptionViewModel.class);
 
-            CommonUtils.clearErrorOnTyping(etSupplier, tiSupplier);
-            CommonUtils.clearErrorOnTyping(etSupplierProduct, tiSupplierProduct);
-            CommonUtils.clearErrorOnTyping(etSupplierProductType, tiSupplierProductType);
-            CommonUtils.clearErrorOnTyping(etIca, tiIca);
-            CommonUtils.clearErrorOnTyping(etMeasurementSystem, tiMeasurementSystem);
-            CommonUtils.clearErrorOnTyping(etWarehouse, tiWarehouse);
-            CommonUtils.clearErrorOnTyping(etReceptionDate, tiReceptionDate);
-            CommonUtils.clearErrorOnTyping(etPurchaseContract, tiPurchaseContract);
-            CommonUtils.clearErrorOnTyping(etTruckNumber, tiTruckNumber);
-            CommonUtils.clearErrorOnTyping(etTruckDriverName, tiTruckDriverName);
+                isReceptionEdit = bundle.getBoolean("isEdit");
 
-            fetchData();
-            actionListeners();
+                txtTitle.setText(isReceptionEdit ? getString(R.string.edit_reception) : getString(R.string.add_reception));
+                imgBack.setOnClickListener(v -> finish());
 
-            receptionViewModel.getProgressState().observe(this, aBoolean -> {
-                if (aBoolean) {
-                    showProgress(progressBar);
+                CommonUtils.clearErrorOnTyping(etSupplier, tiSupplier);
+                CommonUtils.clearErrorOnTyping(etSupplierProduct, tiSupplierProduct);
+                CommonUtils.clearErrorOnTyping(etSupplierProductType, tiSupplierProductType);
+                CommonUtils.clearErrorOnTyping(etIca, tiIca);
+                CommonUtils.clearErrorOnTyping(etMeasurementSystem, tiMeasurementSystem);
+                CommonUtils.clearErrorOnTyping(etWarehouse, tiWarehouse);
+                CommonUtils.clearErrorOnTyping(etReceptionDate, tiReceptionDate);
+                CommonUtils.clearErrorOnTyping(etPurchaseContract, tiPurchaseContract);
+                CommonUtils.clearErrorOnTyping(etTruckNumber, tiTruckNumber);
+                CommonUtils.clearErrorOnTyping(etTruckDriverName, tiTruckDriverName);
+
+                receptionViewModel.getProgressState().observe(this, aBoolean -> {
+                    if (aBoolean) {
+                        showProgress(progressBar);
+                    } else {
+                        hideProgress(progressBar);
+                    }
+                });
+
+                if (isReceptionEdit) {
+
+                    ReceptionView receptionView = (ReceptionView) bundle.getSerializable("receptionDetails");
+
+                    if (receptionView != null) {
+                        existingReceptionDetail = receptionViewModel.fetchReceptionDetailById(receptionView.tempReceptionId);
+                        fetchData(true, existingReceptionDetail);
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 } else {
-                    hideProgress(progressBar);
+                    fetchData(false, null);
                 }
-            });
+
+                actionListeners();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
+                finish();
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "initComponents", e);
         }
     }
 
-    private void fetchData() {
+    private void fetchData(boolean isEdit, ReceptionDetails receptionDetail) {
         try {
-            suppliersList = new ArrayList<>();
             suppliersList = masterViewModel.fetchSuppliers();
-
-            supplierProductsList = new ArrayList<>();
-            supplierProductTypesList = new ArrayList<>();
-            measurementSystemsList = new ArrayList<>();
-            purchaseContractsList = new ArrayList<>();
-
-            warehousesList = new ArrayList<>();
             warehousesList = masterViewModel.fetchWarehouses();
+            resetDependentLists();
+
+            if (isEdit) {
+                // Supplier
+                for (Suppliers s : suppliersList) {
+                    if (s.getSupplierId() == receptionDetail.getSupplierId()) {
+                        etSupplier.setText(s.getSupplierName());
+                        etSupplier.setTag(s.getSupplierId());
+                        break;
+                    }
+                }
+
+                // Load dependent data (IMPORTANT)
+                supplierProductsList = masterViewModel.fetchSupplierProducts(receptionDetail.getSupplierId());
+
+                // Supplier Product
+                for (SupplierProducts sp : supplierProductsList) {
+                    if (sp.getSupplierProductId() == receptionDetail.getSupplierProductId()) {
+                        etSupplierProduct.setText(sp.getProductName());
+                        etSupplierProduct.setTag(R.id.tag_supplier_product_id, sp.getSupplierProductId());
+                        etSupplierProduct.setTag(R.id.tag_product_id, sp.getProductId());
+                        break;
+                    }
+                }
+
+                // Load next dependency
+                supplierProductTypesList = masterViewModel.fetchSupplierProductTypes(receptionDetail.getSupplierId(), receptionDetail.getProductId());
+
+                // Product Type
+                for (SupplierProductTypes spt : supplierProductTypesList) {
+                    if (spt.getTypeId() == receptionDetail.getSupplierProductTypeId()) {
+                        etSupplierProductType.setText(spt.getProductTypeName());
+                        etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, spt.getTypeId());
+                        etSupplierProductType.setTag(R.id.tag_product_type_id, spt.getProductTypeId());
+                        break;
+                    }
+                }
+
+                // Measurement System
+                measurementSystemsList = masterViewModel.fetchMeasurementSystems(receptionDetail.getProductTypeId());
+                for (MeasurementSystems ms : measurementSystemsList) {
+                    if (ms.getId() == receptionDetail.getMeasurementSystem()) {
+                        etMeasurementSystem.setText(ms.getMeasurementName());
+                        etMeasurementSystem.setTag(ms.getId());
+                        break;
+                    }
+                }
+
+                // Warehouse
+                for (Warehouses w : warehousesList) {
+                    if (w.getId() == receptionDetail.getWarehouse()) {
+                        etWarehouse.setText(w.getWarehouseName());
+                        etWarehouse.setTag(w.getId());
+                        break;
+                    }
+                }
+
+                // ICA + Date
+                etIca.setText(receptionDetail.getIca());
+                etReceptionDate.setText(receptionDetail.getReceptionDate());
+
+                // Farm section
+                cbEnableFarm.setChecked(receptionDetail.isFarmEnabled());
+
+                if (receptionDetail.isFarmEnabled()) {
+                    purchaseContractsList = masterViewModel.fetchPurchaseContracts(receptionDetail.getSupplierId(), receptionDetail.getProductId(), receptionDetail.getProductTypeId());
+
+                    for (PurchaseContracts pc : purchaseContractsList) {
+                        if (pc.getContractId() == receptionDetail.getPurchaseContract()) {
+                            etPurchaseContract.setText(pc.getContractCode());
+                            etPurchaseContract.setTag(pc.getContractId());
+                            break;
+                        }
+                    }
+
+                    llFarm.setVisibility(View.VISIBLE);
+
+                    etTruckNumber.setText(receptionDetail.getTruckNumber());
+                    etTruckDriverName.setText(receptionDetail.getTruckDriverName());
+                } else {
+                    llFarm.setVisibility(View.GONE);
+                }
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "fetchData", e);
         }
@@ -194,12 +297,15 @@ public class ReceptionActivity extends BaseActivity {
                 }
 
                 etPurchaseContract.setText("");
-                etPurchaseContract.setTag("");
+                etPurchaseContract.setTag(null);
                 etTruckNumber.setText("");
                 etTruckDriverName.setText("");
             });
 
-            btnSubmit.setOnClickListener(v -> saveOrUpdateReceptionDetails());
+            btnSubmit.setOnClickListener(v -> {
+                btnSubmit.setEnabled(false);
+                saveOrUpdateReceptionDetails();
+            });
 
         } catch (Exception e) {
             AppLogger.e(getClass(), "clickListeners", e);
@@ -277,21 +383,18 @@ public class ReceptionActivity extends BaseActivity {
                         etSupplier.setText(selected.getSupplierName());
                         etSupplier.setTag(selected.getSupplierId());
 
-                        supplierProductsList = new ArrayList<>();
-                        supplierProductTypesList = new ArrayList<>();
-                        measurementSystemsList = new ArrayList<>();
-                        purchaseContractsList = new ArrayList<>();
+                        resetDependentLists();
 
                         etSupplierProduct.setText("");
                         etSupplierProductType.setText("");
-                        etSupplierProduct.setTag(R.id.tag_supplier_product_id, "");
-                        etSupplierProduct.setTag(R.id.tag_product_id, "");
-                        etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, "");
-                        etSupplierProductType.setTag(R.id.tag_product_type_id, "");
+                        etSupplierProduct.setTag(R.id.tag_supplier_product_id, null);
+                        etSupplierProduct.setTag(R.id.tag_product_id, null);
+                        etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, null);
+                        etSupplierProductType.setTag(R.id.tag_product_type_id, null);
                         etMeasurementSystem.setText("");
-                        etMeasurementSystem.setTag("");
+                        etMeasurementSystem.setTag(null);
                         etPurchaseContract.setText("");
-                        etPurchaseContract.setTag("");
+                        etPurchaseContract.setTag(null);
 
                         supplierProductsList = masterViewModel.fetchSupplierProducts(selected.getSupplierId());
 
@@ -390,16 +493,16 @@ public class ReceptionActivity extends BaseActivity {
                     etSupplierProduct.setTag(R.id.tag_product_id, selected.getProductId());
 
                     etSupplierProductType.setText("");
-                    etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, "");
-                    etSupplierProductType.setTag(R.id.tag_product_type_id, "");
+                    etSupplierProductType.setTag(R.id.tag_supplier_product_type_id, null);
+                    etSupplierProductType.setTag(R.id.tag_product_type_id, null);
                     etMeasurementSystem.setText("");
-                    etMeasurementSystem.setTag("");
+                    etMeasurementSystem.setTag(null);
                     etPurchaseContract.setText("");
-                    etPurchaseContract.setTag("");
+                    etPurchaseContract.setTag(null);
 
-                    supplierProductTypesList = new ArrayList<>();
-                    measurementSystemsList = new ArrayList<>();
-                    purchaseContractsList = new ArrayList<>();
+                    if (supplierProductTypesList != null) supplierProductTypesList.clear();
+                    if (measurementSystemsList != null) measurementSystemsList.clear();
+                    if (purchaseContractsList != null) purchaseContractsList.clear();
 
                     supplierProductTypesList = masterViewModel.fetchSupplierProductTypes(selected.getSupplierId(), selected.getProductId());
 
@@ -451,12 +554,12 @@ public class ReceptionActivity extends BaseActivity {
                     etSupplierProductType.setTag(R.id.tag_product_type_id, selected.getProductTypeId());
 
                     etMeasurementSystem.setText("");
-                    etMeasurementSystem.setTag("");
+                    etMeasurementSystem.setTag(null);
                     etPurchaseContract.setText("");
-                    etPurchaseContract.setTag("");
+                    etPurchaseContract.setTag(null);
 
-                    measurementSystemsList = new ArrayList<>();
-                    purchaseContractsList = new ArrayList<>();
+                    if (measurementSystemsList != null) measurementSystemsList.clear();
+                    if (purchaseContractsList != null) purchaseContractsList.clear();
 
                     measurementSystemsList = masterViewModel.fetchMeasurementSystems(selected.getProductTypeId());
                     purchaseContractsList = masterViewModel.fetchPurchaseContracts(selected.getSupplierId(), selected.getProductId(), selected.getProductTypeId());
@@ -651,9 +754,8 @@ public class ReceptionActivity extends BaseActivity {
                             purchaseContractsRecyclerViewAdapter.resetFilter();
                         } else {
                             purchaseContractsRecyclerViewAdapter.filter(item ->
-                                    (item.getContractCode() != null &&
-                                            item.getDescription().toLowerCase().contains(query)) || (item.getContractCode() != null &&
-                                            item.getContractCode().toLowerCase().contains(query))
+                                    ((item.getDescription() != null && item.getDescription().toLowerCase().contains(query)))
+                                            || (item.getContractCode() != null && item.getContractCode().toLowerCase().contains(query))
                             );
                         }
 
@@ -678,13 +780,20 @@ public class ReceptionActivity extends BaseActivity {
         }
     }
 
+    private void resetDependentLists() {
+        if (supplierProductsList != null) supplierProductsList.clear();
+        if (supplierProductTypesList != null) supplierProductTypesList.clear();
+        if (measurementSystemsList != null) measurementSystemsList.clear();
+        if (purchaseContractsList != null) purchaseContractsList.clear();
+    }
+
     private void saveOrUpdateReceptionDetails() {
         try {
             hideKeyboard(this);
 
             boolean isValid = true;
 
-            if (Objects.requireNonNull(etSupplier.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etSupplier.getText())) {
                 tiSupplier.setError(getString(R.string.required_field));
                 tiSupplier.setErrorEnabled(true);
                 isValid = false;
@@ -693,7 +802,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiSupplier.setError(null);
             }
 
-            if (Objects.requireNonNull(etSupplierProduct.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etSupplierProduct.getText())) {
                 tiSupplierProduct.setError(getString(R.string.required_field));
                 tiSupplierProduct.setErrorEnabled(true);
                 isValid = false;
@@ -702,7 +811,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiSupplierProduct.setError(null);
             }
 
-            if (Objects.requireNonNull(etSupplierProductType.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etSupplierProductType.getText())) {
                 tiSupplierProductType.setError(getString(R.string.required_field));
                 tiSupplierProductType.setErrorEnabled(true);
                 isValid = false;
@@ -711,7 +820,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiSupplierProductType.setError(null);
             }
 
-            if (Objects.requireNonNull(etIca.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etIca.getText())) {
                 tiIca.setError(getString(R.string.required_field));
                 tiIca.setErrorEnabled(true);
                 isValid = false;
@@ -720,7 +829,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiIca.setError(null);
             }
 
-            if (Objects.requireNonNull(etMeasurementSystem.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etMeasurementSystem.getText())) {
                 tiMeasurementSystem.setError(getString(R.string.required_field));
                 tiMeasurementSystem.setErrorEnabled(true);
                 isValid = false;
@@ -729,7 +838,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiMeasurementSystem.setError(null);
             }
 
-            if (Objects.requireNonNull(etWarehouse.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etWarehouse.getText())) {
                 tiWarehouse.setError(getString(R.string.required_field));
                 tiWarehouse.setErrorEnabled(true);
                 isValid = false;
@@ -738,7 +847,7 @@ public class ReceptionActivity extends BaseActivity {
                 tiWarehouse.setError(null);
             }
 
-            if (Objects.requireNonNull(etReceptionDate.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etReceptionDate.getText())) {
                 tiReceptionDate.setError(getString(R.string.required_field));
                 tiReceptionDate.setErrorEnabled(true);
                 isValid = false;
@@ -748,7 +857,7 @@ public class ReceptionActivity extends BaseActivity {
             }
 
             if (cbEnableFarm.isChecked()) {
-                if (Objects.requireNonNull(etPurchaseContract.getText()).toString().trim().isEmpty()) {
+                if (TextUtils.isEmpty(etPurchaseContract.getText())) {
                     tiPurchaseContract.setError(getString(R.string.required_field));
                     tiPurchaseContract.setErrorEnabled(true);
                     isValid = false;
@@ -757,7 +866,7 @@ public class ReceptionActivity extends BaseActivity {
                     tiPurchaseContract.setError(null);
                 }
 
-                if (Objects.requireNonNull(etTruckNumber.getText()).toString().trim().isEmpty()) {
+                if (TextUtils.isEmpty(etTruckNumber.getText())) {
                     tiTruckNumber.setError(getString(R.string.required_field));
                     tiTruckNumber.setErrorEnabled(true);
                     isValid = false;
@@ -766,7 +875,7 @@ public class ReceptionActivity extends BaseActivity {
                     tiTruckNumber.setError(null);
                 }
 
-                if (Objects.requireNonNull(etTruckDriverName.getText()).toString().trim().isEmpty()) {
+                if (TextUtils.isEmpty(etTruckDriverName.getText())) {
                     tiTruckDriverName.setError(getString(R.string.required_field));
                     tiTruckDriverName.setErrorEnabled(true);
                     isValid = false;
@@ -776,62 +885,120 @@ public class ReceptionActivity extends BaseActivity {
                 }
             }
 
-            if (isValid) {
-
-                int icaCount = receptionViewModel.getReceptionInventoryOrdersCount(etIca.getText().toString(), (int) etSupplier.getTag());
-
-                if (icaCount > 0) {
-                    Toast.makeText(getApplicationContext(), R.string.ica_exists, Toast.LENGTH_SHORT).show();
-                } else {
-
-                    String mappingId = "M_" + etSupplier.getTag() + "_" + CommonUtils.getCurrentLocalDateTimeStamp();
-
-                    ReceptionDetails receptionDetail = new ReceptionDetails();
-                    receptionDetail.setSupplierId((int) etSupplier.getTag());
-                    receptionDetail.setSupplierProductId((int) etSupplierProduct.getTag(R.id.tag_supplier_product_id));
-                    receptionDetail.setProductId((int) etSupplierProduct.getTag(R.id.tag_product_id));
-                    receptionDetail.setSupplierProductTypeId((int) etSupplierProductType.getTag(R.id.tag_supplier_product_type_id));
-                    receptionDetail.setProductTypeId((int) etSupplierProductType.getTag(R.id.tag_product_type_id));
-                    receptionDetail.setIca(etIca.getText().toString().trim());
-                    receptionDetail.setMeasurementSystem((int) etMeasurementSystem.getTag());
-                    receptionDetail.setWarehouse((int) etWarehouse.getTag());
-                    receptionDetail.setReceptionDate(etReceptionDate.getText().toString().trim());
-                    receptionDetail.setFarmEnabled(cbEnableFarm.isChecked());
-                    receptionDetail.setContainerReceptionMappingId(mappingId);
-
-                    if (cbEnableFarm.isChecked()) {
-                        receptionDetail.setPurchaseContract((int) etPurchaseContract.getTag());
-                        receptionDetail.setTruckNumber(Objects.requireNonNull(etTruckNumber.getText()).toString().trim());
-                        receptionDetail.setTruckDriverName(Objects.requireNonNull(etPurchaseContract.getText()).toString().trim());
-                    } else {
-                        receptionDetail.setPurchaseContract(0);
-                        receptionDetail.setTruckNumber("");
-                        receptionDetail.setTruckDriverName("");
-                    }
-
-                    receptionDetail.setTempReceptionId("R_" + CommonUtils.getCurrentLocalDateTimeStamp());
-                    receptionDetail.setReceptionId(null);
-                    receptionDetail.setSynced(false);
-                    receptionDetail.setDeleted(false);
-                    receptionDetail.setEdited(false);
-                    receptionDetail.setUpdatedAt(System.currentTimeMillis());
-
-                    receptionViewModel.saveReceptionDetails(receptionDetail);
-
-                    receptionViewModel.getReceptionStatus().observe(this, aBoolean -> {
-                        if (aBoolean) {
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra("savedReceptionId", receptionViewModel.getReceptionSavedId());
-                            setResult(RESULT_OK, resultIntent);
-                            finish();
-                        } else {
-                            showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
-                        }
-                    });
-                }
+            if (!isValid) {
+                enableSubmit();
+                return;
             }
+
+            // ================= ICA VALIDATION =================
+            int icaCount;
+            if (isReceptionEdit && existingReceptionDetail != null) {
+                icaCount = receptionViewModel.getReceptionInventoryOrdersCountForEdit(
+                        etIca.getText().toString().trim(),
+                        CommonUtils.getTagInt(etSupplier.getTag()),
+                        existingReceptionDetail.getTempReceptionId()
+                );
+            } else {
+                icaCount = receptionViewModel.getReceptionInventoryOrdersCount(etIca.getText().toString(), CommonUtils.getTagInt(etSupplier.getTag()));
+            }
+
+            if (icaCount > 0) {
+                Toast.makeText(getApplicationContext(), R.string.ica_exists, Toast.LENGTH_SHORT).show();
+                enableSubmit();
+                return;
+            }
+
+            // ================= CREATE / UPDATE OBJECT =================
+            ReceptionDetails receptionDetail;
+            String oldIca = null;
+            int oldSupplierId = 0;
+
+            if (isReceptionEdit && existingReceptionDetail != null) {
+                oldIca = existingReceptionDetail.getIca();
+                oldSupplierId = existingReceptionDetail.getSupplierId();
+                receptionDetail = existingReceptionDetail; // UPDATE
+            } else {
+                receptionDetail = new ReceptionDetails(); // CREATE
+            }
+
+            // ================= COMMON FIELD SET =================
+            receptionDetail.setSupplierId(CommonUtils.getTagInt(etSupplier.getTag()));
+            receptionDetail.setSupplierProductId(CommonUtils.getTagInt(etSupplierProduct.getTag(R.id.tag_supplier_product_id)));
+            receptionDetail.setProductId(CommonUtils.getTagInt(etSupplierProduct.getTag(R.id.tag_product_id)));
+            receptionDetail.setSupplierProductTypeId(CommonUtils.getTagInt(etSupplierProductType.getTag(R.id.tag_supplier_product_type_id)));
+            receptionDetail.setProductTypeId(CommonUtils.getTagInt(etSupplierProductType.getTag(R.id.tag_product_type_id)));
+            receptionDetail.setIca(etIca.getText().toString().trim());
+            receptionDetail.setMeasurementSystem(CommonUtils.getTagInt(etMeasurementSystem.getTag()));
+            receptionDetail.setWarehouse(CommonUtils.getTagInt(etWarehouse.getTag()));
+            receptionDetail.setReceptionDate(etReceptionDate.getText().toString().trim());
+            receptionDetail.setFarmEnabled(cbEnableFarm.isChecked());
+
+            // ================= MAPPING ID =================
+            String mappingId;
+
+            if (isReceptionEdit && existingReceptionDetail != null) {
+                mappingId = existingReceptionDetail.getContainerReceptionMappingId();
+            } else {
+                mappingId = "M_" + CommonUtils.getTagInt(etSupplier.getTag()) + "_" + CommonUtils.getCurrentLocalDateTimeStamp();
+            }
+
+            receptionDetail.setContainerReceptionMappingId(mappingId);
+
+            // ================= FARM DATA =================
+            if (cbEnableFarm.isChecked()) {
+                receptionDetail.setPurchaseContract(CommonUtils.getTagInt(etPurchaseContract.getTag()));
+                receptionDetail.setTruckNumber(Objects.requireNonNull(etTruckNumber.getText()).toString().trim());
+                receptionDetail.setTruckDriverName(Objects.requireNonNull(etTruckDriverName.getText()).toString().trim());
+            } else {
+                receptionDetail.setPurchaseContract(0);
+                receptionDetail.setTruckNumber("");
+                receptionDetail.setTruckDriverName("");
+            }
+
+            // ================= ID HANDLING =================
+            if (isReceptionEdit && existingReceptionDetail != null) {
+                receptionDetail.setTempReceptionId(existingReceptionDetail.getTempReceptionId());
+                receptionDetail.setReceptionId(existingReceptionDetail.getReceptionId());
+                receptionDetail.setEdited(true);
+            } else {
+                receptionDetail.setTempReceptionId("R_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                receptionDetail.setReceptionId(null);
+                receptionDetail.setEdited(false);
+            }
+
+            receptionDetail.setSynced(false);
+            receptionDetail.setDeleted(false);
+            receptionDetail.setUpdatedAt(System.currentTimeMillis());
+
+            // ================= SAVE =================
+            receptionViewModel.saveReceptionDetails(receptionDetail, oldIca != null ? oldIca : receptionDetail.getIca(),
+                    oldSupplierId != 0 ? oldSupplierId : receptionDetail.getSupplierId()
+            );
+
+            receptionViewModel.getReceptionStatus().observe(this, new Observer<>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    receptionViewModel.getReceptionStatus().removeObserver(this);
+
+                    enableSubmit();
+
+                    if (aBoolean) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("savedReceptionId", receptionViewModel.getReceptionSavedId());
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
+                    }
+                }
+            });
         } catch (Exception e) {
+            enableSubmit();
             AppLogger.e(getClass(), "saveOrUpdateReceptionDetails", e);
         }
+    }
+
+    private void enableSubmit() {
+        btnSubmit.setEnabled(true);
     }
 }

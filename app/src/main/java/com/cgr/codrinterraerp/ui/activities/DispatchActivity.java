@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,7 @@ import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
 import com.cgr.codrinterraerp.db.entities.ShippingLines;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
+import com.cgr.codrinterraerp.db.views.DispatchView;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.ui.common.BaseActivity;
@@ -61,6 +64,8 @@ public class DispatchActivity extends BaseActivity {
     private MasterViewModel masterViewModel;
     private DispatchViewModel dispatchViewModel;
     private FrameLayout progressBar;
+    private boolean isDispatchEdit = false;
+    private DispatchDetails existingDispatchDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,47 +96,104 @@ public class DispatchActivity extends BaseActivity {
             btnSubmit = findViewById(R.id.btnSubmit);
             progressBar = findViewById(R.id.progressBar);
 
-            masterViewModel = new ViewModelProvider(this).get(MasterViewModel.class);
-            dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
+            Bundle bundle = getIntent().getExtras();
 
-            txtTitle.setText(getString(R.string.add_dispatch));
-            imgBack.setOnClickListener(v -> finish());
+            if (bundle != null) {
+                masterViewModel = new ViewModelProvider(this).get(MasterViewModel.class);
+                dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
 
-            CommonUtils.clearErrorOnTyping(etContainerNumber, tiContainerNumber);
-            CommonUtils.clearErrorOnTyping(etProduct, tiProduct);
-            CommonUtils.clearErrorOnTyping(etProductType, tiProductType);
-            CommonUtils.clearErrorOnTyping(etShippingLine, tiShippingLine);
-            CommonUtils.clearErrorOnTyping(etWarehouse, tiWarehouse);
-            CommonUtils.clearErrorOnTyping(etDispatchDate, tiDispatchDate);
+                isDispatchEdit = bundle.getBoolean("isEdit");
 
-            fetchData();
-            actionListeners();
+                txtTitle.setText(isDispatchEdit ? getString(R.string.edit_dispatch) : getString(R.string.add_dispatch));
+                imgBack.setOnClickListener(v -> finish());
 
-            dispatchViewModel.getProgressState().observe(this, aBoolean -> {
-                if(aBoolean) {
-                    showProgress(progressBar);
+                CommonUtils.clearErrorOnTyping(etContainerNumber, tiContainerNumber);
+                CommonUtils.clearErrorOnTyping(etProduct, tiProduct);
+                CommonUtils.clearErrorOnTyping(etProductType, tiProductType);
+                CommonUtils.clearErrorOnTyping(etShippingLine, tiShippingLine);
+                CommonUtils.clearErrorOnTyping(etWarehouse, tiWarehouse);
+                CommonUtils.clearErrorOnTyping(etDispatchDate, tiDispatchDate);
+
+                actionListeners();
+
+                dispatchViewModel.getProgressState().observe(this, aBoolean -> {
+                    if (aBoolean) {
+                        showProgress(progressBar);
+                    } else {
+                        hideProgress(progressBar);
+                    }
+                });
+
+                if (isDispatchEdit) {
+                    DispatchView dispatchView = (DispatchView) bundle.getSerializable("dispatchDetails");
+
+                    if (dispatchView != null) {
+                        existingDispatchDetail = dispatchViewModel.fetchDispatchDetailById(dispatchView.tempDispatchId);
+                        fetchData(true, existingDispatchDetail);
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 } else {
-                    hideProgress(progressBar);
+                    fetchData(false, null);
                 }
-            });
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
+                finish();
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "initComponents", e);
         }
     }
 
-    private void fetchData() {
+    private void fetchData(boolean isEdit, DispatchDetails dispatchDetail) {
         try {
-            productsList = new ArrayList<>();
             productsList = masterViewModel.fetchProducts();
-
-            productTypesList = new ArrayList<>();
             productTypesList = masterViewModel.fetchProductTypes();
-
-            shippingLinesList = new ArrayList<>();
             shippingLinesList = masterViewModel.fetchShippingLines();
-
-            warehousesList = new ArrayList<>();
             warehousesList = masterViewModel.fetchWarehouses();
+
+            if (isEdit) {
+                // Wood
+                for (Products p : productsList) {
+                    if (p.getProductId() == dispatchDetail.getProductId()) {
+                        etProduct.setText(p.getProductName());
+                        etProduct.setTag(p.getProductId());
+                        break;
+                    }
+                }
+
+                // Wood Type
+                for (ProductTypes pt : productTypesList) {
+                    if (pt.getTypeId() == dispatchDetail.getProductTypeId()) {
+                        etProductType.setText(pt.getProductTypeName());
+                        etProductType.setTag(pt.getTypeId());
+                        break;
+                    }
+                }
+
+                // Shipping Line
+                for (ShippingLines sl : shippingLinesList) {
+                    if (sl.getId() == dispatchDetail.getShippingLineId()) {
+                        etShippingLine.setText(sl.getShippingLine());
+                        etShippingLine.setTag(sl.getId());
+                        break;
+                    }
+                }
+
+                // Warehouse
+                for (Warehouses w : warehousesList) {
+                    if (w.getId() == dispatchDetail.getWarehouseId()) {
+                        etWarehouse.setText(w.getWarehouseName());
+                        etWarehouse.setTag(w.getId());
+                        break;
+                    }
+                }
+
+                // Container # + Date
+                etContainerNumber.setText(dispatchDetail.getContainerNumber());
+                etDispatchDate.setText(dispatchDetail.getDispatchDate());
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "fetchData", e);
         }
@@ -156,7 +218,10 @@ public class DispatchActivity extends BaseActivity {
 
             etDispatchDate.setOnClickListener(v -> CommonUtils.showDatePicker(this, etDispatchDate));
 
-            btnSubmit.setOnClickListener(v -> saveOrUpdateDispatchDetails());
+            btnSubmit.setOnClickListener(v -> {
+                btnSubmit.setEnabled(false);
+                saveOrUpdateDispatchDetails();
+            });
         } catch (Exception e) {
             AppLogger.e(getClass(), "clickListeners", e);
         }
@@ -475,7 +540,7 @@ public class DispatchActivity extends BaseActivity {
 
             boolean isValid = true;
 
-            if (Objects.requireNonNull(etContainerNumber.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etContainerNumber.getText())) {
                 tiContainerNumber.setError(getString(R.string.required_field));
                 tiContainerNumber.setErrorEnabled(true);
                 isValid = false;
@@ -484,7 +549,7 @@ public class DispatchActivity extends BaseActivity {
                 tiContainerNumber.setError(null);
             }
 
-            if (Objects.requireNonNull(etProduct.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etProduct.getText())) {
                 tiProduct.setError(getString(R.string.required_field));
                 tiProduct.setErrorEnabled(true);
                 isValid = false;
@@ -493,7 +558,7 @@ public class DispatchActivity extends BaseActivity {
                 tiProduct.setError(null);
             }
 
-            if (Objects.requireNonNull(etProductType.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etProductType.getText())) {
                 tiProductType.setError(getString(R.string.required_field));
                 tiProductType.setErrorEnabled(true);
                 isValid = false;
@@ -502,7 +567,7 @@ public class DispatchActivity extends BaseActivity {
                 tiProductType.setError(null);
             }
 
-            if (Objects.requireNonNull(etShippingLine.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etShippingLine.getText())) {
                 tiShippingLine.setError(getString(R.string.required_field));
                 tiShippingLine.setErrorEnabled(true);
                 isValid = false;
@@ -511,7 +576,7 @@ public class DispatchActivity extends BaseActivity {
                 tiShippingLine.setError(null);
             }
 
-            if (Objects.requireNonNull(etWarehouse.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etWarehouse.getText())) {
                 tiWarehouse.setError(getString(R.string.required_field));
                 tiWarehouse.setErrorEnabled(true);
                 isValid = false;
@@ -520,7 +585,7 @@ public class DispatchActivity extends BaseActivity {
                 tiWarehouse.setError(null);
             }
 
-            if (Objects.requireNonNull(etDispatchDate.getText()).toString().trim().isEmpty()) {
+            if (TextUtils.isEmpty(etDispatchDate.getText())) {
                 tiDispatchDate.setError(getString(R.string.required_field));
                 tiDispatchDate.setErrorEnabled(true);
                 isValid = false;
@@ -529,44 +594,96 @@ public class DispatchActivity extends BaseActivity {
                 tiDispatchDate.setError(null);
             }
 
-            if (isValid) {
-
-                int containerCount = dispatchViewModel.getDispatchContainersCount(etContainerNumber.getText().toString(), (int) etShippingLine.getTag());
-
-                if (containerCount > 0) {
-                    Toast.makeText(getApplicationContext(), R.string.container_exists, Toast.LENGTH_SHORT).show();
-                } else {
-
-                    DispatchDetails dispatchDetail = new DispatchDetails();
-                    dispatchDetail.setContainerNumber(etContainerNumber.getText().toString().trim());
-                    dispatchDetail.setTempDispatchId("D_" + CommonUtils.getCurrentLocalDateTimeStamp());
-                    dispatchDetail.setDispatchId(null);
-                    dispatchDetail.setProductId((int) etProduct.getTag());
-                    dispatchDetail.setProductTypeId((int) etProductType.getTag());
-                    dispatchDetail.setWarehouseId((int) etWarehouse.getTag());
-                    dispatchDetail.setShippingLineId((int) etShippingLine.getTag());
-                    dispatchDetail.setDispatchDate(etDispatchDate.getText().toString().trim());
-                    dispatchDetail.setSynced(false);
-                    dispatchDetail.setDeleted(false);
-                    dispatchDetail.setEdited(false);
-                    dispatchDetail.setUpdatedAt(System.currentTimeMillis());
-
-                    dispatchViewModel.saveDispatchDetails(dispatchDetail);
-
-                    dispatchViewModel.getDispatchStatus().observe(this, aBoolean -> {
-                        if (aBoolean) {
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra("savedDispatchId", dispatchViewModel.getDispatchSavedId());
-                            setResult(RESULT_OK, resultIntent);
-                            finish();
-                        } else {
-                            showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
-                        }
-                    });
-                }
+            if (!isValid) {
+                enableSubmit();
+                return;
             }
+
+            // ================= CONTAINER VALIDATION =================
+            int containerCount;
+            if (isDispatchEdit && existingDispatchDetail != null) {
+                containerCount = dispatchViewModel.getDispatchContainersCountForEdit(
+                        etContainerNumber.getText().toString().trim(),
+                        CommonUtils.getTagInt(etShippingLine.getTag()),
+                        existingDispatchDetail.getTempDispatchId()
+                );
+            } else {
+                containerCount = dispatchViewModel.getDispatchContainersCount(etContainerNumber.getText().toString(), CommonUtils.getTagInt(etShippingLine.getTag()));
+            }
+
+            if (containerCount > 0) {
+                Toast.makeText(getApplicationContext(), R.string.container_exists, Toast.LENGTH_SHORT).show();
+                enableSubmit();
+                return;
+            }
+
+            // ================= CREATE / UPDATE OBJECT =================
+            DispatchDetails dispatchDetail;
+            String oldContainerNumber = null;
+            int oldShippingLineId = 0;
+
+            if (isDispatchEdit && existingDispatchDetail != null) {
+                oldContainerNumber = existingDispatchDetail.getContainerNumber();
+                oldShippingLineId = existingDispatchDetail.getShippingLineId();
+                dispatchDetail = existingDispatchDetail; // UPDATE
+            } else {
+                dispatchDetail = new DispatchDetails(); // CREATE
+            }
+
+            // ================= COMMON FIELD SET =================
+            dispatchDetail.setContainerNumber(etContainerNumber.getText().toString().trim());
+            dispatchDetail.setProductId(CommonUtils.getTagInt(etProduct.getTag()));
+            dispatchDetail.setProductTypeId(CommonUtils.getTagInt(etProductType.getTag()));
+            dispatchDetail.setWarehouseId(CommonUtils.getTagInt(etWarehouse.getTag()));
+            dispatchDetail.setShippingLineId(CommonUtils.getTagInt(etShippingLine.getTag()));
+            dispatchDetail.setDispatchDate(etDispatchDate.getText().toString().trim());
+
+            // ================= ID HANDLING =================
+            if (isDispatchEdit && existingDispatchDetail != null) {
+                dispatchDetail.setTempDispatchId(existingDispatchDetail.getTempDispatchId());
+                dispatchDetail.setDispatchId(existingDispatchDetail.getDispatchId());
+                dispatchDetail.setEdited(true);
+            } else {
+                dispatchDetail.setTempDispatchId("D_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                dispatchDetail.setDispatchId(null);
+                dispatchDetail.setEdited(false);
+            }
+
+            dispatchDetail.setSynced(false);
+            dispatchDetail.setDeleted(false);
+            dispatchDetail.setUpdatedAt(System.currentTimeMillis());
+
+            // ================= SAVE =================
+
+            dispatchViewModel.saveDispatchDetails(dispatchDetail,oldContainerNumber != null ? oldContainerNumber : dispatchDetail.getContainerNumber(),
+                    oldShippingLineId != 0 ? oldShippingLineId : dispatchDetail.getShippingLineId()
+            );
+
+            dispatchViewModel.getDispatchStatus().observe(this, new Observer<>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    dispatchViewModel.getDispatchStatus().removeObserver(this);
+
+                    enableSubmit();
+
+                    if (aBoolean) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("savedDispatchId", dispatchViewModel.getDispatchSavedId());
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        showCustomDialog(getString(R.string.error), getString(R.string.data_added_failed), false);
+                    }
+                }
+            });
+
         } catch (Exception e) {
+            enableSubmit();
             AppLogger.e(getClass(), "saveOrUpdateDispatchDetails", e);
         }
+    }
+
+    private void enableSubmit() {
+        btnSubmit.setEnabled(true);
     }
 }

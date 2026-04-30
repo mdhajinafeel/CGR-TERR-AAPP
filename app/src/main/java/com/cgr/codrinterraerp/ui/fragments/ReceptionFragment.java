@@ -103,11 +103,10 @@ public class ReceptionFragment extends Fragment {
                     });
 
                     holder.getView(R.id.btnEditReception).setOnClickListener(v -> {
-                        ReceptionView clickedItem = (ReceptionView) v.getTag();
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
                         Intent intent = new Intent(requireActivity(), ReceptionActivity.class);
                         intent.putExtra("isEdit", true);
-                        intent.putExtra("receptionDetails", clickedItem);
+                        intent.putExtra("receptionDetails", receptionView);
                         receptionResultLauncher.launch(intent, options);
                     });
 

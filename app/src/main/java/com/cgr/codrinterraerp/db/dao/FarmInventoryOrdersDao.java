@@ -23,4 +23,7 @@ public interface FarmInventoryOrdersDao {
 
     @Query("DELETE FROM farm_inventory_orders")
     void clearAll();
+
+    @Query("DELETE FROM farm_inventory_orders WHERE inventoryOrder = :ica AND supplierId = :supplierId")
+    void deleteFarmInventoryOrder(String ica, int supplierId);
 }

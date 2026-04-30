@@ -26,4 +26,7 @@ public interface ReceptionInventoryOrdersDao {
 
     @Query("DELETE FROM reception_inventory_orders")
     void clearAll();
+
+    @Query("DELETE FROM reception_inventory_orders WHERE inventoryOrder = :ica AND supplierId = :supplierId")
+    void deleteReceptionInventoryOrder(String ica, int supplierId);
 }

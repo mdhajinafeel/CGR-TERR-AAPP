@@ -46,6 +46,10 @@ public class ReceptionRepository {
         return receptionInventoryOrdersDao.getReceptionInventoryOrdersCount(inventoryOrder, supplierId);
     }
 
+    public int getReceptionInventoryOrdersCountForEdit(String inventoryOrder, int supplierId, String tempReceptionId) {
+        return receptionDetailsDao.getReceptionInventoryOrdersCountForEdit(inventoryOrder, supplierId, tempReceptionId);
+    }
+
     public LiveData<List<ReceptionView>> getReceptionList() {
         return receptionViewDao.getReceptionList();
     }
@@ -63,5 +67,17 @@ public class ReceptionRepository {
             ReceptionSummary s = receptionSummaryHelper.calculate(receptionId, tempReceptionId);
             receptionSummaryDao.upsert(s);
         });
+    }
+
+    public ReceptionDetails fetchReceptionDetailById(String tempReceptionId) {
+        return receptionDetailsDao.fetchReceptionDetailById(tempReceptionId);
+    }
+
+    public void deleteReceptionInventoryOrder(String ica, int supplierId) {
+        receptionInventoryOrdersDao.deleteReceptionInventoryOrder(ica, supplierId);
+    }
+
+    public void deleteFarmInventoryOrder(String ica, int supplierId) {
+        farmInventoryOrdersDao.deleteFarmInventoryOrder(ica, supplierId);
     }
 }

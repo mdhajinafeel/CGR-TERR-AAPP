@@ -208,6 +208,7 @@
                     android:fontFamily="@font/exo2_semibold"
                     android:gravity="center"
                     android:padding="@dimen/padding_14"
+                    android:textAllCaps="true"
                     android:text="@string/no_data_available"
                     android:textColor="@color/colorCharcoal"
                     android:textSize="@dimen/text_20"
@@ -229,9 +230,9 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="#EEEEEE"
+                            android:background="@color/colorGrey"
                             android:orientation="horizontal"
-                            android:padding="10dp">
+                            android:padding="@dimen/padding_10">
 
                             <!-- EMPTY (for buttons) -->
                             <androidx.appcompat.widget.AppCompatTextView
@@ -300,6 +301,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:clipToPadding="false"
+                            android:background="@color/colorWhite"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             android:nestedScrollingEnabled="false"
                             tools:listitem="@layout/row_item_reception_data" />

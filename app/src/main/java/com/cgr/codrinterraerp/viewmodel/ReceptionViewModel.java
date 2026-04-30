@@ -32,36 +32,60 @@ public class ReceptionViewModel extends ViewModel {
         this.receptionRepository = receptionRepository;
     }
 
-    public void saveReceptionDetails(ReceptionDetails receptionDetails) {
+    public void saveReceptionDetails(ReceptionDetails receptionDetails, String oldIca, int oldSupplierId) {
         progressState.postValue(true);
-        long reception = receptionRepository.saveReceptionDetails(receptionDetails);
-        progressState.postValue(false);
-        if(reception > 0) {
 
+        long reception = receptionRepository.saveReceptionDetails(receptionDetails);
+
+        if (reception > 0) {
+
+            // ================= DETERMINE DELETE VALUES =================
+            String deleteIca = receptionDetails.isEdited() ? oldIca : receptionDetails.getIca();
+            int deleteSupplierId = receptionDetails.isEdited() ? oldSupplierId : receptionDetails.getSupplierId();
+
+            // ================= DELETE OLD INVENTORY =================
+            receptionRepository.deleteReceptionInventoryOrder(deleteIca, deleteSupplierId);
+            receptionRepository.deleteFarmInventoryOrder(deleteIca, deleteSupplierId);
+
+            // ================= INSERT NEW RECEPTION INVENTORY =================
             ReceptionInventoryOrders receptionInventoryOrders = new ReceptionInventoryOrders();
-            receptionInventoryOrders.setInventoryOrder(receptionDetails.getIca());
-            receptionInventoryOrders.setSupplierId(receptionDetails.getSupplierId());
+            receptionInventoryOrders.setInventoryOrder(receptionDetails.getIca()); // NEW ICA
+            receptionInventoryOrders.setSupplierId(receptionDetails.getSupplierId()); // NEW supplier
+
             receptionRepository.insertReceptionInventoryOrder(receptionInventoryOrders);
 
-            receptionRepository.updateSummary(receptionDetails.getReceptionId(), receptionDetails.getTempReceptionId());
-
-            if(receptionDetails.isFarmEnabled) {
+            // ================= FARM INVENTORY =================
+            if (receptionDetails.isFarmEnabled()) {
                 FarmInventoryOrders farmInventoryOrders = new FarmInventoryOrders();
                 farmInventoryOrders.setInventoryOrder(receptionDetails.getIca());
                 farmInventoryOrders.setSupplierId(receptionDetails.getSupplierId());
+
                 receptionRepository.insertFarmInventoryOrder(farmInventoryOrders);
             }
 
+            // ================= SUMMARY =================
+            receptionRepository.updateSummary(
+                    receptionDetails.getReceptionId(),
+                    receptionDetails.getTempReceptionId()
+            );
+
             setReceptionSavedId(reception);
+            progressState.postValue(false);
             receptionStatus.postValue(true);
+
         } else {
             setReceptionSavedId(0);
+            progressState.postValue(false);
             receptionStatus.postValue(false);
         }
     }
 
     public int getReceptionInventoryOrdersCount(String inventoryOrder, int supplierId) {
         return receptionRepository.getReceptionInventoryOrdersCount(inventoryOrder, supplierId);
+    }
+
+    public int getReceptionInventoryOrdersCountForEdit(String inventoryOrder, int supplierId, String tempReceptionId) {
+        return receptionRepository.getReceptionInventoryOrdersCountForEdit(inventoryOrder, supplierId, tempReceptionId);
     }
 
     private final LiveData<List<ReceptionView>> receptionList =
@@ -75,6 +99,10 @@ public class ReceptionViewModel extends ViewModel {
 
     public void load() {
         receptionDataTrigger.setValue(true);
+    }
+
+    public ReceptionDetails fetchReceptionDetailById(String tempReceptionId) {
+        return receptionRepository.fetchReceptionDetailById(tempReceptionId);
     }
 
     public LiveData<Boolean> getProgressState() {

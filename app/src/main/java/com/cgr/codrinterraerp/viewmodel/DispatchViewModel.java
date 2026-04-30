@@ -32,20 +32,31 @@ public class DispatchViewModel extends ViewModel {
         this.dispatchRepository = dispatchRepository;
     }
 
-    public void saveDispatchDetails(DispatchDetails dispatchDetails) {
+    public void saveDispatchDetails(DispatchDetails dispatchDetails, String oldContainerNumber, int oldShippingLineId) {
         progressState.postValue(true);
+
         long dispatch = dispatchRepository.saveDispatchDetails(dispatchDetails);
-        progressState.postValue(false);
+
         if(dispatch > 0) {
 
+            // ================= DETERMINE DELETE VALUES =================
+            String deleteContainerNumber = dispatchDetails.isEdited() ? oldContainerNumber : dispatchDetails.getContainerNumber();
+            int deleteShippingLineId = dispatchDetails.isEdited() ? oldShippingLineId : dispatchDetails.getShippingLineId();
+
+            // ================= DELETE OLD CONTAINERS =================
+            dispatchRepository.deleteDispatchContainers(deleteContainerNumber, deleteShippingLineId);
+
+            // ================= INSERT NEW CONTAINERS =================
             DispatchContainers dispatchContainers = new DispatchContainers();
             dispatchContainers.setContainerNumber(dispatchDetails.getContainerNumber());
             dispatchContainers.setShippingLineId(dispatchDetails.getShippingLineId());
             dispatchRepository.insertDispatchContainer(dispatchContainers);
 
+            // ================= SUMMARY =================
             dispatchRepository.updateSummary(dispatchDetails.getDispatchId(), dispatchDetails.getTempDispatchId());
 
             setDispatchSavedId(dispatch);
+            progressState.postValue(false);
             dispatchStatus.postValue(true);
         } else {
             setDispatchSavedId(0);
@@ -55,6 +66,10 @@ public class DispatchViewModel extends ViewModel {
 
     public int getDispatchContainersCount(String containerNumber, int shippingLineId) {
         return dispatchRepository.getDispatchContainersCount(containerNumber, shippingLineId);
+    }
+
+    public int getDispatchContainersCountForEdit(String containerNumber, int shippingLineId, String tempDispatchId) {
+        return dispatchRepository.getDispatchContainersCountForEdit(containerNumber, shippingLineId, tempDispatchId);
     }
 
     private final LiveData<List<DispatchView>> dispatchList =
@@ -81,6 +96,10 @@ public class DispatchViewModel extends ViewModel {
 
     public void availableContainerload() {
         availableContainerTrigger.setValue(true);
+    }
+
+    public DispatchDetails fetchDispatchDetailById(String tempDispatchId) {
+        return dispatchRepository.fetchDispatchDetailById(tempDispatchId);
     }
 
     public LiveData<Boolean> getProgressState() {

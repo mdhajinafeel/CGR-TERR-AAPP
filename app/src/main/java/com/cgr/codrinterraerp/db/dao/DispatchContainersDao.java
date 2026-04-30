@@ -26,4 +26,7 @@ public interface DispatchContainersDao {
 
     @Query("DELETE FROM dispatch_containers")
     void clearAll();
+
+    @Query("DELETE FROM dispatch_containers WHERE containerNumber = :containerNumber AND shippingLineId = :shippingLineId")
+    void deleteDispatchContainers(String containerNumber, int shippingLineId);
 }

@@ -282,4 +282,12 @@ public class CommonUtils {
             return String.valueOf(value);
         }
     }
+
+    public static int getTagInt(Object tag) {
+        try {
+            return tag instanceof Integer ? (int) tag : 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

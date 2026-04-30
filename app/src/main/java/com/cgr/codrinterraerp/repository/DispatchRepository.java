@@ -60,4 +60,16 @@ public class DispatchRepository {
     public LiveData<List<DispatchView>> getAvailableContainers() {
         return dispatchViewDao.getAvailableContainers();
     }
+
+    public DispatchDetails fetchDispatchDetailById(String tempDispatchId) {
+        return dispatchDetailsDao.fetchDispatchDetailById(tempDispatchId);
+    }
+
+    public int getDispatchContainersCountForEdit(String containerNumber, int shippingLineId, String tempDispatchId) {
+        return dispatchDetailsDao.getDispatchContainersCountForEdit(containerNumber, shippingLineId, tempDispatchId);
+    }
+
+    public void deleteDispatchContainers(String containerNumber, int shippingLineId) {
+        dispatchContainersDao.deleteDispatchContainers(containerNumber, shippingLineId);
+    }
 }
