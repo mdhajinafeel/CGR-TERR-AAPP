@@ -2,13 +2,13 @@ package com.cgr.codrinterraerp.ui.activities;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cgr.codrinterraerp.R;
@@ -20,6 +20,7 @@ import com.cgr.codrinterraerp.ui.common.BaseActivity;
 import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.utils.CommonUtils;
 import com.cgr.codrinterraerp.viewmodel.ReceptionDataViewModel;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class ReceptionDataActivity extends BaseActivity {
 
     private AppCompatTextView tvIca, tvSupplier, tvPieces, tvGrossVolume, tvNetVolume, tvNoReceptionData;
-    private HorizontalScrollView hsvReceptionData;
+    private MaterialCardView cardReception;
     private RecyclerView rvReceptionData;
     private ReceptionDataViewModel receptionDataViewModel;
 
@@ -53,7 +54,7 @@ public class ReceptionDataActivity extends BaseActivity {
             tvGrossVolume = findViewById(R.id.tvGrossVolume);
             tvNetVolume = findViewById(R.id.tvNetVolume);
             tvNoReceptionData = findViewById(R.id.tvNoReceptionData);
-            hsvReceptionData = findViewById(R.id.hsvReceptionData);
+            cardReception = findViewById(R.id.cardReception);
             rvReceptionData = findViewById(R.id.rvReceptionData);
 
             Bundle bundle = getIntent().getExtras();
@@ -109,12 +110,13 @@ public class ReceptionDataActivity extends BaseActivity {
                     }
                 };
 
+                rvReceptionData.setLayoutManager(new LinearLayoutManager(this));
                 rvReceptionData.setAdapter(receptionDataRecyclerViewAdapter);
                 tvNoReceptionData.setVisibility(View.GONE);
-                hsvReceptionData.setVisibility(View.VISIBLE);
+                cardReception.setVisibility(View.VISIBLE);
             } else {
                 tvNoReceptionData.setVisibility(View.VISIBLE);
-                hsvReceptionData.setVisibility(View.GONE);
+                cardReception.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "bindData", e);

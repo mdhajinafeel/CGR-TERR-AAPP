@@ -55,7 +55,7 @@ public interface ReceptionDataDao {
             "AND c.receptionDataId = r.receptionDataId " +
             "JOIN dispatch_details d ON d.tempDispatchId = c.tempDispatchId " +
             "WHERE r.receptionId = :receptionId AND r.isDeleted = 0 AND c.isDeleted = 0 AND d.isDeleted = 0;")
-    List<ReceptionWithContainer> fetchByReceptionId(int receptionId);
+    List<ReceptionWithContainer> fetchByReceptionId(Integer receptionId);
 
     @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, r.receptionDataId " +
             "FROM reception_data r " +
@@ -64,4 +64,17 @@ public interface ReceptionDataDao {
             "JOIN dispatch_details d ON d.tempDispatchId = c.tempDispatchId " +
             "WHERE r.tempReceptionId = :tempReceptionId AND r.isDeleted = 0 AND c.isDeleted = 0 AND d.isDeleted = 0;")
     List<ReceptionWithContainer> fetchByTempReceptionId(String tempReceptionId);
+
+    @Query("UPDATE reception_data SET updatedAt = :updatedAt, isDeleted = 1 WHERE tempReceptionId = :tempReceptionId")
+    int deleteReceptionData(String tempReceptionId, long updatedAt);
+
+    @Query("UPDATE reception_data SET isDeleted = 1, updatedAt = :updatedAt WHERE tempReceptionDataId IN (:tempReceptionDataIds)")
+    int deleteByReceptionDataIds(List<String> tempReceptionDataIds, long updatedAt);
+
+    @Query("SELECT DISTINCT c.tempDispatchId " +
+            "FROM reception_data r " +
+            "JOIN container_data c ON c.containerReceptionMappingId = r.containerReceptionMappingId " +
+            "AND c.tempReceptionDataId = r.tempReceptionDataId " +
+            "WHERE r.tempReceptionId = :tempReceptionId AND r.isDeleted = 0 AND c.isDeleted = 0;")
+    List<String> getAllDispatchIds(String tempReceptionId);
 }

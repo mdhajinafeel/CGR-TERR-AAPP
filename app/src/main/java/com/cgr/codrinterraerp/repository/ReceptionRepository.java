@@ -1,17 +1,23 @@
 package com.cgr.codrinterraerp.repository;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Transaction;
 
+import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
+import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionViewDao;
+import com.cgr.codrinterraerp.db.entities.DispatchSummary;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
 import com.cgr.codrinterraerp.db.entities.ReceptionInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.ReceptionSummary;
 import com.cgr.codrinterraerp.db.views.ReceptionView;
+import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 
 import java.util.List;
@@ -25,17 +31,27 @@ public class ReceptionRepository {
     private final FarmInventoryOrdersDao farmInventoryOrdersDao;
     private final ReceptionViewDao receptionViewDao;
     private final ReceptionSummaryDao receptionSummaryDao;
+    private final DispatchSummaryDao dispatchSummaryDao;
+    private final DispatchSummaryHelper dispatchSummaryHelper;
     private final ReceptionSummaryHelper receptionSummaryHelper;
+    private final ContainerDataDao containerDataDao;
+    private final ReceptionDataDao receptionDataDao;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     public ReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao, ReceptionViewDao receptionViewDao,
-                               FarmInventoryOrdersDao farmInventoryOrdersDao, ReceptionSummaryDao receptionSummaryDao, ReceptionSummaryHelper receptionSummaryHelper) {
+                               FarmInventoryOrdersDao farmInventoryOrdersDao, ReceptionSummaryDao receptionSummaryDao, ReceptionSummaryHelper receptionSummaryHelper,
+                               ContainerDataDao containerDataDao, ReceptionDataDao receptionDataDao, DispatchSummaryHelper dispatchSummaryHelper,
+                               DispatchSummaryDao dispatchSummaryDao) {
         this.receptionDetailsDao = receptionDetailsDao;
         this.receptionInventoryOrdersDao = receptionInventoryOrdersDao;
         this.receptionViewDao = receptionViewDao;
         this.farmInventoryOrdersDao = farmInventoryOrdersDao;
         this.receptionSummaryDao = receptionSummaryDao;
         this.receptionSummaryHelper = receptionSummaryHelper;
+        this.containerDataDao = containerDataDao;
+        this.receptionDataDao = receptionDataDao;
+        this.dispatchSummaryHelper = dispatchSummaryHelper;
+        this.dispatchSummaryDao = dispatchSummaryDao;
     }
 
     public long saveReceptionDetails(ReceptionDetails receptionDetails) {
@@ -69,6 +85,16 @@ public class ReceptionRepository {
         });
     }
 
+    public void updateDispatchSummary(List<String> dispatchIds) {
+        executor.execute(() -> {
+
+            for (String dispatchId : dispatchIds) {
+                DispatchSummary s = dispatchSummaryHelper.calculate(null, dispatchId);
+                dispatchSummaryDao.upsert(s);
+            }
+        });
+    }
+
     public ReceptionDetails fetchReceptionDetailById(String tempReceptionId) {
         return receptionDetailsDao.fetchReceptionDetailById(tempReceptionId);
     }
@@ -79,5 +105,26 @@ public class ReceptionRepository {
 
     public void deleteFarmInventoryOrder(String ica, int supplierId) {
         farmInventoryOrdersDao.deleteFarmInventoryOrder(ica, supplierId);
+    }
+
+    @Transaction
+    public int deleteFullReception(String tempReceptionId, long updatedAt) {
+
+        int totalDeleted = 0;
+
+        // ✅ Delete child first
+        totalDeleted += containerDataDao.deleteContainerData(tempReceptionId, updatedAt);
+
+        // ✅ Then parent
+        totalDeleted += receptionDataDao.deleteReceptionData(tempReceptionId, updatedAt);
+
+        // ✅ Finally root
+        totalDeleted += receptionDetailsDao.deleteReceptionDetails(tempReceptionId, updatedAt);
+
+        return totalDeleted;
+    }
+
+    public List<String> getAllDispatchIds(String tempReceptionId) {
+        return receptionDataDao.getAllDispatchIds(tempReceptionId);
     }
 }

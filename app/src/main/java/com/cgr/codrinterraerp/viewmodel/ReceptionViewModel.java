@@ -105,6 +105,20 @@ public class ReceptionViewModel extends ViewModel {
         return receptionRepository.fetchReceptionDetailById(tempReceptionId);
     }
 
+    public int deleteReceptionDetails(String tempReceptionId, Integer receptionId, long updatedAt) {
+        progressState.postValue(true);
+
+        List<String> getAllDispatchIds = receptionRepository.getAllDispatchIds(tempReceptionId);
+        int receptionDelete = receptionRepository.deleteFullReception(tempReceptionId, updatedAt);
+        if(receptionDelete > 0) {
+            receptionRepository.updateSummary(receptionId, tempReceptionId);
+            receptionRepository.updateDispatchSummary(getAllDispatchIds);
+        }
+
+        progressState.postValue(false);
+        return receptionDelete;
+    }
+
     public LiveData<Boolean> getProgressState() {
         return progressState;
     }

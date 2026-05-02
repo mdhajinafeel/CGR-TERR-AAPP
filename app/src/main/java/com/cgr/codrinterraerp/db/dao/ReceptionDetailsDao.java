@@ -22,4 +22,7 @@ public interface ReceptionDetailsDao {
             "AND tempReceptionId != :tempReceptionId " +
             "AND isDeleted = 0")
     int getReceptionInventoryOrdersCountForEdit(String inventoryOrder, int supplierId, String tempReceptionId);
+
+    @Query("UPDATE reception_details SET updatedAt = :updatedAt, isDeleted = 1 WHERE tempReceptionId = :tempReceptionId")
+    int deleteReceptionDetails(String tempReceptionId, long updatedAt);
 }

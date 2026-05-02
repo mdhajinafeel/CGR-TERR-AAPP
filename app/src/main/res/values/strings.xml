@@ -117,4 +117,9 @@
     <string name="sync_already_in_progress">Sync already in progress…</string>
     <string name="reception_subtitle">%1$s / %2$s</string>
     <string name="reception_data">Reception Data</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="delete_confirmation">Are you sure you want to delete?</string>
+    <string name="data_deleted">Data has been deleted successfully</string>
+    <string name="data_deleted_failed">Failed to delete the data</string>
+    <string name="dispatch_data">Dispatch Data</string>
 </resources>

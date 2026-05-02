@@ -37,7 +37,7 @@ public class DispatchViewModel extends ViewModel {
 
         long dispatch = dispatchRepository.saveDispatchDetails(dispatchDetails);
 
-        if(dispatch > 0) {
+        if (dispatch > 0) {
 
             // ================= DETERMINE DELETE VALUES =================
             String deleteContainerNumber = dispatchDetails.isEdited() ? oldContainerNumber : dispatchDetails.getContainerNumber();
@@ -100,6 +100,20 @@ public class DispatchViewModel extends ViewModel {
 
     public DispatchDetails fetchDispatchDetailById(String tempDispatchId) {
         return dispatchRepository.fetchDispatchDetailById(tempDispatchId);
+    }
+
+    public int deleteDispatchDetails(String tempDispatchId, Integer dispatchId, long updatedAt) {
+        progressState.postValue(true);
+
+        List<String> getAllReceptionIds = dispatchRepository.getAllReceptionIds(tempDispatchId);
+        int dispatchDelete = dispatchRepository.deleteFullDispatch(tempDispatchId, updatedAt);
+        if (dispatchDelete > 0) {
+            dispatchRepository.updateSummary(dispatchId, tempDispatchId);
+            dispatchRepository.updateReceptionSummary(getAllReceptionIds);
+        }
+
+        progressState.postValue(false);
+        return dispatchDelete;
     }
 
     public LiveData<Boolean> getProgressState() {

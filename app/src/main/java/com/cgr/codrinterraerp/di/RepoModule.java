@@ -2,6 +2,7 @@ package com.cgr.codrinterraerp.di;
 
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
@@ -29,6 +30,7 @@ import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 import com.cgr.codrinterraerp.repository.AppMaintenanceRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
+import com.cgr.codrinterraerp.repository.DispatchDataRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.repository.MasterRepository;
 import com.cgr.codrinterraerp.repository.ReceptionDataRepository;
@@ -75,15 +77,20 @@ public class RepoModule {
     @Singleton
     ReceptionRepository provideReceptionRepository(ReceptionDetailsDao receptionDetailsDao, ReceptionInventoryOrdersDao receptionInventoryOrdersDao,
                                                    ReceptionViewDao receptionViewDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
-                                                   ReceptionSummaryDao receptionSummaryDao, ReceptionSummaryHelper receptionSummaryHelper) {
-        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao, farmInventoryOrdersDao, receptionSummaryDao, receptionSummaryHelper);
+                                                   ReceptionSummaryDao receptionSummaryDao, ReceptionSummaryHelper receptionSummaryHelper,
+                                                   ContainerDataDao containerDataDao, ReceptionDataDao receptionDataDao, DispatchSummaryHelper dispatchSummaryHelper,
+                                                   DispatchSummaryDao dispatchSummaryDao) {
+        return new ReceptionRepository(receptionDetailsDao, receptionInventoryOrdersDao, receptionViewDao, farmInventoryOrdersDao, receptionSummaryDao,
+                receptionSummaryHelper, containerDataDao, receptionDataDao, dispatchSummaryHelper, dispatchSummaryDao);
     }
 
     @Provides
     @Singleton
     DispatchRepository provideDispatchRepository(DispatchDetailsDao dispatchDetailsDao, DispatchContainersDao dispatchContainersDao, DispatchViewDao dispatchViewDao,
-                                                 DispatchSummaryDao dispatchSummaryDao, DispatchSummaryHelper dispatchSummaryHelper) {
-        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao, dispatchSummaryDao, dispatchSummaryHelper);
+                                                 DispatchSummaryDao dispatchSummaryDao, DispatchSummaryHelper dispatchSummaryHelper, ContainerDataDao containerDataDao,
+                                                 ReceptionDataDao receptionDataDao, ReceptionSummaryHelper receptionSummaryHelper, ReceptionSummaryDao receptionSummaryDao) {
+        return new DispatchRepository(dispatchDetailsDao, dispatchContainersDao, dispatchViewDao, dispatchSummaryDao, dispatchSummaryHelper, containerDataDao,
+                receptionDataDao, receptionSummaryHelper, receptionSummaryDao);
     }
 
     @Provides
@@ -91,5 +98,11 @@ public class RepoModule {
     ReceptionDataRepository provideReceptionDataRepository(MeasurementSystemFormulasDao measurementSystemFormulasDao, ReceptionTransactionDao receptionTransactionDao,
                                                            ReceptionDataDao receptionDataDao, ReceptionRepository receptionRepository, DispatchRepository dispatchRepository) {
         return new ReceptionDataRepository(measurementSystemFormulasDao, receptionTransactionDao, receptionDataDao, receptionRepository, dispatchRepository);
+    }
+
+    @Provides
+    @Singleton
+    DispatchDataRepository provideDispatchDataRepository(ContainerDataDao containerDataDao) {
+        return new DispatchDataRepository(containerDataDao);
     }
 }

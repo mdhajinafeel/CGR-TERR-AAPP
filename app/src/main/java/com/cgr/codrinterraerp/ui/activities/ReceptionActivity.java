@@ -291,6 +291,12 @@ public class ReceptionActivity extends BaseActivity {
 
             cbEnableFarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
+
+                    if(isReceptionEdit && existingReceptionDetail != null) {
+                        purchaseContractsList = masterViewModel.fetchPurchaseContracts(existingReceptionDetail.getSupplierId(), existingReceptionDetail.getProductId(),
+                                existingReceptionDetail.getProductTypeId());
+                    }
+
                     llFarm.setVisibility(View.VISIBLE);
                 } else {
                     llFarm.setVisibility(View.GONE);

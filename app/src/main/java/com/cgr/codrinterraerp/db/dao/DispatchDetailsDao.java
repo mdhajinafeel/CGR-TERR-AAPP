@@ -22,4 +22,7 @@ public interface DispatchDetailsDao {
             "AND tempDispatchId != :tempDispatchId " +
             "AND isDeleted = 0")
     int getDispatchContainersCountForEdit(String containerNumber, int shippingLineId, String tempDispatchId);
+
+    @Query("UPDATE dispatch_details SET isDeleted = 1, updatedAt = :updatedAt WHERE tempDispatchId = :tempDispatchId")
+    int deleteDispatch(String tempDispatchId, long updatedAt);
 }

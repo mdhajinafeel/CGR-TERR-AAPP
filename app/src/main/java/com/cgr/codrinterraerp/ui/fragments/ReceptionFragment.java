@@ -3,6 +3,8 @@ package com.cgr.codrinterraerp.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,6 +36,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -110,10 +115,7 @@ public class ReceptionFragment extends Fragment {
                         receptionResultLauncher.launch(intent, options);
                     });
 
-                    holder.getView(R.id.btnDeleteReception).setOnClickListener(v -> {
-                        ReceptionView clickedItem = (ReceptionView) v.getTag();
-                        Toast.makeText(getContext(), "Delete - " + clickedItem.ica, Toast.LENGTH_SHORT).show();
-                    });
+                    holder.getView(R.id.btnDeleteReception).setOnClickListener(v -> deleteReception(receptionView));
 
                     holder.getView(R.id.btnReceptionData).setOnClickListener(v -> {
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.fade_fast_in, R.anim.fade_fast_out);
@@ -150,10 +152,7 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-
-                            // 🔥 Optional: You DON'T need this if Room works correctly
                             receptionViewModel.load();
-
                             Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -164,11 +163,7 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-
-                            // 🔥 Optional: You DON'T need this if Room works correctly
                             receptionViewModel.load();
-
-                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
             );
@@ -178,8 +173,64 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                            receptionViewModel.load();
+                            Toast.makeText(requireContext(), getString(R.string.data_updated_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
             );
+
+    private void deleteReception(ReceptionView receptionView) {
+        try {
+            LayoutInflater dialogInflater = LayoutInflater.from(requireContext());
+            View dialogView = dialogInflater.inflate(R.layout.custom_dialog_delete, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setView(dialogView);
+
+            AlertDialog dialog = builder.create();
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+            AppCompatTextView dialogHeader = dialogView.findViewById(R.id.dialogHeader);
+            AppCompatTextView dialogBody = dialogView.findViewById(R.id.dialogBody);
+            MaterialButton btnDelete = dialogView.findViewById(R.id.btnDelete);
+            MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
+
+            dialogHeader.setText(R.string.confirmation);
+            dialogBody.setText(R.string.delete_confirmation);
+
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+            btnDelete.setOnClickListener(v -> new Thread(() -> {
+
+                int deleted = receptionViewModel.deleteReceptionDetails(receptionView.tempReceptionId, receptionView.receptionId, System.currentTimeMillis());
+
+                // Switch to main thread safely
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                    // ✅ Prevent crash if fragment is not attached
+                    if (!isAdded() || getContext() == null) return;
+
+                    if (deleted > 0) {
+                        Toast.makeText(getContext(), getString(R.string.data_deleted), Toast.LENGTH_SHORT).show();
+                        // ✅ Refresh data
+                        receptionViewModel.load();
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.data_deleted_failed), Toast.LENGTH_SHORT).show();
+                    }
+
+                    // ✅ Safe dialog dismiss
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                });
+
+            }).start());
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        } catch (Exception e) {
+            AppLogger.e(getClass(), "deleteReception", e);
+        }
+    }
 }
