@@ -52,9 +52,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ReceptionDataCaptureActivity extends BaseActivity {
 
-    private TextInputLayout tiCircumference, tiLength, tiPieces;
+    private TextInputLayout tiCircumference, tiLength, tiPieces, tiThickness, tiWidth, tiLengthSquare, tiPiecesSquare;
+    private TextInputEditText etCircumference, etLength, etPieces, etThickness, etWidth, etLengthSquare, etPiecesSquare;
     private AppCompatTextView tvNoDataFound;
-    private TextInputEditText etCircumference, etLength, etPieces;
     private RecyclerView rvAvailableContainers;
     private RecyclerViewAdapter<DispatchView> dispatchViewRecyclerViewAdapter;
     private int normalColor, errorColor;
@@ -84,9 +84,19 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             tiCircumference = findViewById(R.id.tiCircumference);
             tiLength = findViewById(R.id.tiLength);
             tiPieces = findViewById(R.id.tiPieces);
+            tiThickness = findViewById(R.id.tiThickness);
+            tiWidth = findViewById(R.id.tiWidth);
+            tiLengthSquare = findViewById(R.id.tiLengthSquare);
+            tiPiecesSquare = findViewById(R.id.tiPiecesSquare);
             etCircumference = findViewById(R.id.etCircumference);
             etLength = findViewById(R.id.etLength);
             etPieces = findViewById(R.id.etPieces);
+            etThickness = findViewById(R.id.etThickness);
+            etWidth = findViewById(R.id.etWidth);
+            etLengthSquare = findViewById(R.id.etLengthSquare);
+            etPiecesSquare = findViewById(R.id.etPiecesSquare);
+            LinearLayout llRoundLogs = findViewById(R.id.llRoundLogs);
+            LinearLayout llSquareBlocks = findViewById(R.id.llSquareBlocks);
             MaterialButton mbSubmit = findViewById(R.id.mbSubmit);
             MaterialButton mbClear = findViewById(R.id.mbClear);
             AppCompatImageView ivReceptionInfo = findViewById(R.id.ivReceptionInfo);
@@ -118,17 +128,20 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                     initializeAdapter();
 
                     // ✅ Observe data (auto updates)
-                    dispatchViewModel.getAvailableContainerList().observe(this, this::bindAvailableContainerData);
-                    dispatchViewModel.availableContainerload();
+                    dispatchViewModel.getAvailableContainerList(receptionView.productTypeId).observe(this, this::bindAvailableContainerData);
 
                     CommonUtils.clearErrorOnTyping(etCircumference, tiCircumference);
                     CommonUtils.clearErrorOnTyping(etLength, tiLength);
                     CommonUtils.clearErrorOnTyping(etPieces, tiPieces);
+                    CommonUtils.clearErrorOnTyping(etThickness, tiThickness);
+                    CommonUtils.clearErrorOnTyping(etWidth, tiWidth);
+                    CommonUtils.clearErrorOnTyping(etLengthSquare, tiLengthSquare);
+                    CommonUtils.clearErrorOnTyping(etPiecesSquare, tiPiecesSquare);
 
-                    mbClear.setOnClickListener(v -> clearFields());
+                    mbClear.setOnClickListener(v -> clearFields(receptionView.productTypeId));
 
                     mbSubmit.setOnClickListener(v -> {
-                        if (validateInputs()) {
+                        if (validateInputs(receptionView.productTypeId)) {
 
                             // ✅ Check container selected
                             if (selectedContainer == null) {
@@ -137,11 +150,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                                 return;
                             }
 
-                            //if(receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
-                            //    // TODO SQUARE BLOCKS
-                            //} else {
-                            submitMeasurementData();
-                            //}
+                            submitMeasurementData(receptionView.productTypeId);
                         }
                     });
 
@@ -154,7 +163,15 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                         receptionDataResultLauncher.launch(intent, options);
                     });
 
-                    clearFields();
+                    if (receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
+                        llSquareBlocks.setVisibility(View.VISIBLE);
+                        llRoundLogs.setVisibility(View.GONE);
+                    } else {
+                        llSquareBlocks.setVisibility(View.GONE);
+                        llRoundLogs.setVisibility(View.VISIBLE);
+                    }
+
+                    clearFields(receptionView.productTypeId);
                     fetchFormulas();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.common_error), Toast.LENGTH_SHORT).show();
@@ -176,15 +193,28 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             public void onPostBindViewHolder(ViewHolder holder, DispatchView dispatchView) {
                 if (dispatchView != null) {
 
+                    LinearLayout llAvgGirth = (LinearLayout) holder.getView(R.id.llAvgGirth);
+
                     int position = holder.getBindingAdapterPosition();
                     boolean isSelected = position == selectedPosition;
 
                     holder.setViewText(R.id.tvContainerNumber, dispatchView.containerNumber);
                     holder.setViewText(R.id.tvShippingLine, dispatchView.shippingLine);
                     holder.setViewText(R.id.tvPieces, String.valueOf(dispatchView.totalPieces));
-                    holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
+
+                    if(dispatchView.productTypeId == 1 || dispatchView.productTypeId == 3) {
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.volume_pie));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalVolumePie));
+
+                        llAvgGirth.setVisibility(View.GONE);
+                    } else {
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.gross_volume));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
+                        holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));
+                        llAvgGirth.setVisibility(View.VISIBLE);
+                    }
+
                     holder.setViewText(R.id.tvNetVolume, String.valueOf(dispatchView.totalNetVolume));
-                    holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));
 
                     View cardBg = holder.getView(R.id.cardBackground);
                     AppCompatImageView tick = (AppCompatImageView) holder.getView(R.id.ivSelected);
@@ -256,59 +286,116 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
         }
     }
 
-    private boolean validateInputs() {
+    private boolean validateInputs(int productTypeId) {
 
         hideKeyboard(this);
 
-        String circ = Objects.requireNonNull(etCircumference.getText()).toString().trim();
-        String length = Objects.requireNonNull(etLength.getText()).toString().trim();
-        String pieces = Objects.requireNonNull(etPieces.getText()).toString().trim();
+        if (productTypeId == 1 || productTypeId == 3) {
 
-        boolean isValid = true;
+            String thickness = Objects.requireNonNull(etThickness.getText()).toString().trim();
+            String width = Objects.requireNonNull(etWidth.getText()).toString().trim();
+            String length = Objects.requireNonNull(etLengthSquare.getText()).toString().trim();
+            String pieces = Objects.requireNonNull(etPiecesSquare.getText()).toString().trim();
 
-        // ❗ Reset first
-        resetBorders();
+            boolean isValid = true;
 
-        if (circ.isEmpty()) {
-            tiCircumference.setBoxStrokeColor(errorColor);
-            etCircumference.requestFocus();
-            isValid = false;
-        }
+            // ❗ Reset first
+            resetBorders(productTypeId);
 
-        if (length.isEmpty()) {
-            tiLength.setBoxStrokeColor(errorColor);
-            if (isValid) etLength.requestFocus();
-            isValid = false;
-        }
-
-        if (!length.isEmpty()) {
-            double l = Double.parseDouble(length);
-            if (l <= 100) {
-                Toast.makeText(getApplicationContext(), getString(R.string.length_must_be_greater_than_100), Toast.LENGTH_SHORT).show();
+            if (thickness.isEmpty()) {
+                tiThickness.setBoxStrokeColor(errorColor);
+                etThickness.requestFocus();
                 isValid = false;
             }
-        }
 
-        if (pieces.isEmpty()) {
-            tiPieces.setBoxStrokeColor(errorColor);
-            if (isValid) etPieces.requestFocus();
-            isValid = false;
-        }
+            if (width.isEmpty()) {
+                tiWidth.setBoxStrokeColor(errorColor);
+                etWidth.requestFocus();
+                isValid = false;
+            }
 
-        return isValid;
+            if (length.isEmpty()) {
+                tiLengthSquare.setBoxStrokeColor(errorColor);
+                if (isValid) etLengthSquare.requestFocus();
+                isValid = false;
+            }
+
+            if (pieces.isEmpty()) {
+                tiPiecesSquare.setBoxStrokeColor(errorColor);
+                if (isValid) etPiecesSquare.requestFocus();
+                isValid = false;
+            }
+
+            return isValid;
+        } else {
+
+            String circ = Objects.requireNonNull(etCircumference.getText()).toString().trim();
+            String length = Objects.requireNonNull(etLength.getText()).toString().trim();
+            String pieces = Objects.requireNonNull(etPieces.getText()).toString().trim();
+
+            boolean isValid = true;
+
+            // ❗ Reset first
+            resetBorders(productTypeId);
+
+            if (circ.isEmpty()) {
+                tiCircumference.setBoxStrokeColor(errorColor);
+                etCircumference.requestFocus();
+                isValid = false;
+            }
+
+            if (length.isEmpty()) {
+                tiLength.setBoxStrokeColor(errorColor);
+                if (isValid) etLength.requestFocus();
+                isValid = false;
+            }
+
+            if (!length.isEmpty()) {
+                double l = Double.parseDouble(length);
+                if (l <= 100) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.length_must_be_greater_than_100), Toast.LENGTH_SHORT).show();
+                    isValid = false;
+                }
+            }
+
+            if (pieces.isEmpty()) {
+                tiPieces.setBoxStrokeColor(errorColor);
+                if (isValid) etPieces.requestFocus();
+                isValid = false;
+            }
+
+            return isValid;
+        }
     }
 
-    private void resetBorders() {
-        tiCircumference.setBoxStrokeColor(normalColor);
-        tiLength.setBoxStrokeColor(normalColor);
-        tiPieces.setBoxStrokeColor(normalColor);
+    private void resetBorders(int productTypeId) {
+
+        if (productTypeId == 1 || productTypeId == 3) {
+            tiThickness.setBoxStrokeColor(normalColor);
+            tiWidth.setBoxStrokeColor(normalColor);
+            tiLengthSquare.setBoxStrokeColor(normalColor);
+            tiPiecesSquare.setBoxStrokeColor(normalColor);
+        } else {
+            tiCircumference.setBoxStrokeColor(normalColor);
+            tiLength.setBoxStrokeColor(normalColor);
+            tiPieces.setBoxStrokeColor(normalColor);
+        }
     }
 
-    private void clearFields() {
-        etCircumference.setText("");
-        etLength.setText("");
-        etPieces.setText("1");
-        etCircumference.requestFocus();
+    private void clearFields(int productTypeId) {
+
+        if (productTypeId == 1 || productTypeId == 3) {
+            etThickness.setText("");
+            etWidth.setText("");
+            etLengthSquare.setText("");
+            etPiecesSquare.setText("1");
+            etThickness.requestFocus();
+        } else {
+            etCircumference.setText("");
+            etLength.setText("");
+            etPieces.setText("1");
+            etCircumference.requestFocus();
+        }
     }
 
     private void resetContainerSelection() {
@@ -330,104 +417,206 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
         }
     }
 
-    private void submitMeasurementData() {
+    private void submitMeasurementData(int productTypeId) {
         try {
-            double c = Double.parseDouble(Objects.requireNonNull(etCircumference.getText()).toString());
-            double l = Double.parseDouble(Objects.requireNonNull(etLength.getText()).toString());
-            int pieces = Integer.parseInt(Objects.requireNonNull(etPieces.getText()).toString());
 
-            double netVolume = 0;
-            double grossVolume = 0;
+            if (productTypeId == 1 || productTypeId == 3) {
+                double t = Double.parseDouble(Objects.requireNonNull(etThickness.getText()).toString());
+                double w = Double.parseDouble(Objects.requireNonNull(etWidth.getText()).toString());
+                double l = Double.parseDouble(Objects.requireNonNull(etLengthSquare.getText()).toString());
+                int pieces = Integer.parseInt(Objects.requireNonNull(etPiecesSquare.getText()).toString());
 
-            for (FormulaWithVariables f : formulaData) {
-                // ✅ Build variable map
-                Map<String, Double> inputValues = new HashMap<>();
+                double volumePie = 0;
 
-                for (MeasurementSystemFormulaVariables v : f.variables) {
-                    switch (v.getVarName()) {
-                        case "c":
-                            inputValues.put("c", c);
-                            break;
-                        case "l":
-                            inputValues.put("l", l);
-                            break;
+                for (FormulaWithVariables f : formulaData) {
+                    // ✅ Build variable map
+                    Map<String, Double> inputValues = new HashMap<>();
+                    for (MeasurementSystemFormulaVariables v : f.variables) {
+                        switch (v.getVarName()) {
+                            case "t":
+                                inputValues.put("t", t);
+                                break;
+                            case "w":
+                                inputValues.put("w", w);
+                                break;
+                            case "l":
+                                inputValues.put("l", l);
+                                break;
+                        }
+                    }
+
+                    // ✅ Evaluate formula
+                    double value = FormulaEngine.evaluate(f.formula.getFormula(), inputValues);
+
+                    // ✅ Apply rounding
+                    double finalValue = FormulaEngine.applyRounding(
+                            value,
+                            f.formula.getRoundPrecision(),
+                            f.formula.getRoundingType()
+                    );
+
+                    // ✅ Separate by context
+                    if ("PIE".equalsIgnoreCase(f.formula.getContext())) {
+                        volumePie = finalValue;
                     }
                 }
 
-                // ✅ Evaluate formula
-                double value = FormulaEngine.evaluate(f.formula.getFormula(), inputValues);
+                // ✅ Multiply by pieces
+                double totalNet = volumePie * pieces;
 
-                // ✅ Apply rounding
-                double finalValue = FormulaEngine.applyRounding(
-                        value,
-                        f.formula.getRoundPrecision(),
-                        f.formula.getRoundingType()
-                );
+                BigDecimal pie = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
+                double pieToSave = Math.round(pie.doubleValue() * 1000.0) / 1000.0;
 
-                // ✅ Separate by context
-                if ("NET".equalsIgnoreCase(f.formula.getContext())) {
-                    netVolume = finalValue;
-                } else if ("GROSS".equalsIgnoreCase(f.formula.getContext())) {
-                    grossVolume = finalValue;
-                }
-            }
+                double net = pieToSave / 424;
+                double netToSave = Math.round(net * 1000.0) / 1000.0;
 
-            // ✅ Multiply by pieces
-            double totalNet = netVolume * pieces;
-            double totalGross = grossVolume * pieces;
+                String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
 
-            BigDecimal net = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
-            BigDecimal gross = BigDecimal.valueOf(totalGross).setScale(3, RoundingMode.HALF_UP);
-            double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
-            double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
+                ReceptionData receptionData = new ReceptionData();
+                receptionData.setTempReceptionDataId(tempReceptionDataId);
+                receptionData.setTempReceptionId(receptionView.tempReceptionId);
+                receptionData.setReceptionId(receptionView.receptionId);
+                receptionData.setReceptionDataId(null);
+                receptionData.setCircumference(0);
+                receptionData.setLength(l);
+                receptionData.setThickness(t);
+                receptionData.setWidth(w);
+                receptionData.setPieces(pieces);
+                receptionData.setGrossVolume(0);
+                receptionData.setNetVolume(netToSave);
+                receptionData.setVolumePie(pieToSave);
+                receptionData.setSynced(false);
+                receptionData.setDeleted(false);
+                receptionData.setEdited(false);
+                receptionData.setUpdatedAt(System.currentTimeMillis());
+                receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
-            String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                ContainerData containerData = new ContainerData();
+                containerData.setTempReceptionDataId(tempReceptionDataId);
+                containerData.setTempDispatchId(selectedContainer.tempDispatchId);
+                containerData.setDispatchId(selectedContainer.dispatchId);
+                containerData.setReceptionId(receptionView.receptionId);
+                containerData.setTempReceptionId(receptionView.tempReceptionId);
+                containerData.setReceptionDataId(null);
+                containerData.setPieces(pieces);
+                containerData.setGrossVolume(0);
+                containerData.setNetVolume(netToSave);
+                containerData.setVolumePie(pieToSave);
+                containerData.setSynced(false);
+                containerData.setDeleted(false);
+                containerData.setEdited(false);
+                containerData.setUpdatedAt(System.currentTimeMillis());
+                containerData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
-            ReceptionData receptionData = new ReceptionData();
-            receptionData.setTempReceptionDataId(tempReceptionDataId);
-            receptionData.setTempReceptionId(receptionView.tempReceptionId);
-            receptionData.setReceptionId(receptionView.receptionId);
-            receptionData.setReceptionDataId(null);
-            receptionData.setCircumference(c);
-            receptionData.setLength(l);
-            receptionData.setPieces(pieces);
-            receptionData.setGrossVolume(grossToSave);
-            receptionData.setNetVolume(netToSave);
-            receptionData.setSynced(false);
-            receptionData.setDeleted(false);
-            receptionData.setEdited(false);
-            receptionData.setUpdatedAt(System.currentTimeMillis());
-            receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
+                saveMeasurementData(receptionData, containerData);
 
-            ContainerData containerData = new ContainerData();
-            containerData.setTempReceptionDataId(tempReceptionDataId);
-            containerData.setTempDispatchId(selectedContainer.tempDispatchId);
-            containerData.setDispatchId(selectedContainer.dispatchId);
-            containerData.setReceptionId(receptionView.receptionId);
-            containerData.setTempReceptionId(receptionView.tempReceptionId);
-            containerData.setReceptionDataId(null);
-            containerData.setPieces(pieces);
-            containerData.setGrossVolume(grossToSave);
-            containerData.setNetVolume(netToSave);
-            containerData.setSynced(false);
-            containerData.setDeleted(false);
-            containerData.setEdited(false);
-            containerData.setUpdatedAt(System.currentTimeMillis());
-            containerData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
+            } else {
 
-            receptionDataViewModel.saveMeasurementData(receptionData, containerData, success ->
-                    runOnUiThread(() -> {
-                        if (success) {
-                            resetContainerSelection();
-                            clearFields();
-                            dispatchViewModel.availableContainerload();
-                        } else {
-                            Toast.makeText(this, getString(R.string.data_added_failed), Toast.LENGTH_SHORT).show();
+                double c = Double.parseDouble(Objects.requireNonNull(etCircumference.getText()).toString());
+                double l = Double.parseDouble(Objects.requireNonNull(etLength.getText()).toString());
+                int pieces = Integer.parseInt(Objects.requireNonNull(etPieces.getText()).toString());
+
+                double netVolume = 0;
+                double grossVolume = 0;
+
+                for (FormulaWithVariables f : formulaData) {
+                    // ✅ Build variable map
+                    Map<String, Double> inputValues = new HashMap<>();
+
+                    for (MeasurementSystemFormulaVariables v : f.variables) {
+                        switch (v.getVarName()) {
+                            case "c":
+                                inputValues.put("c", c);
+                                break;
+                            case "l":
+                                inputValues.put("l", l);
+                                break;
                         }
-                    }));
+                    }
+
+                    // ✅ Evaluate formula
+                    double value = FormulaEngine.evaluate(f.formula.getFormula(), inputValues);
+
+                    // ✅ Apply rounding
+                    double finalValue = FormulaEngine.applyRounding(
+                            value,
+                            f.formula.getRoundPrecision(),
+                            f.formula.getRoundingType()
+                    );
+
+                    // ✅ Separate by context
+                    if ("NET".equalsIgnoreCase(f.formula.getContext())) {
+                        netVolume = finalValue;
+                    } else if ("GROSS".equalsIgnoreCase(f.formula.getContext())) {
+                        grossVolume = finalValue;
+                    }
+                }
+
+                // ✅ Multiply by pieces
+                double totalNet = netVolume * pieces;
+                double totalGross = grossVolume * pieces;
+
+                BigDecimal net = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
+                BigDecimal gross = BigDecimal.valueOf(totalGross).setScale(3, RoundingMode.HALF_UP);
+                double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
+                double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
+
+                String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
+
+                ReceptionData receptionData = new ReceptionData();
+                receptionData.setTempReceptionDataId(tempReceptionDataId);
+                receptionData.setTempReceptionId(receptionView.tempReceptionId);
+                receptionData.setReceptionId(receptionView.receptionId);
+                receptionData.setReceptionDataId(null);
+                receptionData.setCircumference(c);
+                receptionData.setLength(l);
+                receptionData.setThickness(0);
+                receptionData.setWidth(0);
+                receptionData.setPieces(pieces);
+                receptionData.setGrossVolume(grossToSave);
+                receptionData.setNetVolume(netToSave);
+                receptionData.setVolumePie(0);
+                receptionData.setSynced(false);
+                receptionData.setDeleted(false);
+                receptionData.setEdited(false);
+                receptionData.setUpdatedAt(System.currentTimeMillis());
+                receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
+
+                ContainerData containerData = new ContainerData();
+                containerData.setTempReceptionDataId(tempReceptionDataId);
+                containerData.setTempDispatchId(selectedContainer.tempDispatchId);
+                containerData.setDispatchId(selectedContainer.dispatchId);
+                containerData.setReceptionId(receptionView.receptionId);
+                containerData.setTempReceptionId(receptionView.tempReceptionId);
+                containerData.setReceptionDataId(null);
+                containerData.setPieces(pieces);
+                containerData.setGrossVolume(grossToSave);
+                containerData.setNetVolume(netToSave);
+                containerData.setVolumePie(0);
+                containerData.setSynced(false);
+                containerData.setDeleted(false);
+                containerData.setEdited(false);
+                containerData.setUpdatedAt(System.currentTimeMillis());
+                containerData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
+
+                saveMeasurementData(receptionData, containerData);
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "submitMeasurementData", e);
         }
+    }
+
+    private void saveMeasurementData(ReceptionData receptionData, ContainerData containerData) {
+        receptionDataViewModel.saveMeasurementData(receptionData, containerData, success ->
+                runOnUiThread(() -> {
+                    if (success) {
+                        resetContainerSelection();
+                        clearFields(receptionView.productTypeId);
+                        dispatchViewModel.getAvailableContainerList(receptionView.productTypeId);
+                    } else {
+                        Toast.makeText(this, getString(R.string.data_added_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }));
     }
 
     private void showReceptionDetails() {
@@ -476,10 +665,10 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             tvGrossVolume.setText(String.valueOf(receptionView.totalGrossVolume));
             tvNetVolume.setText(String.valueOf(receptionView.totalNetVolume));
 
-            if(receptionView.isFarmEnabled) {
+            if (receptionView.isFarmEnabled) {
                 tvContractCode.setText(receptionView.contractCode);
 
-                if(receptionView.description != null && !receptionView.description.isEmpty()) {
+                if (receptionView.description != null && !receptionView.description.isEmpty()) {
                     tvContractDesc.setText(receptionView.description);
                     llContractDesc.setVisibility(View.VISIBLE);
                 } else {

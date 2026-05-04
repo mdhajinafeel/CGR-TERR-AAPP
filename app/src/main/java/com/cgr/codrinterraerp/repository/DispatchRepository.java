@@ -18,6 +18,7 @@ import com.cgr.codrinterraerp.db.views.DispatchView;
 import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -82,8 +83,18 @@ public class DispatchRepository {
         });
     }
 
-    public LiveData<List<DispatchView>> getAvailableContainers() {
-        return dispatchViewDao.getAvailableContainers();
+    public LiveData<List<DispatchView>> getAvailableContainers(int productTypeId) {
+
+        List<Integer> productTypeIds = new ArrayList<>();
+        if(productTypeId == 1 || productTypeId == 3) {
+            productTypeIds.add(1);
+            productTypeIds.add(3);
+        } else {
+            productTypeIds.add(2);
+            productTypeIds.add(4);
+        }
+
+        return dispatchViewDao.getAvailableContainers(productTypeIds);
     }
 
     public DispatchDetails fetchDispatchDetailById(String tempDispatchId) {

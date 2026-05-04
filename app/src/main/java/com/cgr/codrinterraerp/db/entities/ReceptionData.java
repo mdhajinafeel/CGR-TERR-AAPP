@@ -26,9 +26,12 @@ public class ReceptionData implements Serializable {
     private Integer receptionId;
     private double circumference;
     private double length;
+    private double thickness;
+    private double width;
     private int pieces;
     private double grossVolume;
     private double netVolume;
+    private double volumePie;
     private boolean isSynced = false;
     private boolean isDeleted = false;
     private boolean isEdited = false;
@@ -163,5 +166,29 @@ public class ReceptionData implements Serializable {
 
     public void setContainerNumber(String containerNumber) {
         this.containerNumber = containerNumber;
+    }
+
+    public double getThickness() {
+        return thickness;
+    }
+
+    public void setThickness(double thickness) {
+        this.thickness = thickness;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getVolumePie() {
+        return volumePie;
+    }
+
+    public void setVolumePie(double volumePie) {
+        this.volumePie = volumePie;
     }
 }

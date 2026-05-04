@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,7 +91,17 @@ public class DispatchFragment extends Fragment {
                     holder.setViewText(R.id.tvContainerNumber, dispatchView.containerNumber);
                     holder.setViewText(R.id.tvShippingLine, dispatchView.shippingLine);
                     holder.setViewText(R.id.tvPieces, String.valueOf(dispatchView.totalPieces));
-                    holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
+
+                    if(dispatchView.productTypeId == 1 || dispatchView.productTypeId == 3) {
+                        holder.setViewImageDrawable(R.id.ivTypeIcon, ContextCompat.getDrawable(requireContext(), R.drawable.ic_square_logs));
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.volume_pie));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalVolumePie));
+                    } else {
+                        holder.setViewImageDrawable(R.id.ivTypeIcon, ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_logs));
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.gross_volume));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
+                    }
+
                     holder.setViewText(R.id.tvNetVolume, String.valueOf(dispatchView.totalNetVolume));
                     holder.setViewText(R.id.tvDate, dispatchView.dispatchDate);
                     holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));

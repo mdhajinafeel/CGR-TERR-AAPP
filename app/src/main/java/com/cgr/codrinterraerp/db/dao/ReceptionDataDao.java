@@ -51,6 +51,12 @@ public interface ReceptionDataDao {
     @Query("SELECT IFNULL(SUM(netVolume),0) FROM reception_data WHERE tempReceptionId = :tempId AND isDeleted = 0")
     double sumNetByTempReceptionId(String tempId);
 
+    @Query("SELECT IFNULL(SUM(volumePie),0) FROM reception_data WHERE receptionId = :receptionId AND isDeleted = 0")
+    double sumPieByReceptionId(Integer receptionId);
+
+    @Query("SELECT IFNULL(SUM(volumePie),0) FROM reception_data WHERE tempReceptionId = :tempId AND isDeleted = 0")
+    double sumPieByTempReceptionId(String tempId);
+
     @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, r.receptionDataId, r.tempReceptionId " +
             "FROM reception_data r " +
             "JOIN container_data c ON c.containerReceptionMappingId = r.containerReceptionMappingId " +
@@ -86,7 +92,7 @@ public interface ReceptionDataDao {
     @Query("SELECT 0 as id, 0 as updatedAt, '' as tempReceptionId, '' as receptionId, " +
             "IFNULL(SUM(pieces),0) AS totalPieces, " +
             "IFNULL(SUM(grossVolume),0) AS totalGrossVolume, " +
-            "IFNULL(SUM(netVolume),0) AS totalNetVolume " +
+            "IFNULL(SUM(netVolume),0) AS totalNetVolume, IFNULL(SUM(volumePie),0) AS totalVolumePie " +
             "FROM reception_data " +
             "WHERE tempReceptionId = :tempReceptionId AND isDeleted = 0")
     LiveData<ReceptionSummary> getSummaryByTempId(String tempReceptionId);

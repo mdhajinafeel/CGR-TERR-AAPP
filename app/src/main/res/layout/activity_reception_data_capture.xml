@@ -123,13 +123,15 @@
 
             </LinearLayout>
 
-            <!-- Input Fields Row -->
+            <!-- Input Fields Row - Round Logs -->
             <LinearLayout
+                android:id="@+id/llRoundLogs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_12"
                 android:layout_marginEnd="@dimen/margin_10"
+                android:visibility="gone"
                 android:baselineAligned="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -210,6 +212,136 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPieces"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Input Fields Row - Square Blocks -->
+            <LinearLayout
+                android:id="@+id/llSquareBlocks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_marginTop="@dimen/margin_12"
+                android:layout_marginEnd="@dimen/margin_10"
+                android:visibility="gone"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Input 1 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiThickness"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/thickness"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etThickness"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Input 2 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiWidth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/width"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etWidth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Input 3 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiLengthSquare"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/length"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLengthSquare"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableTint="@color/colorDarkGreen"
+                        android:fontFamily="@font/exo2_medium"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorDarkGrey"
+                        android:textSize="@dimen/text_18" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Input 4 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiPiecesSquare"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/pieces"
+                    app:boxStrokeColor="@color/colorDarkGreen"
+                    app:boxStrokeErrorColor="@color/colorErrorOrange"
+                    app:boxStrokeWidth="@dimen/box_stroke"
+                    app:errorEnabled="false"
+                    app:hintEnabled="true"
+                    app:hintTextAppearance="@style/HintTextAppearance"
+                    app:hintTextColor="@color/colorDarkGrey">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPiecesSquare"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableTint="@color/colorDarkGreen"

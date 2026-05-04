@@ -27,7 +27,7 @@ public class ReceptionSummaryHelper {
             s.totalPieces = receptionDataDao.sumPiecesByReceptionId(receptionId);
             s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByReceptionId(receptionId), 3);
             s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByReceptionId(receptionId), 3);
-
+            s.totalVolumePie = CommonUtils.round(receptionDataDao.sumPieByReceptionId(receptionId), 3);
         } else {
             // ✅ ONLY use tempReceptionId
             s.receptionId = null;
@@ -36,6 +36,7 @@ public class ReceptionSummaryHelper {
             s.totalPieces = receptionDataDao.sumPiecesByTempReceptionId(tempReceptionId);
             s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByTempReceptionId(tempReceptionId), 3);
             s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByTempReceptionId(tempReceptionId), 3);
+            s.totalVolumePie = CommonUtils.round(receptionDataDao.sumPieByTempReceptionId(tempReceptionId), 3);
         }
 
         s.updatedAt = System.currentTimeMillis();

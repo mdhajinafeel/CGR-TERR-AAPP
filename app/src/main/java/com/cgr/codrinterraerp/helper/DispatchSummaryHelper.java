@@ -31,6 +31,7 @@ public class DispatchSummaryHelper {
             s.totalGrossVolume = CommonUtils.round(containerDataDao.sumGrossByDispatchId(dispatchId), 3);
             s.totalNetVolume = CommonUtils.round(containerDataDao.sumNetByDispatchId(dispatchId), 3);
             s.avgGirth = CommonUtils.round(receptionDataDao.avgGirthByDispatch(dispatchId), 2);
+            s.totalVolumePie = CommonUtils.round(containerDataDao.sumPieByDispatchId(dispatchId), 2);
 
         } else {
             // ✅ ONLY use tempDispatchId
@@ -41,6 +42,19 @@ public class DispatchSummaryHelper {
             s.totalGrossVolume = CommonUtils.round(containerDataDao.sumGrossByTempDispatchId(tempDispatchId), 3);
             s.totalNetVolume = CommonUtils.round(containerDataDao.sumNetByTempDispatchId(tempDispatchId), 3);
             s.avgGirth = CommonUtils.round(receptionDataDao.avgGirthByTempDispatchId(tempDispatchId), 2);
+            s.totalVolumePie = CommonUtils.round(containerDataDao.sumPieByTempDispatchId(tempDispatchId), 2);
+
+        }
+
+        if(s.totalNetVolume > 0 && s.totalPieces > 0) {
+            double cftValue = (s.totalNetVolume / s.totalPieces) * 35.315;
+            if (cftValue > 0) {
+                s.cft = CommonUtils.round(cftValue, 2);
+            } else {
+                s.cft = 0;
+            }
+        } else {
+            s.cft = 0;
         }
 
         s.updatedAt = System.currentTimeMillis();

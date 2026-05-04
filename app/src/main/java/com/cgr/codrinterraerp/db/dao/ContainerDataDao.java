@@ -8,7 +8,6 @@ import androidx.room.Query;
 
 import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.DispatchSummary;
-import com.cgr.codrinterraerp.db.entities.ReceptionSummary;
 import com.cgr.codrinterraerp.model.ContainerWithReception;
 
 import java.util.List;
@@ -39,6 +38,12 @@ public interface ContainerDataDao {
 
     @Query("SELECT IFNULL(SUM(netVolume),0) FROM container_data WHERE tempDispatchId = :tempId AND isDeleted = 0")
     double sumNetByTempDispatchId(String tempId);
+
+    @Query("SELECT IFNULL(SUM(volumePie),0) FROM container_data WHERE dispatchId = :dispatchId AND isDeleted = 0")
+    double sumPieByDispatchId(Integer dispatchId);
+
+    @Query("SELECT IFNULL(SUM(volumePie),0) FROM container_data WHERE tempDispatchId = :tempId AND isDeleted = 0")
+    double sumPieByTempDispatchId(String tempId);
 
     @Query("UPDATE container_data SET updatedAt = :updatedAt, isDeleted = 1 WHERE tempReceptionId = :tempReceptionId")
     int deleteContainerData(String tempReceptionId, long updatedAt);
@@ -74,7 +79,8 @@ public interface ContainerDataDao {
     String getAllDispatchId(String tempReceptionId, String tempReceptionDataId);
 
     @Query("SELECT 0 AS id, 0 AS dispatchId, '' AS tempDispatchId, 0 AS avgGirth, 0 AS updatedAt, " +
-            "IFNULL(SUM(r.pieces), 0) AS totalPieces, IFNULL(SUM(r.grossVolume), 0) AS totalGrossVolume, IFNULL(SUM(r.netVolume), 0) AS totalNetVolume " +
+            "IFNULL(SUM(r.pieces), 0) AS totalPieces, IFNULL(SUM(r.grossVolume), 0) AS totalGrossVolume, IFNULL(SUM(r.netVolume), 0) AS totalNetVolume, " +
+            "IFNULL(SUM(r.volumePie), 0) AS totalVolumePie, (IFNULL(SUM(r.netVolume), 0) / IFNULL(SUM(r.pieces), 0) * 35.315) AS cft " +
             "FROM container_data c " +
             "JOIN reception_data r ON r.tempReceptionId = c.tempReceptionId AND r.tempReceptionDataId = c.tempReceptionDataId " +
             "WHERE c.isDeleted = 0 AND c.tempDispatchId = :tempDispatchId")

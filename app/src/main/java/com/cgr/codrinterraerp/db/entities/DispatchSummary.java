@@ -25,6 +25,8 @@ public class DispatchSummary implements Serializable {
     public double totalGrossVolume;
     public double totalNetVolume;
     public double avgGirth;
+    public double cft;
+    public double totalVolumePie;
 
     public long updatedAt;
 
@@ -90,5 +92,21 @@ public class DispatchSummary implements Serializable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public double getCft() {
+        return cft;
+    }
+
+    public void setCft(double cft) {
+        this.cft = cft;
+    }
+
+    public double getTotalVolumePie() {
+        return totalVolumePie;
+    }
+
+    public void setTotalVolumePie(double totalVolumePie) {
+        this.totalVolumePie = totalVolumePie;
     }
 }

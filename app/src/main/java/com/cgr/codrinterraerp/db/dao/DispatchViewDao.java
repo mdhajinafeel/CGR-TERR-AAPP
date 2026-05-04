@@ -15,6 +15,6 @@ public interface DispatchViewDao {
     @Query("SELECT * FROM dispatch_view ORDER BY id DESC")
     LiveData<List<DispatchView>> getDispatchList();
 
-    @Query("SELECT * FROM dispatch_view WHERE isClosed = 0")
-    LiveData<List<DispatchView>> getAvailableContainers();
+    @Query("SELECT * FROM dispatch_view WHERE isClosed = 0 AND productTypeId IN (:productTypeIds)")
+    LiveData<List<DispatchView>> getAvailableContainers(List<Integer> productTypeIds);
 }

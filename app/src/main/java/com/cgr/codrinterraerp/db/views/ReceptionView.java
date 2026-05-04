@@ -8,7 +8,7 @@ import java.io.Serializable;
         viewName = "reception_view",
         value = "SELECT r.id, r.tempReceptionId, r.receptionId, r.ica, " +
                 "s.supplierName, m.measurementName, r.receptionDate, " +
-                "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, " +
+                "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie, " +
                 "IFNULL(ds.totalNetVolume,0) as totalNetVolume, r.measurementSystem, r.productTypeId, p.productName, pt.productTypeName," +
                 "r.isFarmEnabled, pc.contractCode, pc.description, r.supplierId, r.containerReceptionMappingId " +
                 "FROM reception_details r " +
@@ -23,10 +23,7 @@ import java.io.Serializable;
 public class ReceptionView implements Serializable {
 
     public int id, receptionId, totalPieces, measurementSystem, productTypeId, supplierId;
-
     public String tempReceptionId, ica, supplierName, measurementName, receptionDate, productName, productTypeName, contractCode, description, containerReceptionMappingId;
-
-    public double totalGrossVolume, totalNetVolume;
-
+    public double totalGrossVolume, totalNetVolume, totalVolumePie;
     public boolean isFarmEnabled;
 }

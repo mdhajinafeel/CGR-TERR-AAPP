@@ -91,7 +91,15 @@ public class ReceptionFragment extends Fragment {
                     holder.setViewText(R.id.tvIca, receptionView.ica);
                     holder.setViewText(R.id.tvSupplier, receptionView.supplierName);
                     holder.setViewText(R.id.tvPieces, String.valueOf(receptionView.totalPieces));
-                    holder.setViewText(R.id.tvGrossVolume, String.valueOf(receptionView.totalGrossVolume));
+
+                    if(receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.volume_pie));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(receptionView.totalVolumePie));
+                    } else {
+                        holder.setViewText(R.id.tvGrossTitle, getString(R.string.gross_volume));
+                        holder.setViewText(R.id.tvGrossVolume, String.valueOf(receptionView.totalGrossVolume));
+                    }
+
                     holder.setViewText(R.id.tvNetVolume, String.valueOf(receptionView.totalNetVolume));
                     holder.setViewText(R.id.tvDate, receptionView.receptionDate);
                     holder.setViewText(R.id.tvMeasurement, receptionView.measurementName);

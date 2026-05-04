@@ -103,8 +103,8 @@ public class DispatchDataActivity extends BaseActivity {
 
             if (summary != null) {
                 tvPieces.setText(String.valueOf(summary.totalPieces));
-                tvGrossVolume.setText(String.valueOf(summary.totalGrossVolume));
-                tvNetVolume.setText(String.valueOf(summary.totalNetVolume));
+                tvGrossVolume.setText(CommonUtils.formatNumber(CommonUtils.round(summary.totalGrossVolume, 3)));
+                tvNetVolume.setText(CommonUtils.formatNumber(CommonUtils.round(summary.totalNetVolume, 3)));
             }
         });
     }

@@ -17,14 +17,12 @@ public class ReceptionSummary implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
-
-    public Integer receptionId;       // server ID (after sync)
-    public String tempReceptionId;    // local ID (before sync)
-
+    public Integer receptionId;
+    public String tempReceptionId;
     public int totalPieces;
     public double totalGrossVolume;
     public double totalNetVolume;
-
+    public double totalVolumePie;
     public long updatedAt;
 
     public int getId() {
@@ -81,5 +79,13 @@ public class ReceptionSummary implements Serializable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public double getTotalVolumePie() {
+        return totalVolumePie;
+    }
+
+    public void setTotalVolumePie(double totalVolumePie) {
+        this.totalVolumePie = totalVolumePie;
     }
 }

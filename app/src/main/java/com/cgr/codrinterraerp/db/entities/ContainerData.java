@@ -30,6 +30,7 @@ public class ContainerData implements Serializable {
     private int pieces;
     private double grossVolume;
     private double netVolume;
+    private double volumePie;
     private boolean isSynced = false;
     private boolean isDeleted = false;
     private boolean isEdited = false;
@@ -154,5 +155,13 @@ public class ContainerData implements Serializable {
 
     public void setContainerReceptionMappingId(String containerReceptionMappingId) {
         this.containerReceptionMappingId = containerReceptionMappingId;
+    }
+
+    public double getVolumePie() {
+        return volumePie;
+    }
+
+    public void setVolumePie(double volumePie) {
+        this.volumePie = volumePie;
     }
 }

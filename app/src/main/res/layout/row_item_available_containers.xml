@@ -102,6 +102,7 @@
                 android:weightSum="1">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvGrossTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
@@ -152,6 +153,7 @@
 
             <!-- Avg Girth -->
             <LinearLayout
+                android:id="@+id/llAvgGirth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_2"
@@ -160,6 +162,7 @@
                 android:weightSum="1">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvAvgGirthTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
