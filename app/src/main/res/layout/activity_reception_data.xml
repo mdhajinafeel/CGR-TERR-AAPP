@@ -132,6 +132,7 @@
 
             <!-- Label -->
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvGrossTitle"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/exo2_semibold"
@@ -237,6 +238,85 @@
 
                 <!-- ================= HEADER ================= -->
                 <LinearLayout
+                    android:id="@+id/llDataSquareLogs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorGrey"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/padding_10">
+
+                    <!-- EMPTY (for buttons) -->
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/thickness"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/width"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/length"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/pieces"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/container"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/volume_pie"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/exo2_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="@string/net_volume"
+                        android:textColor="@color/colorCharcoal"
+                        android:textSize="@dimen/text_16" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llDataRoundLogs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/colorGrey"

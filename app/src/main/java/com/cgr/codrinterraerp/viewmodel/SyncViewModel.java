@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
@@ -24,6 +25,7 @@ import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.model.response.DownloadMasterDataResponse;
 import com.cgr.codrinterraerp.model.response.DownloadMasterResponse;
+import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulaVariablesResponse;
@@ -297,6 +299,30 @@ public class SyncViewModel extends ViewModel {
 
             masterRepository.insertProductTypes(getProductTypes(productType));
         }
+
+        // ---------------- CONTAINER CATEGORIES ----------------
+        List<ContainerCategoriesResponse> category = data.getContainerCategories();
+        if(category != null && !category.isEmpty()) {
+            if(!getContainerCategories(category).isEmpty()) {
+                masterRepository.deleteContainerCategories();
+            }
+
+            masterRepository.insertContainerCategories(getContainerCategories(category));
+        }
+    }
+
+    @NonNull
+    private static List<ContainerCategories> getContainerCategories(List<ContainerCategoriesResponse> containerCategoriesResponseList) {
+        List<ContainerCategories> containerCategoriesList = new ArrayList<>();
+        for (ContainerCategoriesResponse containerCategoriesResponse : containerCategoriesResponseList) {
+            ContainerCategories containerCategories = new ContainerCategories();
+            containerCategories.setId(containerCategoriesResponse.getId());
+            containerCategories.setProductTypeId(containerCategoriesResponse.getProductTypeId());
+            containerCategories.setCategory(containerCategoriesResponse.getCategory());
+
+            containerCategoriesList.add(containerCategories);
+        }
+        return containerCategoriesList;
     }
 
     @NonNull

@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import com.cgr.codrinterraerp.BuildConfig;
 import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
@@ -34,6 +35,7 @@ import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
+import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
@@ -60,7 +62,7 @@ import com.cgr.codrinterraerp.db.views.ReceptionView;
 
 @Database(entities = {Origins.class, ApiLogs.class, Suppliers.class, SupplierProducts.class, SupplierProductTypes.class, MeasurementSystems.class, PurchaseContracts.class,
         ShippingLines.class, Warehouses.class, FarmInventoryOrders.class, ReceptionInventoryOrders.class, DispatchContainers.class, Products.class, ProductTypes.class,
-        ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class,
+        ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class, ContainerCategories.class,
         DispatchSummary.class, ReceptionSummary.class, MeasurementSystemFormulas.class, MeasurementSystemFormulaVariables.class},
         views = {ReceptionView.class, DispatchView.class},
         version = 1)
@@ -111,6 +113,8 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
     public abstract MeasurementSystemFormulasDao measurementSystemFormulasDao();
 
     public abstract MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao();
+
+    public abstract ContainerCategoriesDao containerCategoriesDao();
 
     //VIEWS
     public abstract ReceptionViewDao receptionViewDao();

@@ -2,6 +2,7 @@ package com.cgr.codrinterraerp.di;
 
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
@@ -55,10 +56,10 @@ public class RepoModule {
                                              MeasurementSystemFormulasDao measurementSystemFormulasDao, MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao,
                                              ShippingLinesDao shippingLinesDao, PurchaseContractDao purchaseContractDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
                                              ReceptionInventoryOrdersDao receptionInventoryOrdersDao, DispatchContainersDao dispatchContainersDao, ProductsDao productsDao,
-                                             ProductTypesDao productTypesDao) {
+                                             ProductTypesDao productTypesDao, ContainerCategoriesDao containerCategoriesDao) {
         return new MasterRepository(cgrTerraERPDatabase, iMasterApiService, originsDao, suppliersDao, supplierProductsDao, supplierProductTypesDao, warehousesDao,
                 measurementSystemsDao, measurementSystemFormulasDao, measurementSystemFormulaVariablesDao, shippingLinesDao, purchaseContractDao, farmInventoryOrdersDao,
-                receptionInventoryOrdersDao, dispatchContainersDao, productsDao, productTypesDao);
+                receptionInventoryOrdersDao, dispatchContainersDao, productsDao, productTypesDao, containerCategoriesDao);
     }
 
     @Provides

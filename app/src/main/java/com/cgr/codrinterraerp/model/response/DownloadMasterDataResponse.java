@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.model.response;
 
+import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemsResponse;
@@ -26,6 +27,7 @@ public class DownloadMasterDataResponse implements Serializable {
     private List<DispatchContainersResponse> dispatchContainers;
     private List<ProductsResponse> products;
     private List<ProductTypesResponse> productTypes;
+    private List<ContainerCategoriesResponse> containerCategories;
 
     public List<SuppliersResponse> getSuppliers() {
         return suppliers;
@@ -105,5 +107,13 @@ public class DownloadMasterDataResponse implements Serializable {
 
     public void setProductTypes(List<ProductTypesResponse> productTypes) {
         this.productTypes = productTypes;
+    }
+
+    public List<ContainerCategoriesResponse> getContainerCategories() {
+        return containerCategories;
+    }
+
+    public void setContainerCategories(List<ContainerCategoriesResponse> containerCategories) {
+        this.containerCategories = containerCategories;
     }
 }

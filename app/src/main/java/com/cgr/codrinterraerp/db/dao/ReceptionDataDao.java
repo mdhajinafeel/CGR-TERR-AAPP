@@ -57,7 +57,8 @@ public interface ReceptionDataDao {
     @Query("SELECT IFNULL(SUM(volumePie),0) FROM reception_data WHERE tempReceptionId = :tempId AND isDeleted = 0")
     double sumPieByTempReceptionId(String tempId);
 
-    @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, r.receptionDataId, r.tempReceptionId " +
+    @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, " +
+            "r.receptionDataId, r.tempReceptionId, r.thickness, r.width, r.volumePie " +
             "FROM reception_data r " +
             "JOIN container_data c ON c.containerReceptionMappingId = r.containerReceptionMappingId " +
             "AND c.receptionDataId = r.receptionDataId " +
@@ -65,7 +66,8 @@ public interface ReceptionDataDao {
             "WHERE r.receptionId = :receptionId AND r.isDeleted = 0 AND c.isDeleted = 0 AND d.isDeleted = 0;")
     LiveData<List<ReceptionWithContainer>> fetchByReceptionId(Integer receptionId);
 
-    @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, r.receptionDataId, r.tempReceptionId " +
+    @Query("SELECT r.circumference, r.length, r.pieces, d.containerNumber, r.grossVolume, r.netVolume, r.tempReceptionDataId, " +
+            "r.receptionDataId, r.tempReceptionId, r.thickness, r.width, r.volumePie " +
             "FROM reception_data r " +
             "JOIN container_data c ON c.containerReceptionMappingId = r.containerReceptionMappingId " +
             "AND c.tempReceptionDataId = r.tempReceptionDataId " +

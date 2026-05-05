@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "62f0df964a81a2c9a52ac94952b94577",
+    "version": 2,
+    "identityHash": "6b08cf16940e8ca7834d3c2ab165317a",
     "entities": [
       {
         "tableName": "origins",
@@ -1936,12 +1936,12 @@
       },
       {
         "viewName": "dispatch_view",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie,IFNULL(ds.avgGirth,0) as avgGirth, IFNULL(ds.cft,0) as cft, d.isClosed, d.productTypeId, c.category, d.categoryId FROM dispatch_details d INNER JOIN shipping_lines s ON s.id = d.shippingLineId INNER JOIN container_categories c ON c.id = d.categoryId LEFT JOIN dispatch_summary ds ON (ds.dispatchId = d.dispatchId OR ds.tempDispatchId = d.tempDispatchId) WHERE isDeleted = 0"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie,IFNULL(ds.avgGirth,0) as avgGirth, IFNULL(ds.cft,0) as cft, d.isClosed, d.productTypeId, c.category FROM dispatch_details d INNER JOIN shipping_lines s ON s.id = d.shippingLineId INNER JOIN container_categories c ON c.id = d.categoryId LEFT JOIN dispatch_summary ds ON (ds.dispatchId = d.dispatchId OR ds.tempDispatchId = d.tempDispatchId) WHERE isDeleted = 0"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62f0df964a81a2c9a52ac94952b94577')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6b08cf16940e8ca7834d3c2ab165317a')"
     ]
   }
 }

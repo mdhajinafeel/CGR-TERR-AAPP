@@ -27,6 +27,7 @@ public class DispatchDetails implements Serializable {
     public int warehouseId;
     public int shippingLineId;
     public String dispatchDate;
+    public int categoryId;
     public boolean isClosed = false;
     public boolean isSynced = false;
     public boolean isDeleted = false;
@@ -145,5 +146,13 @@ public class DispatchDetails implements Serializable {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }

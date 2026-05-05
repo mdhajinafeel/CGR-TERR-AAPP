@@ -55,14 +55,16 @@ public interface ContainerDataDao {
     @Query("SELECT DISTINCT tempReceptionDataId FROM container_data WHERE tempDispatchId = :tempDispatchId")
     List<String> getReceptionDataIdsByDispatch(String tempDispatchId);
 
-    @Query("SELECT r.circumference, r.length, r.pieces, rd.ica, r.grossVolume, r.netVolume, c.tempReceptionId, c.tempReceptionDataId, c.tempDispatchId, r.receptionDataId " +
+    @Query("SELECT r.circumference, r.length, r.pieces, rd.ica, r.grossVolume, r.netVolume, c.tempReceptionId, c.tempReceptionDataId, " +
+            "c.tempDispatchId, r.receptionDataId, r.thickness, r.width, rd.productTypeId, r.volumePie " +
             "FROM container_data c " +
             "JOIN reception_data r ON r.containerReceptionMappingId = c.containerReceptionMappingId AND r.tempReceptionDataId = c.tempReceptionDataId " +
             "JOIN reception_details rd ON rd.tempReceptionId = r.tempReceptionId " +
             "WHERE c.dispatchId = :dispatchId AND c.isDeleted = 0 AND r.isDeleted = 0 AND rd.isDeleted = 0;")
     LiveData<List<ContainerWithReception>> fetchByDispatchId(Integer dispatchId);
 
-    @Query("SELECT r.circumference, r.length, r.pieces, rd.ica, r.grossVolume, r.netVolume, c.tempReceptionId, c.tempReceptionDataId, c.tempDispatchId, r.receptionDataId " +
+    @Query("SELECT r.circumference, r.length, r.pieces, rd.ica, r.grossVolume, r.netVolume, c.tempReceptionId, c.tempReceptionDataId, " +
+            "c.tempDispatchId, r.receptionDataId, r.thickness, r.width, rd.productTypeId, r.volumePie " +
             "FROM container_data c " +
             "JOIN reception_data r ON r.containerReceptionMappingId = c.containerReceptionMappingId AND r.tempReceptionDataId = c.tempReceptionDataId " +
             "JOIN reception_details rd ON rd.tempReceptionId = r.tempReceptionId " +
@@ -78,9 +80,10 @@ public interface ContainerDataDao {
     @Query("SELECT tempDispatchId FROM container_data WHERE tempReceptionDataId = :tempReceptionDataId AND tempReceptionId = :tempReceptionId")
     String getAllDispatchId(String tempReceptionId, String tempReceptionDataId);
 
-    @Query("SELECT 0 AS id, 0 AS dispatchId, '' AS tempDispatchId, 0 AS avgGirth, 0 AS updatedAt, " +
+    @Query("SELECT 0 AS id, 0 AS dispatchId, '' AS tempDispatchId, 0 AS updatedAt, " +
             "IFNULL(SUM(r.pieces), 0) AS totalPieces, IFNULL(SUM(r.grossVolume), 0) AS totalGrossVolume, IFNULL(SUM(r.netVolume), 0) AS totalNetVolume, " +
-            "IFNULL(SUM(r.volumePie), 0) AS totalVolumePie, (IFNULL(SUM(r.netVolume), 0) / IFNULL(SUM(r.pieces), 0) * 35.315) AS cft " +
+            "IFNULL(SUM(r.volumePie), 0) AS totalVolumePie, (IFNULL(SUM(r.netVolume), 0) / IFNULL(SUM(r.pieces), 0) * 35.315) AS cft, " +
+            "IFNULL(ROUND(CASE WHEN SUM(c.pieces) = 0 THEN 0 ELSE SUM(r.circumference * c.pieces) / SUM(c.pieces) END, 3), 0) AS avgGirth " +
             "FROM container_data c " +
             "JOIN reception_data r ON r.tempReceptionId = c.tempReceptionId AND r.tempReceptionDataId = c.tempReceptionDataId " +
             "WHERE c.isDeleted = 0 AND c.tempDispatchId = :tempDispatchId")

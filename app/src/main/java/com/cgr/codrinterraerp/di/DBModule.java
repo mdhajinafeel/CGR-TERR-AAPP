@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
@@ -196,5 +197,11 @@ public class DBModule {
     @Singleton
     public ReceptionTransactionDao provideReceptionTransactionDao(CGRTerraERPDatabase db) {
         return db.receptionTransactionDao();
+    }
+
+    @Provides
+    @Singleton
+    public ContainerCategoriesDao provideContainerCategoriesDao(CGRTerraERPDatabase db) {
+        return db.containerCategoriesDao();
     }
 }

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class ContainerWithReception implements Serializable {
 
-    public double circumference, length, grossVolume, netVolume;
-    public int pieces;
+    public double circumference, thickness, width, length, grossVolume, netVolume, volumePie;
+    public int pieces, productTypeId;
     private Integer receptionDataId;
     public String tempReceptionDataId, tempReceptionId, tempDispatchId, ica;
 
@@ -87,5 +87,37 @@ public class ContainerWithReception implements Serializable {
 
     public void setTempDispatchId(String tempDispatchId) {
         this.tempDispatchId = tempDispatchId;
+    }
+
+    public double getThickness() {
+        return thickness;
+    }
+
+    public void setThickness(double thickness) {
+        this.thickness = thickness;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public int getProductTypeId() {
+        return productTypeId;
+    }
+
+    public void setProductTypeId(int productTypeId) {
+        this.productTypeId = productTypeId;
+    }
+
+    public double getVolumePie() {
+        return volumePie;
+    }
+
+    public void setVolumePie(double volumePie) {
+        this.volumePie = volumePie;
     }
 }

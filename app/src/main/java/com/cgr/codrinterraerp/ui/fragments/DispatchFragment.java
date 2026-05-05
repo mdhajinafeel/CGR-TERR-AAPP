@@ -89,6 +89,7 @@ public class DispatchFragment extends Fragment {
             public void onPostBindViewHolder(ViewHolder holder, DispatchView dispatchView) {
                 if (dispatchView != null) {
                     holder.setViewText(R.id.tvContainerNumber, dispatchView.containerNumber);
+                    holder.setViewText(R.id.tvContainerCategory, dispatchView.category);
                     holder.setViewText(R.id.tvShippingLine, dispatchView.shippingLine);
                     holder.setViewText(R.id.tvPieces, String.valueOf(dispatchView.totalPieces));
 
@@ -100,11 +101,18 @@ public class DispatchFragment extends Fragment {
                         holder.setViewImageDrawable(R.id.ivTypeIcon, ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_logs));
                         holder.setViewText(R.id.tvGrossTitle, getString(R.string.gross_volume));
                         holder.setViewText(R.id.tvGrossVolume, String.valueOf(dispatchView.totalGrossVolume));
+
+                        if(dispatchView.categoryId == 1) {
+                            holder.setViewText(R.id.tvAvgGirthTitle, getString(R.string.cft));
+                            holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.cft));
+                        } else {
+                            holder.setViewText(R.id.tvAvgGirthTitle, getString(R.string.avg_girth));
+                            holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));
+                        }
                     }
 
                     holder.setViewText(R.id.tvNetVolume, String.valueOf(dispatchView.totalNetVolume));
                     holder.setViewText(R.id.tvDate, dispatchView.dispatchDate);
-                    holder.setViewText(R.id.tvAvgGirth, String.valueOf(dispatchView.avgGirth));
 
                     holder.getView(R.id.btnEditDispatch).setTag(dispatchView);
                     holder.getView(R.id.btnDeleteDispatch).setTag(dispatchView);

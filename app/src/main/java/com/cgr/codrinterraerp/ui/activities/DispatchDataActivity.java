@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -35,11 +36,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DispatchDataActivity extends BaseActivity {
 
-    private AppCompatTextView tvContainerNumber, tvShippingLine, tvPieces, tvGrossVolume, tvNetVolume, tvNoDispatchData;
+    private AppCompatTextView tvContainerNumber, tvShippingLine, tvPieces, tvGrossVolume, tvNetVolume, tvNoDispatchData, tvAvgGirth, tvAvgGirthTitle;
     private MaterialCardView cardDispatch;
     private RecyclerView rvDispatchData;
     private DispatchDataViewModel dispatchDataViewModel;
     private RecyclerViewAdapter<ContainerWithReception> containerWithReceptionRecyclerViewAdapter;
+    private LinearLayout llGrossVolume, llDataRoundLogs, llDataSquareLogs;
     private final List<ContainerWithReception> containerWithReceptionList = new ArrayList<>();
     private DispatchView dispatchView;
 
@@ -62,9 +64,14 @@ public class DispatchDataActivity extends BaseActivity {
             tvPieces = findViewById(R.id.tvPieces);
             tvGrossVolume = findViewById(R.id.tvGrossVolume);
             tvNetVolume = findViewById(R.id.tvNetVolume);
+            tvAvgGirth = findViewById(R.id.tvAvgGirth);
+            tvAvgGirthTitle = findViewById(R.id.tvAvgGirthTitle);
             tvNoDispatchData = findViewById(R.id.tvNoDispatchData);
             cardDispatch = findViewById(R.id.cardDispatch);
             rvDispatchData = findViewById(R.id.rvDispatchData);
+            llGrossVolume = findViewById(R.id.llGrossVolume);
+            llDataRoundLogs = findViewById(R.id.llDataRoundLogs);
+            llDataSquareLogs = findViewById(R.id.llDataSquareLogs);
 
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
@@ -99,27 +106,63 @@ public class DispatchDataActivity extends BaseActivity {
     private void observeHeader() {
         tvContainerNumber.setText(dispatchView.containerNumber);
         tvShippingLine.setText(dispatchView.shippingLine);
-        dispatchDataViewModel.getDispatchSummary(dispatchView.tempDispatchId).observe(this, summary -> {
 
+        dispatchDataViewModel.getDispatchSummary(dispatchView.tempDispatchId).observe(this, summary -> {
             if (summary != null) {
                 tvPieces.setText(String.valueOf(summary.totalPieces));
                 tvGrossVolume.setText(CommonUtils.formatNumber(CommonUtils.round(summary.totalGrossVolume, 3)));
                 tvNetVolume.setText(CommonUtils.formatNumber(CommonUtils.round(summary.totalNetVolume, 3)));
+
+                if(dispatchView.productTypeId == 1 || dispatchView.productTypeId == 3) {
+
+                    llGrossVolume.setVisibility(View.GONE);
+                    llDataSquareLogs.setVisibility(View.VISIBLE);
+                    llDataRoundLogs.setVisibility(View.GONE);
+
+                    tvAvgGirthTitle.setText(getString(R.string.volume_pie));
+                    tvAvgGirth.setText(CommonUtils.formatNumber(CommonUtils.round(summary.totalVolumePie, 2)));
+                } else {
+
+                    llGrossVolume.setVisibility(View.VISIBLE);
+                    llDataSquareLogs.setVisibility(View.GONE);
+                    llDataRoundLogs.setVisibility(View.VISIBLE);
+
+                    if (dispatchView.categoryId == 1) {
+                        tvAvgGirthTitle.setText(getString(R.string.cft));
+                        tvAvgGirth.setText(CommonUtils.formatNumber(CommonUtils.round(summary.cft, 2)));
+                    } else {
+                        tvAvgGirthTitle.setText(getString(R.string.avg_girth));
+                        tvAvgGirth.setText(CommonUtils.formatNumber(CommonUtils.round(summary.avgGirth, 2)));
+                    }
+                }
             }
         });
     }
 
     private void setupRecyclerView() {
-        containerWithReceptionRecyclerViewAdapter = new RecyclerViewAdapter<>(getApplicationContext(), containerWithReceptionList, R.layout.row_item_container_data) {
+
+        int layoutId = R.layout.row_item_container_data;
+        if(dispatchView.productTypeId == 1 || dispatchView.productTypeId == 3) {
+            layoutId = R.layout.row_item_container_data_square;
+        }
+
+        containerWithReceptionRecyclerViewAdapter = new RecyclerViewAdapter<>(getApplicationContext(), containerWithReceptionList, layoutId) {
 
             @Override
             public void onPostBindViewHolder(ViewHolder holder, ContainerWithReception item) {
 
-                holder.setViewText(R.id.tvGirth, CommonUtils.formatNumber(item.getCircumference()));
+                if(dispatchView.productTypeId == 1 || dispatchView.productTypeId == 3) {
+                    holder.setViewText(R.id.tvThickness, CommonUtils.formatNumber(item.getThickness()));
+                    holder.setViewText(R.id.tvWidth, CommonUtils.formatNumber(item.getWidth()));
+                    holder.setViewText(R.id.tvVolumePie, CommonUtils.formatNumber(item.getVolumePie()));
+                } else {
+                    holder.setViewText(R.id.tvGirth, CommonUtils.formatNumber(item.getCircumference()));
+                    holder.setViewText(R.id.tvGrossVolume, CommonUtils.formatNumber(item.getGrossVolume()));
+                }
+
                 holder.setViewText(R.id.tvLength, CommonUtils.formatNumber(item.getLength()));
                 holder.setViewText(R.id.tvPieces, String.valueOf(item.getPieces()));
                 holder.setViewText(R.id.tvIca, item.getIca());
-                holder.setViewText(R.id.tvGrossVolume, CommonUtils.formatNumber(item.getGrossVolume()));
                 holder.setViewText(R.id.tvNetVolume, CommonUtils.formatNumber(item.getNetVolume()));
 
                 holder.getView(R.id.ivDelete).setOnClickListener(v -> deleteDispatchData(item.getTempReceptionDataId(), item.getTempReceptionId(), item.getTempDispatchId()));

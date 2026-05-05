@@ -66,6 +66,15 @@
                         android:layout_marginStart="@dimen/margin_6" />
 
                 </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvContainerCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorCharcoal"
+                    android:textSize="@dimen/text_12" />
             </LinearLayout>
 
             <!-- Shipping Line Column -->
@@ -231,6 +240,7 @@
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvAvgGirthTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/exo2_medium"

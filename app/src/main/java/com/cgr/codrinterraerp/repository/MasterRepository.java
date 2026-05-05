@@ -1,6 +1,7 @@
 package com.cgr.codrinterraerp.repository;
 
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
+import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulaVariablesDao;
@@ -16,6 +17,7 @@ import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
+import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
@@ -59,13 +61,14 @@ public class MasterRepository {
     private final DispatchContainersDao dispatchContainersDao;
     private final ProductsDao productsDao;
     private final ProductTypesDao productTypesDao;
+    private final ContainerCategoriesDao containerCategoriesDao;
 
     public MasterRepository(CGRTerraERPDatabase database, IMasterApiService iMasterApiService, OriginsDao originsDao, SuppliersDao suppliersDao, SupplierProductsDao supplierProductsDao,
                             SupplierProductTypesDao supplierProductTypesDao, WarehousesDao warehousesDao, MeasurementSystemsDao measurementSystemsDao,
                             MeasurementSystemFormulasDao measurementSystemFormulasDao, MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao,
                             ShippingLinesDao shippingLinesDao, PurchaseContractDao purchaseContractDao, FarmInventoryOrdersDao farmInventoryOrdersDao,
                             ReceptionInventoryOrdersDao receptionInventoryOrdersDao, DispatchContainersDao dispatchContainersDao, ProductsDao productsDao,
-                            ProductTypesDao productTypesDao) {
+                            ProductTypesDao productTypesDao, ContainerCategoriesDao containerCategoriesDao) {
         this.database = database;
         this.iMasterApiService = iMasterApiService;
         this.originsDao = originsDao;
@@ -83,6 +86,7 @@ public class MasterRepository {
         this.dispatchContainersDao = dispatchContainersDao;
         this.productsDao = productsDao;
         this.productTypesDao = productTypesDao;
+        this.containerCategoriesDao = containerCategoriesDao;
     }
 
     public Call<OriginsResponse> getOrigins() {
@@ -267,5 +271,18 @@ public class MasterRepository {
 
     public List<ProductTypes> fetchProductTypes() {
         return productTypesDao.getAllProductTypes();
+    }
+
+    // CONTAINER CATEGORIES
+    public void deleteContainerCategories() {
+        containerCategoriesDao.clearAll();
+    }
+
+    public void insertContainerCategories(List<ContainerCategories> containerCategoriesList) {
+        containerCategoriesDao.insertContainerCategories(containerCategoriesList);
+    }
+
+    public List<ContainerCategories> fetchContainerCategories(int productTypeId) {
+        return containerCategoriesDao.fetchContainerCategories(productTypeId);
     }
 }

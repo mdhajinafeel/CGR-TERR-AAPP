@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
@@ -49,18 +50,20 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DispatchActivity extends BaseActivity {
 
-    private TextInputLayout tiContainerNumber, tiProduct, tiProductType, tiShippingLine, tiWarehouse, tiDispatchDate;
-    private AppCompatEditText etContainerNumber, etProduct, etProductType, etShippingLine, etWarehouse, etDispatchDate;
+    private TextInputLayout tiContainerNumber, tiProduct, tiProductType, tiShippingLine, tiWarehouse, tiDispatchDate, tiCategory;
+    private AppCompatEditText etContainerNumber, etProduct, etProductType, etShippingLine, etWarehouse, etDispatchDate, etCategory;
     private MaterialButton btnSubmit;
     private AppCompatTextView tvNoDataFound;
     private List<Products> productsList;
     private List<ProductTypes> productTypesList;
     private List<ShippingLines> shippingLinesList;
     private List<Warehouses> warehousesList;
+    private List<ContainerCategories> containerCategoriesList;
     private RecyclerViewAdapter<Products> productsRecyclerViewAdapter;
     private RecyclerViewAdapter<ProductTypes> productTypesRecyclerViewAdapter;
     private RecyclerViewAdapter<ShippingLines> shippingLinesRecyclerViewAdapter;
     private RecyclerViewAdapter<Warehouses> warehousesRecyclerViewAdapter;
+    private RecyclerViewAdapter<ContainerCategories> containerCategoriesRecyclerViewAdapter;
     private MasterViewModel masterViewModel;
     private DispatchViewModel dispatchViewModel;
     private FrameLayout progressBar;
@@ -87,12 +90,14 @@ public class DispatchActivity extends BaseActivity {
             tiShippingLine = findViewById(R.id.tiShippingLine);
             tiWarehouse = findViewById(R.id.tiWarehouse);
             tiDispatchDate = findViewById(R.id.tiDispatchDate);
+            tiCategory = findViewById(R.id.tiCategory);
             etContainerNumber = findViewById(R.id.etContainerNumber);
             etProduct = findViewById(R.id.etProduct);
             etProductType = findViewById(R.id.etProductType);
             etShippingLine = findViewById(R.id.etShippingLine);
             etWarehouse = findViewById(R.id.etWarehouse);
             etDispatchDate = findViewById(R.id.etDispatchDate);
+            etCategory = findViewById(R.id.etCategory);
             btnSubmit = findViewById(R.id.btnSubmit);
             progressBar = findViewById(R.id.progressBar);
 
@@ -113,6 +118,7 @@ public class DispatchActivity extends BaseActivity {
                 CommonUtils.clearErrorOnTyping(etShippingLine, tiShippingLine);
                 CommonUtils.clearErrorOnTyping(etWarehouse, tiWarehouse);
                 CommonUtils.clearErrorOnTyping(etDispatchDate, tiDispatchDate);
+                CommonUtils.clearErrorOnTyping(etCategory, tiCategory);
 
                 actionListeners();
 
@@ -172,6 +178,18 @@ public class DispatchActivity extends BaseActivity {
                     }
                 }
 
+                // Load dependent data (IMPORTANT)
+                containerCategoriesList = masterViewModel.fetchContainerCategories(dispatchDetail.getProductTypeId());
+
+                // Category
+                for (ContainerCategories cc : containerCategoriesList) {
+                    if (cc.getId() == dispatchDetail.getCategoryId()) {
+                        etCategory.setText(cc.getCategory());
+                        etCategory.setTag(cc.getId());
+                        break;
+                    }
+                }
+
                 // Shipping Line
                 for (ShippingLines sl : shippingLinesList) {
                     if (sl.getId() == dispatchDetail.getShippingLineId()) {
@@ -205,16 +223,19 @@ public class DispatchActivity extends BaseActivity {
             etProductType.setKeyListener(null);
             etShippingLine.setKeyListener(null);
             etWarehouse.setKeyListener(null);
+            etCategory.setKeyListener(null);
 
             etProduct.setOnClickListener(v -> showDataDialog("Product"));
             etProductType.setOnClickListener(v -> showDataDialog("ProductType"));
             etShippingLine.setOnClickListener(v -> showDataDialog("ShippingLine"));
             etWarehouse.setOnClickListener(v -> showDataDialog("Warehouse"));
+            etCategory.setOnClickListener(v -> showDataDialog("Category"));
 
             tiProduct.setEndIconOnClickListener(v -> showDataDialog("Product"));
             tiProductType.setEndIconOnClickListener(v -> showDataDialog("ProductType"));
             tiShippingLine.setEndIconOnClickListener(v -> showDataDialog("ShippingLine"));
             tiWarehouse.setEndIconOnClickListener(v -> showDataDialog("Warehouse"));
+            tiCategory.setOnClickListener(v -> showDataDialog("Category"));
 
             etDispatchDate.setOnClickListener(v -> CommonUtils.showDatePicker(this, etDispatchDate));
 
@@ -348,6 +369,11 @@ public class DispatchActivity extends BaseActivity {
                     etProductType.setText(selected.getProductTypeName());
                     etProductType.setTag(selected.getTypeId());
 
+                    etCategory.setText("");
+                    etCategory.setTag(null);
+
+                    containerCategoriesList = masterViewModel.fetchContainerCategories(selected.getTypeId());
+
                     dialog.dismiss(); // optional
                 });
             } else if (tag.equalsIgnoreCase("Warehouse")) {
@@ -442,6 +468,52 @@ public class DispatchActivity extends BaseActivity {
 
                     dialog.dismiss(); // optional
                 });
+            } else if (tag.equalsIgnoreCase("Category")) {
+
+                dialogTitle.setText(R.string.select_warehouse);
+
+                if (containerCategoriesList.isEmpty()) {
+                    tvNoDataFound.setVisibility(View.VISIBLE);
+                } else {
+                    tvNoDataFound.setVisibility(View.GONE);
+                }
+
+                containerCategoriesRecyclerViewAdapter = new RecyclerViewAdapter<>(this, new ArrayList<>(containerCategoriesList), R.layout.row_dialog_list) {
+                    @Override
+                    public void onPostBindViewHolder(ViewHolder holder, ContainerCategories containerCategory) {
+
+                        AppCompatTextView tvName = holder.itemView.findViewById(R.id.tvName);
+                        AppCompatImageView ivSelected = holder.itemView.findViewById(R.id.ivItemSelected);
+
+                        tvName.setText(containerCategory.getCategory());
+
+                        boolean isSelected = false;
+                        if (etCategory.getTag() != null) {
+                            isSelected = Objects.equals(containerCategory.getId(), etCategory.getTag());
+                        }
+
+                        ivSelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+
+                        if (isSelected) {
+                            holder.setViewTypeface(R.id.tvName,
+                                    ResourcesCompat.getFont(holder.itemView.getContext(), R.font.exo2_bold));
+                        } else {
+                            holder.setViewTypeface(R.id.tvName,
+                                    ResourcesCompat.getFont(holder.itemView.getContext(), R.font.exo2_medium));
+                        }
+                    }
+                };
+
+                rvList.setAdapter(containerCategoriesRecyclerViewAdapter);
+                containerCategoriesRecyclerViewAdapter.setOnItemClickListener((view, position) -> {
+
+                    ContainerCategories selected = containerCategoriesRecyclerViewAdapter.getItem(position);
+
+                    etCategory.setText(selected.getCategory());
+                    etCategory.setTag(selected.getId());
+
+                    dialog.dismiss(); // optional
+                });
             }
 
             etSearch.addTextChangedListener(new TextWatcher() {
@@ -518,6 +590,22 @@ public class DispatchActivity extends BaseActivity {
                         } else {
                             tvNoDataFound.setVisibility(View.GONE);
                         }
+                    } else if (tag.equalsIgnoreCase("Category")) {
+                        if (query.isEmpty()) {
+                            containerCategoriesRecyclerViewAdapter.resetFilter();
+                        } else {
+                            containerCategoriesRecyclerViewAdapter.filter(item ->
+                                    item.getCategory() != null &&
+                                            item.getCategory().toLowerCase().contains(query)
+                            );
+                        }
+
+                        // Optional: Show "No Data Found"
+                        if (containerCategoriesRecyclerViewAdapter.getItemCount() == 0) {
+                            tvNoDataFound.setVisibility(View.VISIBLE);
+                        } else {
+                            tvNoDataFound.setVisibility(View.GONE);
+                        }
                     }
                 }
 
@@ -565,6 +653,15 @@ public class DispatchActivity extends BaseActivity {
             } else {
                 tiProductType.setErrorEnabled(false);
                 tiProductType.setError(null);
+            }
+
+            if (TextUtils.isEmpty(etCategory.getText())) {
+                tiCategory.setError(getString(R.string.required_field));
+                tiCategory.setErrorEnabled(true);
+                isValid = false;
+            } else {
+                tiCategory.setErrorEnabled(false);
+                tiCategory.setError(null);
             }
 
             if (TextUtils.isEmpty(etShippingLine.getText())) {
@@ -636,6 +733,7 @@ public class DispatchActivity extends BaseActivity {
             dispatchDetail.setProductTypeId(CommonUtils.getTagInt(etProductType.getTag()));
             dispatchDetail.setWarehouseId(CommonUtils.getTagInt(etWarehouse.getTag()));
             dispatchDetail.setShippingLineId(CommonUtils.getTagInt(etShippingLine.getTag()));
+            dispatchDetail.setCategoryId(CommonUtils.getTagInt(etCategory.getTag()));
             dispatchDetail.setDispatchDate(etDispatchDate.getText().toString().trim());
 
             // ================= ID HANDLING =================

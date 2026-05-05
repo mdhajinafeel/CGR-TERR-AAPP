@@ -649,6 +649,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             AppCompatTextView tvWoodType = dialog.findViewById(R.id.tvWoodType);
             AppCompatTextView tvMeasurement = dialog.findViewById(R.id.tvMeasurement);
             AppCompatTextView tvPieces = dialog.findViewById(R.id.tvPieces);
+            AppCompatTextView tvGrossTitle = dialog.findViewById(R.id.tvGrossTitle);
             AppCompatTextView tvGrossVolume = dialog.findViewById(R.id.tvGrossVolume);
             AppCompatTextView tvNetVolume = dialog.findViewById(R.id.tvNetVolume);
             AppCompatTextView tvContractCode = dialog.findViewById(R.id.tvContractCode);
@@ -662,7 +663,15 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
             tvWoodType.setText(receptionView.productTypeName);
             tvMeasurement.setText(receptionView.measurementName);
             tvPieces.setText(String.valueOf(receptionView.totalPieces));
-            tvGrossVolume.setText(String.valueOf(receptionView.totalGrossVolume));
+
+            if(receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
+                tvGrossTitle.setText(getString(R.string.volume_pie));
+                tvGrossVolume.setText(String.valueOf(receptionView.totalVolumePie));
+            } else {
+                tvGrossTitle.setText(getString(R.string.gross_volume));
+                tvGrossVolume.setText(String.valueOf(receptionView.totalGrossVolume));
+            }
+
             tvNetVolume.setText(String.valueOf(receptionView.totalNetVolume));
 
             if (receptionView.isFarmEnabled) {

@@ -17,17 +17,14 @@ public class DispatchSummary implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
-
     public Integer dispatchId;       // server ID (after sync)
     public String tempDispatchId;    // local ID (before sync)
-
     public int totalPieces;
     public double totalGrossVolume;
     public double totalNetVolume;
     public double avgGirth;
     public double cft;
     public double totalVolumePie;
-
     public long updatedAt;
 
     public int getId() {
