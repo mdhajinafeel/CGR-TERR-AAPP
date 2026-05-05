@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_10"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="@dimen/corner_radius_12"
+    app:cardElevation="@dimen/corner_elevation_2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/vStatusBar"
+                android:layout_width="4dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/margin_8"
+                android:background="#C62828" />
+
+            <!-- ICON (emoji) -->
+            <TextView
+                android:id="@+id/tvIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="💥"
+                android:textSize="24sp" />
+
+            <!-- TITLE + ACTIVITY (center, flex) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:text="NullPointerException"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_16" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_2"
+                    android:fontFamily="@font/exo2_medium"
+                    android:text="ReceptionActivity.initComponents"
+                    android:textColor="@color/colorCharcoal"
+                    android:textSize="@dimen/text_14" />
+
+            </LinearLayout>
+
+            <!-- STATUS BADGE (type label) -->
+            <TextView
+                android:id="@+id/tvLogType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="ERROR"
+                android:textColor="#C62828"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- TIMESTAMP -->
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:text="2025-01-03 10:35:84 AM"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expandableContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- DIVIDER LINE -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="8dp"
+                android:background="#E0E0E0" />
+
+            <!-- ============ STACK TRACE SECTION ============ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Stack trace:"
+                android:textColor="#424242"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- SCROLLABLE STACK TRACE (capped at 150dp height) -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="150dp"
+                android:scrollbars="vertical">
+
+                <TextView
+                    android:id="@+id/tvStackTrace"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F5F5F5"
+                    android:fontFamily="monospace"
+                    android:lineSpacingMultiplier="1.2"
+                    android:padding="8dp"
+                    android:text="at com.cgr.codrinterraerp.ui.activities.ReceptionActivity.initComponents(ReceptionActivity.java:173)
+at com.cgr.codrinterraerp.ui.activities.ReceptionActivity.onCreate(ReceptionActivity.java:88)
+at android.app.Activity.performCreate(Activity.java:9393)"
+                    android:textColor="#666666"
+                    android:textSize="9sp" />
+
+            </ScrollView>
+
+            <!-- ============ ERROR MESSAGE SECTION ============ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="6dp"
+                android:text="Error message:"
+                android:textColor="#424242"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- ERROR MESSAGE IN RED BACKGROUND -->
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="#FFEBEE"
+                android:padding="8dp"
+                android:text="Attempt to invoke virtual method 'int java.lang.String.length()' on a null object reference"
+                android:textColor="#C62828"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <!-- COPY BUTTON -->
+            <ImageButton
+                android:id="@+id/btnCopy"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/margin_6"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Copy log"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_view" />
+
+            <!-- SHARE BUTTON -->
+            <ImageButton
+                android:id="@+id/btnShare"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Share log"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_share" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

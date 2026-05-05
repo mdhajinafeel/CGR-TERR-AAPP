@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 }
             });
         } catch (Exception e) {
-            AppLogger.e(getClass(), "Error in initComponents", e);
+            AppLogger.e(getClass(), "initComponents", e);
         }
     }
 
@@ -198,6 +198,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         menuModels = new ArrayList<>();
         menuModels.add(new MenuModel(R.drawable.ic_sync, getString(R.string.sync), NavigationType.SYNCHRONIZATION));
         menuModels.add(new MenuModel(R.drawable.ic_export_data, getString(R.string.export_data), NavigationType.EXPORT_DATA));
+        menuModels.add(new MenuModel(R.drawable.ic_logs, getString(R.string.app_status), NavigationType.APP_STATUS));
         return menuModels;
     }
 
@@ -255,6 +256,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
                 if (item.getTag() == 2) {
                     startActivity(new Intent(MainActivity.this, WarehouseActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             });
         }
@@ -370,6 +372,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             } else {
                 requestPermission();
             }
+        } else if (selectedType == NavigationType.APP_STATUS) {
+            startActivity(new Intent(MainActivity.this, AppStatusActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 

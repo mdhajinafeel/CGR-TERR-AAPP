@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "62f0df964a81a2c9a52ac94952b94577",
+    "identityHash": "bb448c47937b6717b55ca6238994e6f6",
     "entities": [
       {
         "tableName": "origins",
@@ -49,7 +49,7 @@
       },
       {
         "tableName": "api_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `endpoint` TEXT, `method` TEXT, `requestBody` TEXT, `responseBody` TEXT, `statusCode` INTEGER NOT NULL, `success` INTEGER NOT NULL, `errorMessage` TEXT, `createdAt` INTEGER NOT NULL, `durationMs` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `endpoint` TEXT, `method` TEXT, `requestBody` TEXT, `responseBody` TEXT, `statusCode` INTEGER NOT NULL, `success` INTEGER NOT NULL, `errorMessage` TEXT, `createdAt` INTEGER NOT NULL, `durationMs` INTEGER NOT NULL, `isSlow` INTEGER NOT NULL, `isLarge` INTEGER NOT NULL, `type` TEXT, `exceptionType` TEXT, `tag` TEXT, `methodName` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,6 +105,38 @@
             "columnName": "durationMs",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isSlow",
+            "columnName": "isSlow",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLarge",
+            "columnName": "isLarge",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "exceptionType",
+            "columnName": "exceptionType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tag",
+            "columnName": "tag",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "methodName",
+            "columnName": "methodName",
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -1941,7 +1973,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62f0df964a81a2c9a52ac94952b94577')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb448c47937b6717b55ca6238994e6f6')"
     ]
   }
 }

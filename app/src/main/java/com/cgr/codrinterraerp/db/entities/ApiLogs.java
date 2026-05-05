@@ -25,6 +25,12 @@ public class ApiLogs implements Serializable {
     public String errorMessage;
     public long createdAt;
     public long durationMs;
+    public boolean isSlow;
+    public boolean isLarge;
+    public String type;
+    public String exceptionType;
+    public String tag;
+    public String methodName;
 
     public int getId() {
         return id;
@@ -104,5 +110,53 @@ public class ApiLogs implements Serializable {
 
     public void setDurationMs(long durationMs) {
         this.durationMs = durationMs;
+    }
+
+    public boolean isSlow() {
+        return isSlow;
+    }
+
+    public void setSlow(boolean slow) {
+        isSlow = slow;
+    }
+
+    public boolean isLarge() {
+        return isLarge;
+    }
+
+    public void setLarge(boolean large) {
+        isLarge = large;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getExceptionType() {
+        return exceptionType;
+    }
+
+    public void setExceptionType(String exceptionType) {
+        this.exceptionType = exceptionType;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 }

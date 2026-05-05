@@ -159,6 +159,7 @@ public class LoginActivity extends BaseActivity {
                 startActivity(new Intent(this, MainActivity.class)
                         .putExtra("isFromLogin", true)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         } catch (Exception e) {
             AppLogger.e(getClass(), "initComponents", e);

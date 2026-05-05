@@ -290,4 +290,41 @@ public class CommonUtils {
             return 0;
         }
     }
+
+    public static String classifyError(Throwable t) {
+
+        if (t == null) return "UNKNOWN";
+
+        String name = t.getClass().getSimpleName().toLowerCase();
+
+        // 🌐 Network issues (specific first)
+        if (t instanceof java.net.SocketTimeoutException) {
+            return "NETWORK_TIMEOUT";
+        } else if (t instanceof java.net.UnknownHostException) {
+            return "NETWORK_NO_INTERNET";
+        } else if (t instanceof java.io.IOException) {
+            return "NETWORK";
+        }
+
+        // 🗄️ Database
+        if (name.contains("sqlite") || name.contains("room")) {
+            return "DATABASE";
+        }
+
+        // 🔌 API
+        if (name.contains("http") || name.contains("retrofit")) {
+            return "API";
+        }
+
+        // 💥 Crash (specific first)
+        if (t instanceof NullPointerException) {
+            return "CRASH_NULL";
+        } else if (t instanceof IllegalStateException) {
+            return "CRASH_STATE";
+        } else if (t instanceof RuntimeException) {
+            return "CRASH";
+        }
+
+        return "ERROR";
+    }
 }

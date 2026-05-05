@@ -26,7 +26,7 @@ public abstract class ReceptionTransactionDao {
             return receptionId > 0 && containerId > 0;
 
         } catch (Exception e) {
-            AppLogger.e(getClass(), e.getMessage());
+            AppLogger.e(getClass(), "saveMeasurementData", e);
             return false;
         }
     }

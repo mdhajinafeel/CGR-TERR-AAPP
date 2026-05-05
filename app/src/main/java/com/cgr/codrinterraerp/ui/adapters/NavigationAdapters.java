@@ -33,8 +33,10 @@ public class NavigationAdapters extends ArrayAdapter<MenuModel> {
     @Override
     @Nonnull
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
         View view;
         ViewHolder viewHolder;
+
         if (convertView == null) {
             viewHolder = new ViewHolder();
             view = this.inflater.inflate(this.layoutResourceId, parent, false);
@@ -45,17 +47,17 @@ public class NavigationAdapters extends ArrayAdapter<MenuModel> {
             view = convertView;
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+        // Bind data
         MenuModel menuModel = this.menuModels.get(position);
         viewHolder.imageViewIcon.setImageResource(menuModel.getMenuIcon());
         viewHolder.textViewName.setText(menuModel.getMenuName());
+
         return view;
     }
 
     private static class ViewHolder {
         private AppCompatImageView imageViewIcon;
         private AppCompatTextView textViewName;
-
-        private ViewHolder() {
-        }
     }
 }

@@ -134,6 +134,13 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- App Status Screen -->
+        <activity
+            android:name=".ui.activities.AppStatusActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Firebase -->
         <service
             android:name=".firebase.MyFirebaseMessagingService"

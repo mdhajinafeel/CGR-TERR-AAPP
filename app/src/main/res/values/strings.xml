@@ -126,4 +126,10 @@
     <string name="width">Width</string>
     <string name="volume_pie">Volume Pie</string>
     <string name="cft">CFT</string>
+    <string name="endpoint">Endpoint</string>
+    <string name="duration">Duration</string>
+    <string name="type">Type</string>
+    <string name="time">Time</string>
+    <string name="flags">Flags</string>
+    <string name="app_status">App Status</string>
 </resources>
