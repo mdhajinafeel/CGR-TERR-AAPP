@@ -3,6 +3,6 @@ package com.cgr.codrinterraerp.constants;
 public enum NavigationType {
 
     SYNCHRONIZATION,
-    EXPORT_DATA,
+    DATA_BACKUP,
     APP_STATUS
 }

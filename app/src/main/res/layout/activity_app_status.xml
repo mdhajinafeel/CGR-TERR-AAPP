@@ -14,6 +14,260 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/layoutSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_10"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_2"
+            app:cardBackgroundColor="@color/colorApiTrans"
+            app:cardCornerRadius="@dimen/corner_radius_8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_4"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:src="@drawable/ic_api" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/api"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textColor="@color/colorApi"
+                    android:textSize="@dimen/text_14" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvApiCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:textColor="@color/colorApi"
+                    android:textSize="@dimen/text_16" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_2"
+            app:cardBackgroundColor="@color/colorInternetTrans"
+            app:cardCornerRadius="@dimen/corner_radius_8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_4"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:src="@drawable/ic_internet" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textColor="@color/colorInternet"
+                    android:textSize="@dimen/text_14" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNetworkCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:textColor="@color/colorInternet"
+                    android:textSize="@dimen/text_16" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_2"
+            app:cardBackgroundColor="@color/colorDBErrorTrans"
+            app:cardCornerRadius="@dimen/corner_radius_8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_4"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:src="@drawable/ic_database_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/database"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textColor="@color/colorDBError"
+                    android:textSize="@dimen/text_14" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDatabaseCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:textColor="@color/colorDBError"
+                    android:textSize="@dimen/text_16" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_2"
+            app:cardBackgroundColor="@color/colorErrorTrans"
+            app:cardCornerRadius="@dimen/corner_radius_8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_4"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:src="@drawable/ic_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/text_14" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvErrorCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:textColor="@color/colorError"
+                    android:textSize="@dimen/text_16" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginEnd="@dimen/margin_2"
+            android:layout_marginStart="@dimen/margin_2"
+            app:cardBackgroundColor="@color/colorSindoorRedTrans"
+            app:cardCornerRadius="@dimen/corner_radius_8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/padding_4"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="@dimen/margin_4"
+                    android:src="@drawable/ic_crash" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/crash"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:textColor="@color/colorSindoorRed"
+                    android:textSize="@dimen/text_14" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCrashCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/exo2_bold"
+                    android:textColor="@color/colorSindoorRed"
+                    android:textSize="@dimen/text_16" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/toolsDropDown"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_12"
+        android:background="@drawable/bg_filter_dropdown"
+        android:drawableStart="@drawable/ic_settings"
+        android:drawableEnd="@drawable/ic_dropdown_arrow"
+        android:drawablePadding="@dimen/padding_10"
+        android:fontFamily="@font/exo2_semibold"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_6"
+        android:text="@string/select"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/text_16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSummary" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/filterDropDown"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_12"
+        android:background="@drawable/bg_filter_dropdown"
+        android:drawableStart="@drawable/ic_filter"
+        android:drawableEnd="@drawable/ic_dropdown_arrow"
+        android:drawablePadding="@dimen/padding_10"
+        android:fontFamily="@font/exo2_semibold"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_6"
+        android:text="@string/all"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/text_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSummary" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAppStatusList"
         android:layout_width="0dp"
@@ -25,7 +279,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/filterDropDown"
         tools:listitem="@layout/row_item_app_status" />
 
     <LinearLayout
@@ -37,7 +291,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/filterDropDown">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
@@ -55,5 +309,4 @@
             android:textSize="@dimen/text_20" />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

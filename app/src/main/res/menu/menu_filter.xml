@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/filter_all"
+        android:title="@string/all" />
+
+    <item
+        android:id="@+id/filter_api"
+        android:icon="@drawable/ic_api"
+        android:title="@string/api" />
+
+    <item
+        android:id="@+id/filter_network"
+        android:icon="@drawable/ic_internet"
+        android:title="@string/network" />
+
+    <item
+        android:id="@+id/filter_database"
+        android:icon="@drawable/ic_database_error"
+        android:title="@string/database" />
+
+    <item
+        android:id="@+id/filter_error"
+        android:icon="@drawable/ic_error"
+        android:title="@string/error" />
+
+    <item
+        android:id="@+id/filter_crash"
+        android:icon="@drawable/ic_crash"
+        android:title="@string/crash" />
+
+</menu>

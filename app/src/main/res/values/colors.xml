@@ -36,8 +36,14 @@
     <color name="colorBoldGrey">#403E3E</color>
     <color name="colorPalePink">#FFEBEE</color>
     <color name="colorSindoorRed">#C62828</color>
+    <color name="colorSindoorRedTrans">#33C62828</color>
     <color name="colorError">#D32F2F</color>
+    <color name="colorErrorTrans">#33D32F2F</color>
     <color name="colorInternet">#3ea6c6</color>
+    <color name="colorInternetTrans">#333ea6c6</color>
+    <color name="colorApi">#1772E6</color>
+    <color name="colorApiTrans">#331772E6</color>
     <color name="colorDBError">#E53935</color>
+    <color name="colorDBErrorTrans">#33E53935</color>
     <color name="colorGrey88">#E0E0E0</color>
 </resources>

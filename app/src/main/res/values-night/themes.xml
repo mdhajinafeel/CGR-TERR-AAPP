@@ -41,4 +41,33 @@
         <item name="windowFixedWidthMajor">70%</item>
         <item name="windowFixedWidthMinor">70%</item>
     </style>
+
+    <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/exo2_medium</item>
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
+    <style name="CustomSelectedTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/exo2_semibold</item>
+        <item name="android:textSize">@dimen/text_18</item>
+    </style>
+
+    <style name="PopupMenuTextStyle">
+        <item name="fontFamily">@font/exo2_medium</item>
+        <item name="android:fontFamily">@font/exo2_medium</item>
+        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+
+    <style name="CustomPopupMenu" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textAppearanceLargePopupMenu">@style/PopupMenuTextStyle</item>
+        <item name="textAppearanceLargePopupMenu">@style/PopupMenuTextStyle</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/PopupMenuTextStyle</item>
+        <item name="textAppearanceSmallPopupMenu">@style/PopupMenuTextStyle</item>
+        <item name="popupMenuStyle">@style/MyPopupMenuStyle</item>
+    </style>
+
+    <style name="MyPopupMenuStyle" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+    </style>
 </resources>

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
+import com.cgr.codrinterraerp.model.LogCount;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface ApiLogsDao {
     @Query("SELECT * FROM api_logs ORDER BY createdAt DESC")
     LiveData<List<ApiLogs>> getAllApiLogs();
 
+    @Query("SELECT * FROM api_logs WHERE type = :type ORDER BY createdAt DESC")
+    LiveData<List<ApiLogs>> getApiLogsByType(String type);
+
     @Query("DELETE FROM api_logs")
     void clearAll();
 
@@ -27,4 +31,13 @@ public interface ApiLogsDao {
 
     @Query("DELETE FROM api_logs WHERE id NOT IN (SELECT id FROM api_logs ORDER BY createdAt DESC LIMIT 500)")
     void keepLast500();
+
+    @Query("DELETE FROM api_logs WHERE type = :type")
+    void clearLogsByType(String type);
+
+    @Query("DELETE FROM api_logs WHERE id = :id AND createdAt = :createdAt")
+    void clearLog(int id, long createdAt);
+
+    @Query("SELECT type, COUNT(*) as count FROM api_logs GROUP BY type")
+    LiveData<List<LogCount>> getLogCounts();
 }

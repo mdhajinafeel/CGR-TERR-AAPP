@@ -148,4 +148,8 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHo
 
         notifyDataSetChanged();
     }
+
+    public List<T> getItems() {
+        return mFullList;
+    }
 }

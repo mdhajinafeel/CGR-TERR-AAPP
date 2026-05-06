@@ -6,10 +6,7 @@ import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
@@ -24,8 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -33,8 +28,6 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,7 +37,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.caverock.androidsvg.SVG;
 import com.cgr.codrinterraerp.R;
-import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.constants.NavigationType;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.model.DashboardMenuModel;
@@ -62,14 +54,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -197,7 +185,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private List<MenuModel> getMenuListItems() {
         menuModels = new ArrayList<>();
         menuModels.add(new MenuModel(R.drawable.ic_sync, getString(R.string.sync), NavigationType.SYNCHRONIZATION));
-        menuModels.add(new MenuModel(R.drawable.ic_export_data, getString(R.string.export_data), NavigationType.EXPORT_DATA));
+        menuModels.add(new MenuModel(R.drawable.ic_export_data, getString(R.string.data_backup), NavigationType.DATA_BACKUP));
         menuModels.add(new MenuModel(R.drawable.ic_logs, getString(R.string.app_status), NavigationType.APP_STATUS));
         return menuModels;
     }
@@ -365,13 +353,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
             syncViewModel.masterDownload();
 
-        } else if (selectedType == NavigationType.EXPORT_DATA) {
+        } else if (selectedType == NavigationType.DATA_BACKUP) {
 
-            if (checkPermission()) {
-                exportDatabase();
-            } else {
-                requestPermission();
-            }
+            startActivity(new Intent(MainActivity.this, DataBackupActivity.class));
         } else if (selectedType == NavigationType.APP_STATUS) {
             startActivity(new Intent(MainActivity.this, AppStatusActivity.class));
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -383,121 +367,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             drawerLayout.closeDrawers();
         }
     }
-
-    private boolean checkPermission() {
-        if (Build.VERSION.SDK_INT >= 30) {
-            return Environment.isExternalStorageManager();
-        }
-        return ContextCompat.checkSelfPermission(getApplicationContext(), "android.permission.READ_EXTERNAL_STORAGE") == 0
-                && ContextCompat.checkSelfPermission(getApplicationContext(), "android.permission.WRITE_EXTERNAL_STORAGE") == 0;
-    }
-
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= 30) {
-            try {
-                Intent intent = new Intent("android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION");
-                intent.addCategory("android.intent.category.DEFAULT");
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                manageAllFilesAccessPermissionLauncher.launch(intent);
-            } catch (Exception unused) {
-                Intent intent2 = new Intent("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION");
-                manageAllFilesAccessPermissionLauncher.launch(intent2);
-            }
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, 101);
-        }
-    }
-
-    private void exportDatabase() {
-        try {
-
-            if (Build.VERSION.SDK_INT >= 30 && !Environment.isExternalStorageManager()) {
-                startActivity(new Intent("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"));
-            }
-
-            File dbFile = getDatabasePath(IAPIConstants.DBNAME);
-            File exportDir = new File(Environment.getExternalStorageDirectory(), "Codrin Group");
-
-            if (!exportDir.exists() && !exportDir.mkdirs()) {
-                AppLogger.e(getClass(), "Failed to create directory: " + exportDir.getAbsolutePath());
-                return;
-            }
-
-            String timeStamp = CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd_MM_yyyy_HH_mm_ss_S", getApplicationContext());
-
-            File zipFile = new File(exportDir, "cgr_terra_erp_" + timeStamp + ".zip");
-
-            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
-
-                // 📦 Database files
-                addFileToZip(dbFile, zos, "database/" + dbFile.getName());
-                addFileToZip(new File(dbFile.getPath() + "-wal"), zos, "database/" + dbFile.getName() + "-wal");
-                addFileToZip(new File(dbFile.getPath() + "-shm"), zos, "database/" + dbFile.getName() + "-shm");
-
-                // 📁 Uploads folder
-                File uploadsDir = new File(getFilesDir(), "uploads");
-                addFolderToZip(uploadsDir, zos);
-            }
-
-            Toast.makeText(getApplicationContext(), getString(R.string.database_exported_successfully), Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-            AppLogger.e(getClass(), "exportDatabaseAsZip", e);
-        }
-    }
-
-    private void addFileToZip(File file, ZipOutputStream zos, String zipEntryName) {
-        if (!file.exists()) return;
-
-        try (FileInputStream fis = new FileInputStream(file)) {
-
-            ZipEntry zipEntry = new ZipEntry(zipEntryName);
-            zos.putNextEntry(zipEntry);
-
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                zos.write(buffer, 0, length);
-            }
-
-            zos.closeEntry();
-
-        } catch (Exception e) {
-            AppLogger.e(getClass(), "addFileToZip", e);
-        }
-    }
-
-    private void addFolderToZip(File folder, ZipOutputStream zos) {
-        if (folder == null || !folder.exists() || !folder.isDirectory()) return;
-
-        File[] files = folder.listFiles();
-        if (files == null) return;
-
-        int index = 1;
-
-        for (File file : files) {
-
-            if (file.isFile()) {
-
-                // 🔁 Custom rename logic
-                String newFileName = "upload_" + index + "_" + file.getName();
-
-                addFileToZip(file, zos, "uploads" + "/" + newFileName);
-
-                index++;
-            }
-        }
-    }
-
-    private final ActivityResultLauncher<Intent> manageAllFilesAccessPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (Build.VERSION.SDK_INT >= 30 && Environment.isExternalStorageManager()) {
-                            Toast.makeText(getApplicationContext(), getString(R.string.permission_granted), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                        }
-                    });
 
     private void applyErpClickAnimation(View view) {
 
