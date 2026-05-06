@@ -299,9 +299,9 @@ public class CommonUtils {
 
         // 🌐 Network issues (specific first)
         if (t instanceof java.net.SocketTimeoutException) {
-            return "NETWORK_TIMEOUT";
+            return "NETWORK";
         } else if (t instanceof java.net.UnknownHostException) {
-            return "NETWORK_NO_INTERNET";
+            return "NETWORK";
         } else if (t instanceof java.io.IOException) {
             return "NETWORK";
         }
@@ -318,9 +318,9 @@ public class CommonUtils {
 
         // 💥 Crash (specific first)
         if (t instanceof NullPointerException) {
-            return "CRASH_NULL";
+            return "CRASH";
         } else if (t instanceof IllegalStateException) {
-            return "CRASH_STATE";
+            return "CRASH";
         } else if (t instanceof RuntimeException) {
             return "CRASH";
         }

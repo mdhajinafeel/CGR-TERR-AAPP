@@ -44,33 +44,110 @@ public class CodrinTerraErpApplication extends Application {
 
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
 
-            StackTraceElement[] stackTrace = throwable.getStackTrace();
+            try {
 
-            ApiLogs log = new ApiLogs();
-            log.type = "CRASH";
-            log.errorMessage = throwable.getMessage();
+                ApiLogs log = new ApiLogs();
 
-            String stack = Log.getStackTraceString(throwable);
+                // =========================
+                // BASIC INFO
+                // =========================
 
-            log.exceptionType = throwable.getClass().getSimpleName();
-            log.type = CommonUtils.classifyError(throwable);
+                log.success = false;
+                log.createdAt = System.currentTimeMillis();
 
-            if (stack.length() > 5000) {
-                stack = stack.substring(0, 5000) + "...";
+                // Exception class
+                log.exceptionType = throwable.getClass().getSimpleName();
+
+                // Your custom classifier
+                log.type = CommonUtils.classifyError(throwable);
+
+                // =========================
+                // FIND ROOT CAUSE
+                // =========================
+
+                Throwable rootCause = throwable;
+
+                while (rootCause.getCause() != null
+                        && rootCause.getCause() != rootCause) {
+
+                    rootCause = rootCause.getCause();
+                }
+
+                // =========================
+                // ERROR MESSAGE
+                // =========================
+
+                if (rootCause.getMessage() != null
+                        && !rootCause.getMessage().trim().isEmpty()) {
+
+                    log.errorMessage = rootCause.getMessage();
+
+                } else {
+
+                    log.errorMessage = rootCause.toString();
+                }
+
+                // =========================
+                // STACK TRACE
+                // =========================
+
+                String stackTraceString =
+                        Log.getStackTraceString(rootCause);
+
+                if (stackTraceString.length() > 5000) {
+
+                    stackTraceString =
+                            stackTraceString.substring(0, 5000) + "...";
+                }
+
+                log.responseBody = stackTraceString;
+
+                // =========================
+                // CLASS + METHOD
+                // =========================
+
+                StackTraceElement[] stackTrace =
+                        rootCause.getStackTrace();
+
+                log.tag = "UNKNOWN";
+                log.methodName = "UNKNOWN";
+
+                if (stackTrace.length > 0) {
+
+                    for (StackTraceElement element : stackTrace) {
+                        String className = element.getClassName();
+
+                        if (className.startsWith("com.cgr.codrinterraerp")) {
+                            log.tag = className.substring(className.lastIndexOf(".") + 1);
+                            log.methodName = element.getMethodName();
+                            break;
+                        }
+                    }
+
+                    // Fallback if no app class found
+                    if ("UNKNOWN".equals(log.tag)) {
+                        StackTraceElement element = stackTrace[0];
+                        log.tag = element.getClassName();
+                        log.methodName = element.getMethodName();
+                    }
+                }
+
+                // =========================
+                // SAVE LOG
+                // =========================
+
+                db.apiLogsDao().insertApiLogs(log);
+
+            } catch (Exception e) {
+
+                Log.e("CRASH_HANDLER",
+                        "Failed to save crash log", e);
             }
 
-            if (stackTrace.length > 0) {
-                StackTraceElement element = stackTrace[0];
-                log.tag = element.getClassName();       // full class name
-                log.methodName = element.getMethodName(); // method name
-            }
+            // =========================
+            // TERMINATE APP
+            // =========================
 
-            log.responseBody = stack;
-            log.createdAt = System.currentTimeMillis();
-            log.success = false;
-
-            db.apiLogsDao().insertApiLogs(log);
-            // Let system crash normally
             System.exit(2);
         });
     }

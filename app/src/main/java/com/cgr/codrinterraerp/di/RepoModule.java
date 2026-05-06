@@ -29,7 +29,7 @@ import com.cgr.codrinterraerp.db.dao.SuppliersDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
-import com.cgr.codrinterraerp.repository.AppMaintenanceRepository;
+import com.cgr.codrinterraerp.repository.AppStatusRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
 import com.cgr.codrinterraerp.repository.DispatchDataRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
@@ -70,8 +70,8 @@ public class RepoModule {
 
     @Provides
     @Singleton
-    AppMaintenanceRepository provideAppMaintenanceRepository(ApiLogsDao apiLogsDao) {
-        return new AppMaintenanceRepository(apiLogsDao);
+    AppStatusRepository provideAppMaintenanceRepository(ApiLogsDao apiLogsDao) {
+        return new AppStatusRepository(apiLogsDao);
     }
 
     @Provides

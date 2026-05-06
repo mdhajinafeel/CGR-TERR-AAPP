@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.db.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -16,7 +17,7 @@ public interface ApiLogsDao {
     void insertApiLogs(ApiLogs apiLog);
 
     @Query("SELECT * FROM api_logs ORDER BY createdAt DESC")
-    List<ApiLogs> getAllApiLogs();
+    LiveData<List<ApiLogs>> getAllApiLogs();
 
     @Query("DELETE FROM api_logs")
     void clearAll();

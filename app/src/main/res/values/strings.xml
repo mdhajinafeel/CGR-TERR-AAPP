@@ -132,4 +132,8 @@
     <string name="time">Time</string>
     <string name="flags">Flags</string>
     <string name="app_status">App Status</string>
+    <string name="stack_trace">Stack trace:</string>
+    <string name="error_message">Error message:</string>
+    <string name="show_less">Show Less...</string>
+    <string name="show_more">Show More...</string>
 </resources>
