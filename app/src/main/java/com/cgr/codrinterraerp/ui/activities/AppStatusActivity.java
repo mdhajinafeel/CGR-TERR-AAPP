@@ -495,7 +495,7 @@ public class AppStatusActivity extends BaseActivity {
             writer.close();
 
             // GET URI
-            Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", file);
+            Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".fileprovider", file);
 
             // SHARE
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -739,7 +739,7 @@ public class AppStatusActivity extends BaseActivity {
                 writer.append(builder.toString());
                 writer.flush();
                 writer.close();
-                Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", file);
+                Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".fileprovider", file);
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);

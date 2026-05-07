@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,6 +76,10 @@ public class DataBackupActivity extends BaseActivity {
             imgBack.setOnClickListener(view -> finish());
 
             btnCreateBackup.setOnClickListener(view -> generateBackup());
+
+            if (!checkPermission()) {
+                requestPermission();
+            }
 
             loadBackups();
             bindBackupData();
@@ -225,8 +230,8 @@ public class DataBackupActivity extends BaseActivity {
                 addFileToZip(new File(dbFile.getPath() + "-shm"), zos, "database/" + dbFile.getName() + "-shm");
 
                 // 📁 Uploads folder
-                File uploadsDir = new File(getFilesDir(), "uploads");
-                addFolderToZip(uploadsDir, zos);
+                File uploadsDir = new File(getFilesDir(), "container_images");
+                addFolderToZip(uploadsDir, zos, "container_images");
             }
 
             Toast.makeText(getApplicationContext(), getString(R.string.database_exported_successfully), Toast.LENGTH_SHORT).show();
@@ -269,19 +274,20 @@ public class DataBackupActivity extends BaseActivity {
         }
     }
 
-    private void addFolderToZip(File folder, ZipOutputStream zos) {
-        if (folder == null || !folder.exists() || !folder.isDirectory()) return;
+    private void addFolderToZip(File folder, ZipOutputStream zos, String parentPath) {
 
+        if (folder == null || !folder.exists()) return;
         File[] files = folder.listFiles();
         if (files == null) return;
 
-        int index = 1;
-
         for (File file : files) {
-            if (file.isFile()) {
-                String newFileName = "upload_" + index + "_" + file.getName();
-                addFileToZip(file, zos, "uploads" + "/" + newFileName);
-                index++;
+            // Preserve folder structure
+            String zipPath = parentPath + "/" + file.getName();
+            if (file.isDirectory()) {
+                // Recursive call for subfolders
+                addFolderToZip(file, zos, zipPath);
+            } else {
+                addFileToZip(file, zos, zipPath);
             }
         }
     }
@@ -304,7 +310,7 @@ public class DataBackupActivity extends BaseActivity {
 
     private void shareBackup(File file) {
         try {
-            Uri uri = androidx.core.content.FileProvider.getUriForFile(this,getPackageName() + ".provider",file);
+            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("application/zip");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -356,9 +362,9 @@ public class DataBackupActivity extends BaseActivity {
                 backupModelList.remove(position);
                 backupModelRecyclerViewAdapter.notifyItemRemoved(position);
                 updateEmptyView();
-                Toast.makeText(getApplicationContext(), getString(R.string.backup_deleted),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.backup_deleted), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.failed_to_delete_backup),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.failed_to_delete_backup), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "deleteBackup", e);

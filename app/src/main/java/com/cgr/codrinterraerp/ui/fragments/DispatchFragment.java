@@ -369,7 +369,6 @@ public class DispatchFragment extends Fragment {
 
     ActivityResultLauncher<Intent> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                requireActivity();
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     selectedFileUri = cameraTempUri;
                     processAndSaveImage(selectedFileUri, selectedTempDispatchId);
@@ -675,7 +674,6 @@ public class DispatchFragment extends Fragment {
 
                                 Toast.makeText(requireContext(), getString(R.string.photo_deleted), Toast.LENGTH_SHORT).show();
                             }
-
                         });
                     }).start();
 
