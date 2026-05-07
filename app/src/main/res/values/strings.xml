@@ -2,9 +2,9 @@
     <string name="app_name">Terra ERP</string>
 
     <!-- COMMON -->
-    <string name="ok">OK</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
+    <string name="ok">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
@@ -153,4 +153,10 @@
     <string name="delete_log">Delete Log</string>
     <string name="deleted_log">Log has been deleted successfully</string>
     <string name="generate">Generate</string>
+    <string name="date_format">yyyyMMdd_HHmmssa</string>
+    <string name="share_backup">Share Backup</string>
+    <string name="backup_deleted">Backup deleted successfully</string>
+    <string name="failed_to_delete_backup">Failed to delete backup</string>
+    <string name="delete_backup">Delete backup</string>
+    <string name="delete_backup_confirmation">Are you sure you want to delete the backup?</string>
 </resources>

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -78,6 +79,7 @@ public class ReceptionActivity extends BaseActivity {
     private FrameLayout progressBar;
     private boolean isReceptionEdit = false;
     private ReceptionDetails existingReceptionDetail;
+    private ReceptionView receptionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +152,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 if (isReceptionEdit) {
 
-                    ReceptionView receptionView = (ReceptionView) bundle.getSerializable("receptionDetails");
+                    receptionView = (ReceptionView) bundle.getSerializable("receptionDetails");
 
                     if (receptionView != null) {
                         existingReceptionDetail = receptionViewModel.fetchReceptionDetailById(receptionView.tempReceptionId);
@@ -180,6 +182,32 @@ public class ReceptionActivity extends BaseActivity {
             resetDependentLists();
 
             if (isEdit) {
+
+                if(receptionView.totalPieces > 0) {
+                    int colorLightGrey = ContextCompat.getColor(this, R.color.colorLightGrey);
+
+                    tiSupplier.setEnabled(false);
+                    tiSupplierProduct.setEnabled(false);
+                    tiSupplierProductType.setEnabled(false);
+                    tiMeasurementSystem.setEnabled(false);
+
+                    tiSupplier.setBoxBackgroundColor(colorLightGrey);
+                    tiSupplierProduct.setBoxBackgroundColor(colorLightGrey);
+                    tiSupplierProductType.setBoxBackgroundColor(colorLightGrey);
+                    tiMeasurementSystem.setBoxBackgroundColor(colorLightGrey);
+
+                    tiSupplier.setAlpha(0.9f);
+                    tiSupplierProduct.setAlpha(0.9f);
+                    tiSupplierProductType.setAlpha(0.9f);
+                    tiMeasurementSystem.setAlpha(0.9f);
+
+                    if(receptionView.isFarmEnabled) {
+                        tiPurchaseContract.setEnabled(false);
+                        tiPurchaseContract.setBoxBackgroundColor(colorLightGrey);
+                        tiPurchaseContract.setAlpha(0.9f);
+                    }
+                }
+
                 // Supplier
                 for (Suppliers s : suppliersList) {
                     if (s.getSupplierId() == receptionDetail.getSupplierId()) {

@@ -7,4 +7,5 @@ public class BackupModel implements Serializable {
 
     public File file;
     public String name, size, date;
+    public int uploadCount;
 }

@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+
+    <!-- External storage root access -->
+    <external-path
+        name="external_files"
+        path="." />
+
+    <!-- External app-specific files -->
+    <external-files-path
+        name="external_app_files"
+        path="." />
+
+    <!-- Internal app files -->
+    <files-path
+        name="files"
+        path="." />
+
+    <!-- Cache files if needed -->
     <cache-path
         name="cache"
         path="." />
+
+    <!-- External cache -->
+    <external-cache-path
+        name="external_cache"
+        path="." />
+
 </paths>

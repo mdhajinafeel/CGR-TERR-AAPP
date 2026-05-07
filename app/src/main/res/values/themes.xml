@@ -60,7 +60,7 @@
     <style name="PopupMenuTextStyle">
         <item name="fontFamily">@font/exo2_medium</item>
         <item name="android:fontFamily">@font/exo2_medium</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_16</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 

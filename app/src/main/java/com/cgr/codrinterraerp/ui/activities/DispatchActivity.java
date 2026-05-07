@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -69,6 +70,7 @@ public class DispatchActivity extends BaseActivity {
     private FrameLayout progressBar;
     private boolean isDispatchEdit = false;
     private DispatchDetails existingDispatchDetail;
+    private DispatchView dispatchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +133,7 @@ public class DispatchActivity extends BaseActivity {
                 });
 
                 if (isDispatchEdit) {
-                    DispatchView dispatchView = (DispatchView) bundle.getSerializable("dispatchDetails");
+                    dispatchView = (DispatchView) bundle.getSerializable("dispatchDetails");
 
                     if (dispatchView != null) {
                         existingDispatchDetail = dispatchViewModel.fetchDispatchDetailById(dispatchView.tempDispatchId);
@@ -160,6 +162,24 @@ public class DispatchActivity extends BaseActivity {
             warehousesList = masterViewModel.fetchWarehouses();
 
             if (isEdit) {
+
+                if(dispatchView.totalPieces > 0) {
+
+                    int colorLightGrey = ContextCompat.getColor(this, R.color.colorLightGrey);
+
+                    tiProduct.setEnabled(false);
+                    tiProductType.setEnabled(false);
+                    tiCategory.setEnabled(false);
+
+                    tiProduct.setBoxBackgroundColor(colorLightGrey);
+                    tiProductType.setBoxBackgroundColor(colorLightGrey);
+                    tiCategory.setBoxBackgroundColor(colorLightGrey);
+
+                    tiProduct.setAlpha(0.9f);
+                    tiProductType.setAlpha(0.9f);
+                    tiCategory.setAlpha(0.9f);
+                }
+
                 // Wood
                 for (Products p : productsList) {
                     if (p.getProductId() == dispatchDetail.getProductId()) {

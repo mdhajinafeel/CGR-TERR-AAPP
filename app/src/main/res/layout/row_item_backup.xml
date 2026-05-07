@@ -3,61 +3,132 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/margin_14"
-    android:layout_marginTop="@dimen/margin_12"
-    android:layout_marginEnd="@dimen/margin_14"
-    android:layout_marginBottom="@dimen/margin_12"
+    android:layout_marginStart="@dimen/margin_12"
+    android:layout_marginTop="@dimen/margin_8"
+    android:layout_marginEnd="@dimen/margin_12"
+    android:layout_marginBottom="@dimen/margin_8"
     app:cardBackgroundColor="@color/colorWhite"
     app:cardCornerRadius="@dimen/corner_radius_12"
     app:cardElevation="@dimen/corner_elevation_8">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="@dimen/padding_12">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <!-- File Icon -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgFileIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/data_backup"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_zip_file"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- File Info Container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fileInfoContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/actionButtonsContainer"
+            app:layout_constraintStart_toEndOf="@+id/imgFileIcon"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- File Name -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:ellipsize="end"
+                android:fontFamily="@font/exo2_bold"
+                android:maxLines="1"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+            <!-- File Date -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_4"
+                android:fontFamily="@font/exo2_medium"
+                android:textColor="@color/colorCharcoal"
+                android:textSize="@dimen/text_14"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-        </LinearLayout>
+            <!-- File Size and Upload Count -->
+            <LinearLayout
+                android:id="@+id/metadataContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_4"
+                android:gravity="start"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtDate">
 
+                <!-- Size Icon and Text -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_12"
+                    android:drawableStart="@drawable/ic_memory"
+                    android:drawablePadding="@dimen/padding_4"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorCharcoal"
+                    android:textSize="@dimen/text_14" />
+
+                <!-- Upload Count Icon and Text -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtUploadCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_folder"
+                    android:drawablePadding="@dimen/padding_4"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorCharcoal"
+                    android:textSize="@dimen/text_14" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Action Buttons Container -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/actionButtonsContainer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_6"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:layout_marginStart="@dimen/margin_8"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnDelete"
+                android:id="@+id/ivDelete"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginEnd="@dimen/margin_8"
+                android:layout_marginEnd="@dimen/margin_12"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_delete"
                 app:tint="@color/colorErrorRed" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnShare"
+                android:id="@+id/ivShare"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="@dimen/margin_8"
@@ -66,5 +137,5 @@
                 app:tint="@color/colorCharcoal" />
 
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -308,9 +308,14 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
 
             setMenus();
+
             imgClose.setOnClickListener(v -> closeDrawers());
             lstMenu.setOnItemClickListener(this);
-            tvLogout.setOnClickListener(v -> logoutConfirmation());
+
+            tvLogout.setOnClickListener(v -> {
+                closeDrawers();
+                logoutConfirmation();
+            });
         } catch (Exception e) {
             AppLogger.e(getClass(), "setDashboardDetails", e);
         }
