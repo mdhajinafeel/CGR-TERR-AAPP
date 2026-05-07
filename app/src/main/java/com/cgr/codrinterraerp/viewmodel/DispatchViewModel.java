@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.cgr.codrinterraerp.db.entities.ContainerImages;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.views.DispatchView;
+import com.cgr.codrinterraerp.repository.ContainerImagesRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.wrapper.SingleLiveEvent;
 
@@ -21,6 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class DispatchViewModel extends ViewModel {
 
     private DispatchRepository dispatchRepository;
+    private final ContainerImagesRepository containerImagesRepository;
     private long dispatchSavedId;
     private final SingleLiveEvent<Boolean> dispatchStatus = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
@@ -28,8 +31,9 @@ public class DispatchViewModel extends ViewModel {
     private final MutableLiveData<Integer> availableContainerTrigger = new MutableLiveData<>();
 
     @Inject
-    public DispatchViewModel(DispatchRepository dispatchRepository) {
+    public DispatchViewModel(DispatchRepository dispatchRepository, ContainerImagesRepository containerImagesRepository) {
         this.dispatchRepository = dispatchRepository;
+        this.containerImagesRepository = containerImagesRepository;
     }
 
     public void saveDispatchDetails(DispatchDetails dispatchDetails, String oldContainerNumber, int oldShippingLineId) {
@@ -127,5 +131,21 @@ public class DispatchViewModel extends ViewModel {
 
     public void setDispatchSavedId(long dispatchSavedId) {
         this.dispatchSavedId = dispatchSavedId;
+    }
+
+    public long insertContainerImage(ContainerImages image) {
+        return containerImagesRepository.insert(image);
+    }
+
+    public LiveData<List<ContainerImages>> getContainerImages(String tempDispatchId) {
+        return containerImagesRepository.getContainerImages(tempDispatchId);
+    }
+
+    public int hardDeleteImage(String id) {
+        return containerImagesRepository.hardDeleteImage(id);
+    }
+
+    public int softDeleteImage(String id) {
+        return containerImagesRepository.softDeleteImage(id);
     }
 }

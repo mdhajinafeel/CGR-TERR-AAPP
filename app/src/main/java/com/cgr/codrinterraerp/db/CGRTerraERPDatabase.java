@@ -11,6 +11,7 @@ import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
+import com.cgr.codrinterraerp.db.dao.ContainerImagesDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
@@ -37,6 +38,7 @@ import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
 import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.ContainerData;
+import com.cgr.codrinterraerp.db.entities.ContainerImages;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.DispatchSummary;
@@ -62,7 +64,7 @@ import com.cgr.codrinterraerp.db.views.ReceptionView;
 
 @Database(entities = {Origins.class, ApiLogs.class, Suppliers.class, SupplierProducts.class, SupplierProductTypes.class, MeasurementSystems.class, PurchaseContracts.class,
         ShippingLines.class, Warehouses.class, FarmInventoryOrders.class, ReceptionInventoryOrders.class, DispatchContainers.class, Products.class, ProductTypes.class,
-        ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class, ContainerCategories.class,
+        ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class, ContainerCategories.class, ContainerImages.class,
         DispatchSummary.class, ReceptionSummary.class, MeasurementSystemFormulas.class, MeasurementSystemFormulaVariables.class},
         views = {ReceptionView.class, DispatchView.class},
         version = 1)
@@ -115,6 +117,8 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
     public abstract MeasurementSystemFormulaVariablesDao measurementSystemFormulaVariablesDao();
 
     public abstract ContainerCategoriesDao containerCategoriesDao();
+
+    public abstract ContainerImagesDao containerImageDao();
 
     //VIEWS
     public abstract ReceptionViewDao receptionViewDao();

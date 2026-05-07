@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bb448c47937b6717b55ca6238994e6f6",
+    "identityHash": "e0ab7b80ff1d5682cbbbd8a427d89ba1",
     "entities": [
       {
         "tableName": "origins",
@@ -1597,6 +1597,113 @@
         ]
       },
       {
+        "tableName": "container_images",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempDispatchId` TEXT, `tempContainerImageId` TEXT, `imagePath` TEXT, `createdAt` INTEGER NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tempDispatchId",
+            "columnName": "tempDispatchId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tempContainerImageId",
+            "columnName": "tempContainerImageId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imagePath",
+            "columnName": "imagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "isDeleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_dispatch_id_container_images",
+            "unique": false,
+            "columnNames": [
+              "tempDispatchId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_dispatch_id_container_images` ON `${TABLE_NAME}` (`tempDispatchId`)"
+          },
+          {
+            "name": "idx_image_path",
+            "unique": false,
+            "columnNames": [
+              "imagePath"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_image_path` ON `${TABLE_NAME}` (`imagePath`)"
+          },
+          {
+            "name": "idx_temp_container_image_id",
+            "unique": false,
+            "columnNames": [
+              "tempContainerImageId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_temp_container_image_id` ON `${TABLE_NAME}` (`tempContainerImageId`)"
+          },
+          {
+            "name": "idx_synced_container_images",
+            "unique": false,
+            "columnNames": [
+              "isSynced"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_synced_container_images` ON `${TABLE_NAME}` (`isSynced`)"
+          },
+          {
+            "name": "idx_deleted_container_images",
+            "unique": false,
+            "columnNames": [
+              "isDeleted"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_deleted_container_images` ON `${TABLE_NAME}` (`isDeleted`)"
+          },
+          {
+            "name": "idx_created_at_container_images",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_created_at_container_images` ON `${TABLE_NAME}` (`createdAt`)"
+          }
+        ]
+      },
+      {
         "tableName": "dispatch_summary",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dispatchId` INTEGER, `tempDispatchId` TEXT, `totalPieces` INTEGER NOT NULL, `totalGrossVolume` REAL NOT NULL, `totalNetVolume` REAL NOT NULL, `avgGirth` REAL NOT NULL, `cft` REAL NOT NULL, `totalVolumePie` REAL NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
@@ -1973,7 +2080,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb448c47937b6717b55ca6238994e6f6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e0ab7b80ff1d5682cbbbd8a427d89ba1')"
     ]
   }
 }

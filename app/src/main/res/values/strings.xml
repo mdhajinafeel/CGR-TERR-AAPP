@@ -159,4 +159,19 @@
     <string name="failed_to_delete_backup">Failed to delete backup</string>
     <string name="delete_backup">Delete backup</string>
     <string name="delete_backup_confirmation">Are you sure you want to delete the backup?</string>
+    <string name="no_images_available">No photos available</string>
+    <string name="container_images">Container Photos</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="select_source">Select Source</string>
+
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="camera_permission_required">Camera Permission Required</string>
+    <string name="camera_access_is_required_to_take_photos_for_expense_attachments">Camera access is required to take photos for expense attachments.</string>
+    <string name="allow">Allow</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="camera_permission_is_disabled_please_enable_it_from_app_settings">Camera permission is disabled. Please enable it from App Settings.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="image_added">Photo added successfully</string>
+    <string name="photo_deleted">Photo deleted successfully</string>
 </resources>

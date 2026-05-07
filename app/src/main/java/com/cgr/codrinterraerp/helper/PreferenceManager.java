@@ -206,6 +206,15 @@ public enum PreferenceManager {
         prefStore.edit().putLong(KEY_LAST_CLEANUP_TIME, lastCleanupTime).apply();
     }
 
+    // ===== CAMERA PERMISSION =====
+    public void setPermissionCameraAsked(boolean permissionPrefs) {
+        prefStore.edit().putBoolean(KEY_PERMISSION_CAMERA_ASKED, permissionPrefs).apply();
+    }
+
+    public boolean getPermissionCameraAsked() {
+        return prefStore.getBoolean(KEY_PERMISSION_CAMERA_ASKED, false);
+    }
+
     public void clearLoginSession() {
         prefStore.edit()
                 .remove(KEY_ACCESS_TOKEN)
@@ -220,7 +229,6 @@ public enum PreferenceManager {
                 .remove(KEY_ORIGIN_ICON)
                 .remove(KEY_CURRENCY_EXCEL_FORMAT)
                 .remove(KEY_CURRENCY_FORMAT)
-                .remove(KEY_PERMISSION_CAMERA_ASKED)
                 .remove(KEY_CURRENCY_NAME)
                 .remove(KEY_TIMEZONE)
                 .remove(KEY_LOGIN_DETAIL_ID)

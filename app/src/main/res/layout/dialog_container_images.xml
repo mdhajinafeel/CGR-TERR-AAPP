@@ -1,0 +1,99 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center"
+    app:cardCornerRadius="@dimen/corner_radius_16"
+    app:cardElevation="@dimen/corner_elevation_8"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- HEADER -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle_solid_green">
+
+            <TextView
+                android:id="@+id/tvDialogTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/exo2_bold"
+                android:textColor="@color/colorMilkWhite"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgClose"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_close" />
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddContainerImage"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginEnd="@dimen/margin_10"
+            android:fontFamily="@font/exo2_semibold"
+            android:paddingStart="@dimen/padding_16"
+            android:paddingEnd="@dimen/padding_16"
+            android:text="@string/add"
+            android:layout_gravity="end"
+            android:textSize="@dimen/text_16"
+            app:backgroundTint="@color/colorDarkGreen"
+            app:cornerRadius="@dimen/corner_radius_8"
+            app:iconTint="@color/colorMildGreen"
+            app:icon="@drawable/ic_container_images"
+            app:iconGravity="textStart" />
+
+        <LinearLayout
+            android:id="@+id/llContainerImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_6"
+            android:visibility="gone"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_6">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvContainerImages"
+                android:layout_width="match_parent"
+                android:overScrollMode="never"
+                android:layout_height="400dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
+                android:padding="@dimen/padding_4"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
+                tools:listitem="@layout/row_item_container_image" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNoDataFound"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/margin_10"
+            android:text="@string/no_images_available"
+            android:gravity="center_horizontal"
+            android:fontFamily="@font/exo2_bold"
+            android:textColor="@color/colorBlack"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:textSize="@dimen/text_20"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

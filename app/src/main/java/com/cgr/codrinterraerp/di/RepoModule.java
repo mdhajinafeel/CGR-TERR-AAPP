@@ -4,6 +4,7 @@ import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.dao.ContainerCategoriesDao;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
+import com.cgr.codrinterraerp.db.dao.ContainerImagesDao;
 import com.cgr.codrinterraerp.db.dao.DispatchContainersDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
@@ -31,6 +32,7 @@ import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 import com.cgr.codrinterraerp.repository.AppStatusRepository;
 import com.cgr.codrinterraerp.repository.AuthRepository;
+import com.cgr.codrinterraerp.repository.ContainerImagesRepository;
 import com.cgr.codrinterraerp.repository.DispatchDataRepository;
 import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.repository.MasterRepository;
@@ -107,5 +109,11 @@ public class RepoModule {
     DispatchDataRepository provideDispatchDataRepository(ContainerDataDao containerDataDao, ReceptionDataDao receptionDataDao, DispatchRepository dispatchRepository,
                                                          ReceptionRepository receptionRepository) {
         return new DispatchDataRepository(containerDataDao, receptionDataDao, dispatchRepository, receptionRepository);
+    }
+
+    @Provides
+    @Singleton
+    ContainerImagesRepository provideContainerImagesRepository(ContainerImagesDao containerImagesDao) {
+        return new ContainerImagesRepository(containerImagesDao);
     }
 }
