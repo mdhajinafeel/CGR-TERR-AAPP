@@ -780,7 +780,6 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            dispatchViewModel.load();
                             Toast.makeText(getApplicationContext(), getString(R.string.data_updated_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }

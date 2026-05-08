@@ -27,13 +27,15 @@ public class DispatchViewModel extends ViewModel {
     private long dispatchSavedId;
     private final SingleLiveEvent<Boolean> dispatchStatus = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
-    private final MutableLiveData<Boolean> dispatchDataTrigger = new MutableLiveData<>();
     private final MutableLiveData<Integer> availableContainerTrigger = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> filterStatus = new MutableLiveData<>(false);
+    private final LiveData<List<DispatchView>> dispatchList;
 
     @Inject
     public DispatchViewModel(DispatchRepository dispatchRepository, ContainerImagesRepository containerImagesRepository) {
         this.dispatchRepository = dispatchRepository;
         this.containerImagesRepository = containerImagesRepository;
+        dispatchList = Transformations.switchMap(filterStatus, this.dispatchRepository::getDispatchList);
     }
 
     public void saveDispatchDetails(DispatchDetails dispatchDetails, String oldContainerNumber, int oldShippingLineId) {
@@ -76,17 +78,12 @@ public class DispatchViewModel extends ViewModel {
         return dispatchRepository.getDispatchContainersCountForEdit(containerNumber, shippingLineId, tempDispatchId);
     }
 
-    private final LiveData<List<DispatchView>> dispatchList =
-            Transformations.switchMap(dispatchDataTrigger, pro ->
-                    dispatchRepository.getDispatchList()
-            );
-
     public LiveData<List<DispatchView>> getDispatchList() {
         return dispatchList;
     }
 
-    public void load() {
-        dispatchDataTrigger.setValue(true);
+    public void setFilter(boolean status) {
+        filterStatus.setValue(status);
     }
 
     private final LiveData<List<DispatchView>> availableContainerList =
@@ -147,5 +144,9 @@ public class DispatchViewModel extends ViewModel {
 
     public int softDeleteImage(String id) {
         return containerImagesRepository.softDeleteImage(id);
+    }
+
+    public boolean closeDispatchDetails(String tempDispatchId, String closedDate, int closedBy, boolean isClose) {
+        return dispatchRepository.closeDispatchDetails(tempDispatchId, closedDate, closedBy, isClose);
     }
 }

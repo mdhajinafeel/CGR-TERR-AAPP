@@ -66,8 +66,8 @@ public class ReceptionRepository {
         return receptionDetailsDao.getReceptionInventoryOrdersCountForEdit(inventoryOrder, supplierId, tempReceptionId);
     }
 
-    public LiveData<List<ReceptionView>> getReceptionList() {
-        return receptionViewDao.getReceptionList();
+    public LiveData<List<ReceptionView>> getReceptionList(boolean isClosed) {
+        return receptionViewDao.getReceptionList(isClosed);
     }
 
     public void insertReceptionInventoryOrder(ReceptionInventoryOrders receptionInventoryOrder) {
@@ -126,5 +126,10 @@ public class ReceptionRepository {
 
     public List<String> getAllDispatchIds(String tempReceptionId) {
         return receptionDataDao.getAllDispatchIds(tempReceptionId);
+    }
+
+    public boolean closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose) {
+        int closed = receptionDetailsDao.closeReceptionDetails(tempReceptionId, closedDate, closedBy, isClose);
+        return closed > 0;
     }
 }

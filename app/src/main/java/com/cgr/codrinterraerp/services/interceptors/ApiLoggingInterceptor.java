@@ -33,6 +33,15 @@ public class ApiLoggingInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
 
         Request request = chain.request();
+
+        // Skip sensitive APIs
+        String url = request.url().encodedPath();
+
+        if (url.contains("auth/refresh_token") ||
+                url.contains("auth/logout")) {
+            return chain.proceed(request);
+        }
+
         long startTime = System.currentTimeMillis();
 
         String requestBodyString = "";

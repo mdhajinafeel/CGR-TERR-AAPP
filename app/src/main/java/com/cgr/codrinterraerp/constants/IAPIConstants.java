@@ -11,4 +11,6 @@ public interface IAPIConstants {
     String REFRESH_TOKEN = "auth/refresh_token";
     String LOGOUT = "auth/logout";
     String DOWNLOAD_MASTERS = "downloadmasters";
+    String UPLOAD_CONTAINER_PHOTOS = "sync/uploadcontainerphotos";
+    String SYNC_DATA = "sync/syncdata";
 }

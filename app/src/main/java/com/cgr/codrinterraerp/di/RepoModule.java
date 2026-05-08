@@ -27,6 +27,7 @@ import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
+import com.cgr.codrinterraerp.db.dao.SyncDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
@@ -38,8 +39,10 @@ import com.cgr.codrinterraerp.repository.DispatchRepository;
 import com.cgr.codrinterraerp.repository.MasterRepository;
 import com.cgr.codrinterraerp.repository.ReceptionDataRepository;
 import com.cgr.codrinterraerp.repository.ReceptionRepository;
+import com.cgr.codrinterraerp.repository.SyncRepository;
 import com.cgr.codrinterraerp.services.IAuthApiService;
 import com.cgr.codrinterraerp.services.IMasterApiService;
+import com.cgr.codrinterraerp.services.ISyncApiService;
 
 import javax.inject.Singleton;
 
@@ -115,5 +118,11 @@ public class RepoModule {
     @Singleton
     ContainerImagesRepository provideContainerImagesRepository(ContainerImagesDao containerImagesDao) {
         return new ContainerImagesRepository(containerImagesDao);
+    }
+
+    @Provides
+    @Singleton
+    SyncRepository provideSyncRepository(SyncDao syncDao, ISyncApiService iSyncApiService) {
+        return new SyncRepository(syncDao, iSyncApiService);
     }
 }

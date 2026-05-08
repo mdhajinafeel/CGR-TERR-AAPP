@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.ui.activities;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,6 +33,7 @@ import com.cgr.codrinterraerp.db.entities.Products;
 import com.cgr.codrinterraerp.db.entities.ShippingLines;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.db.views.DispatchView;
+import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.ui.common.BaseActivity;
@@ -53,7 +56,7 @@ public class DispatchActivity extends BaseActivity {
 
     private TextInputLayout tiContainerNumber, tiProduct, tiProductType, tiShippingLine, tiWarehouse, tiDispatchDate, tiCategory;
     private AppCompatEditText etContainerNumber, etProduct, etProductType, etShippingLine, etWarehouse, etDispatchDate, etCategory;
-    private MaterialButton btnSubmit;
+    private MaterialButton btnSubmit, btnCloseDispatch, btnOpenDispatch;
     private AppCompatTextView tvNoDataFound;
     private List<Products> productsList;
     private List<ProductTypes> productTypesList;
@@ -102,6 +105,8 @@ public class DispatchActivity extends BaseActivity {
             etCategory = findViewById(R.id.etCategory);
             btnSubmit = findViewById(R.id.btnSubmit);
             progressBar = findViewById(R.id.progressBar);
+            btnCloseDispatch = findViewById(R.id.btnCloseDispatch);
+            btnOpenDispatch = findViewById(R.id.btnOpenDispatch);
 
             Bundle bundle = getIntent().getExtras();
 
@@ -163,7 +168,15 @@ public class DispatchActivity extends BaseActivity {
 
             if (isEdit) {
 
-                if(dispatchView.totalPieces > 0) {
+                if (dispatchView.isClosed) {
+                    btnOpenDispatch.setVisibility(View.VISIBLE);
+                    btnCloseDispatch.setVisibility(View.GONE);
+                } else {
+                    btnCloseDispatch.setVisibility(View.VISIBLE);
+                    btnOpenDispatch.setVisibility(View.GONE);
+                }
+
+                if (dispatchView.totalPieces > 0) {
 
                     int colorLightGrey = ContextCompat.getColor(this, R.color.colorLightGrey);
 
@@ -231,6 +244,9 @@ public class DispatchActivity extends BaseActivity {
                 // Container # + Date
                 etContainerNumber.setText(dispatchDetail.getContainerNumber());
                 etDispatchDate.setText(dispatchDetail.getDispatchDate());
+            } else {
+                btnCloseDispatch.setVisibility(View.GONE);
+                btnOpenDispatch.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "fetchData", e);
@@ -263,6 +279,10 @@ public class DispatchActivity extends BaseActivity {
                 btnSubmit.setEnabled(false);
                 saveOrUpdateDispatchDetails();
             });
+
+            btnCloseDispatch.setOnClickListener(v -> closeConfirmation(true));
+
+            btnOpenDispatch.setOnClickListener(v -> closeConfirmation(false));
         } catch (Exception e) {
             AppLogger.e(getClass(), "clickListeners", e);
         }
@@ -773,7 +793,7 @@ public class DispatchActivity extends BaseActivity {
 
             // ================= SAVE =================
 
-            dispatchViewModel.saveDispatchDetails(dispatchDetail,oldContainerNumber != null ? oldContainerNumber : dispatchDetail.getContainerNumber(),
+            dispatchViewModel.saveDispatchDetails(dispatchDetail, oldContainerNumber != null ? oldContainerNumber : dispatchDetail.getContainerNumber(),
                     oldShippingLineId != 0 ? oldShippingLineId : dispatchDetail.getShippingLineId()
             );
 
@@ -803,5 +823,58 @@ public class DispatchActivity extends BaseActivity {
 
     private void enableSubmit() {
         btnSubmit.setEnabled(true);
+    }
+
+    private void closeConfirmation(boolean isClose) {
+        try {
+            LayoutInflater dialogInflater = LayoutInflater.from(this);
+            View dialogView = dialogInflater.inflate(R.layout.custom_dialog, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+
+            AlertDialog dialog = builder.create();
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+            AppCompatTextView dialogHeader = dialogView.findViewById(R.id.dialogHeader);
+            AppCompatTextView dialogBody = dialogView.findViewById(R.id.dialogBody);
+            MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
+            MaterialButton btnOk = dialogView.findViewById(R.id.btnOk);
+
+            dialogHeader.setText(getString(R.string.confirmation));
+
+            if(dispatchView.isClosed) {
+                dialogBody.setText(R.string.open_confirmation);
+            } else {
+                dialogBody.setText(R.string.close_confirmation);
+            }
+
+
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+            btnOk.setOnClickListener(v -> {
+                dialog.dismiss();
+                boolean closed = dispatchViewModel.closeDispatchDetails(dispatchView.tempDispatchId,
+                        CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd/MM/yyyy", getApplicationContext()),
+                        PreferenceManager.INSTANCE.getUserId(), isClose);
+
+                if(closed) {
+                    Intent resultIntent = new Intent();
+                    if(isClose) {
+                        resultIntent.putExtra("isClosed", true);
+                    } else {
+                        resultIntent.putExtra("isOpened", true);
+                    }
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
+            });
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        } catch (Exception e) {
+            AppLogger.e(getClass(), "performLogout", e);
+        }
     }
 }

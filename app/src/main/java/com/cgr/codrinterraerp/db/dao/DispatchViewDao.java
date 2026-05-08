@@ -12,8 +12,8 @@ import java.util.List;
 public interface DispatchViewDao {
 
     // Optional (recommended)
-    @Query("SELECT * FROM dispatch_view ORDER BY id DESC")
-    LiveData<List<DispatchView>> getDispatchList();
+    @Query("SELECT * FROM dispatch_view WHERE isClosed = :isClosed ORDER BY id DESC")
+    LiveData<List<DispatchView>> getDispatchList(boolean isClosed);
 
     @Query("SELECT * FROM dispatch_view WHERE isClosed = 0 AND productTypeId IN (:productTypeIds)")
     LiveData<List<DispatchView>> getAvailableContainers(List<Integer> productTypeIds);

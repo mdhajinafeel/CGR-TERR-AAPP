@@ -39,6 +39,40 @@
                 android:layout_margin="@dimen/margin_16"
                 android:orientation="vertical">
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOpenDispatch"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:visibility="gone"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:paddingStart="@dimen/padding_16"
+                    android:paddingEnd="@dimen/padding_16"
+                    android:text="@string/open"
+                    android:textSize="@dimen/text_16"
+                    app:backgroundTint="@color/darkGreen"
+                    app:cornerRadius="@dimen/corner_radius_8"
+                    app:icon="@drawable/ic_open_clock"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCloseDispatch"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:visibility="gone"
+                    android:fontFamily="@font/exo2_semibold"
+                    android:paddingStart="@dimen/padding_16"
+                    android:paddingEnd="@dimen/padding_16"
+                    android:text="@string/close"
+                    android:textSize="@dimen/text_16"
+                    app:backgroundTint="@color/colorRed"
+                    app:cornerRadius="@dimen/corner_radius_8"
+                    app:icon="@drawable/ic_close"
+                    app:iconGravity="textStart" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tiContainerNumber"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

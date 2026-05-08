@@ -58,8 +58,8 @@ public class DispatchRepository {
         return dispatchContainersDao.getDispatchContainersCount(containerNumber, shippingLineId);
     }
 
-    public LiveData<List<DispatchView>> getDispatchList() {
-        return dispatchViewDao.getDispatchList();
+    public LiveData<List<DispatchView>> getDispatchList(boolean isClosed) {
+        return dispatchViewDao.getDispatchList(isClosed);
     }
 
     public void insertDispatchContainer(DispatchContainers dispatchContainer) {
@@ -133,5 +133,10 @@ public class DispatchRepository {
 
     public List<String> getAllReceptionIds(String tempDispatchId) {
         return containerDataDao.getAllReceptionIds(tempDispatchId);
+    }
+
+    public boolean closeDispatchDetails(String tempDispatchId, String closedDate, int closedBy, boolean isClose) {
+        int closed = dispatchDetailsDao.closeDispatchDetails(tempDispatchId, closedDate, closedBy, isClose);
+        return closed > 0;
     }
 }

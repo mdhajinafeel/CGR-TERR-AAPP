@@ -3,6 +3,7 @@ package com.cgr.codrinterraerp.ui.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,8 +24,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -51,6 +54,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +65,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DispatchFragment extends Fragment {
 
+    private AppCompatTextView filterDropDown;
     private RecyclerView rvDispatchLists, rvContainerImages;
     private LinearLayout llNoData, llContainerImages;
     private AppCompatTextView tvNoDataFound;
@@ -77,6 +83,7 @@ public class DispatchFragment extends Fragment {
         try {
             MaterialButton btnAddReception = view.findViewById(R.id.btnAddDispatch);
             rvDispatchLists = view.findViewById(R.id.rvDispatchLists);
+            filterDropDown = view.findViewById(R.id.filterDropDown);
             llNoData = view.findViewById(R.id.llNoData);
 
             dispatchViewModel = new ViewModelProvider(this).get(DispatchViewModel.class);
@@ -97,7 +104,8 @@ public class DispatchFragment extends Fragment {
 
             // ✅ Observe data (auto updates)
             dispatchViewModel.getDispatchList().observe(getViewLifecycleOwner(), this::bindDispatchData);
-            dispatchViewModel.load();
+
+            bindFilterOption();
         } catch (Exception e) {
             AppLogger.e(getClass(), "onCreateView", e);
         }
@@ -189,11 +197,19 @@ public class DispatchFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-
-                            // 🔥 Optional: You DON'T need this if Room works correctly
-                            dispatchViewModel.load();
-
-                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                            Intent data = result.getData();
+                            if (data != null) {
+                                int savedDispatchId = data.getIntExtra("savedDispatchId", 0);
+                                boolean isClosed = data.getBooleanExtra("isClosed", false);
+                                boolean isOpened = data.getBooleanExtra("isOpened", false);
+                                if (savedDispatchId > 0) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                                } else if(isClosed) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_closed_successfully), Toast.LENGTH_SHORT).show();
+                                } else if(isOpened) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_opened_successfully), Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                     }
             );
@@ -203,7 +219,6 @@ public class DispatchFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            dispatchViewModel.load();
                             Toast.makeText(requireContext(), getString(R.string.data_updated_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -242,8 +257,6 @@ public class DispatchFragment extends Fragment {
 
                     if (deleted > 0) {
                         Toast.makeText(getContext(), getString(R.string.data_deleted), Toast.LENGTH_SHORT).show();
-                        // ✅ Refresh data
-                        dispatchViewModel.load();
                     } else {
                         Toast.makeText(getContext(), getString(R.string.data_deleted_failed), Toast.LENGTH_SHORT).show();
                     }
@@ -688,6 +701,51 @@ public class DispatchFragment extends Fragment {
             dialog.show();
         } catch (Exception e) {
             AppLogger.e(getClass(), "deleteContainerImage", e);
+        }
+    }
+
+    private void bindFilterOption() {
+        try {
+            filterDropDown.setOnClickListener(v -> {
+
+                Context wrapper = new ContextThemeWrapper(requireContext(), R.style.CustomPopupMenu);
+                PopupMenu popupMenu = new PopupMenu(wrapper, filterDropDown);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_status, popupMenu.getMenu());
+
+                // FORCE SHOW ICONS
+                try {
+
+                    Field field = popupMenu.getClass().getDeclaredField("mPopup");
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popupMenu);
+                    Class<?> classPopupHelper = Class.forName(Objects.requireNonNull(menuPopupHelper).getClass().getName());
+                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+
+                } catch (Exception e) {
+                    AppLogger.e(getClass(), "bindFilterOptions", e);
+                }
+
+                popupMenu.setOnMenuItemClickListener(item -> {
+
+                    String selected = Objects.requireNonNull(item.getTitle()).toString();
+                    filterDropDown.setText(selected);
+
+                    if (item.getItemId() == R.id.status_open) {
+                        dispatchViewModel.setFilter(false);
+                        return true;
+                    } else if (item.getItemId() == R.id.status_close) {
+                        dispatchViewModel.setFilter(true);
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                popupMenu.show();
+            });
+        }catch (Exception e) {
+            AppLogger.e(getClass(), "bindFilterOptions", e);
         }
     }
 

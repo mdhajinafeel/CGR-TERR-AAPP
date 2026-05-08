@@ -178,4 +178,10 @@
     <string name="semi_validate">Semi length must be between 300 and 590</string>
     <string name="longs_validate">Longs length must be greater than 590</string>
     <string name="invalid_length">Invalid length</string>
+    <string name="close">Close</string>
+    <string name="close_confirmation">Are you sure you want to close?</string>
+    <string name="open_confirmation">Are you sure you want to open?</string>
+    <string name="data_closed_successfully">Reception has been closed successfully</string>
+    <string name="data_opened_successfully">Reception has been opened successfully</string>
+    <string name="open">Open</string>
 </resources>

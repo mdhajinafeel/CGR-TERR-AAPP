@@ -1,6 +1,7 @@
 package com.cgr.codrinterraerp.ui.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,6 +37,8 @@ import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.viewmodel.ReceptionViewModel;
 import com.google.android.material.button.MaterialButton;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ReceptionFragment extends Fragment {
 
+    private AppCompatTextView filterDropDown;
     private RecyclerView rvReceptionLists;
     private LinearLayout llNoData;
     private RecyclerViewAdapter<ReceptionView> receptionViewRecyclerViewAdapter;
@@ -55,6 +61,7 @@ public class ReceptionFragment extends Fragment {
         try {
             MaterialButton btnAddReception = view.findViewById(R.id.btnAddReception);
             rvReceptionLists = view.findViewById(R.id.rvReceptionLists);
+            filterDropDown = view.findViewById(R.id.filterDropDown);
             llNoData = view.findViewById(R.id.llNoData);
 
             receptionViewModel = new ViewModelProvider(this).get(ReceptionViewModel.class);
@@ -75,7 +82,8 @@ public class ReceptionFragment extends Fragment {
 
             // ✅ Observe data (auto updates)
             receptionViewModel.getReceptionList().observe(getViewLifecycleOwner(), this::bindReceptionData);
-            receptionViewModel.load();
+
+            bindFilterOption();
         } catch (Exception e) {
             AppLogger.e(getClass(), "onCreateView", e);
         }
@@ -92,7 +100,7 @@ public class ReceptionFragment extends Fragment {
                     holder.setViewText(R.id.tvSupplier, receptionView.supplierName);
                     holder.setViewText(R.id.tvPieces, String.valueOf(receptionView.totalPieces));
 
-                    if(receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
+                    if (receptionView.productTypeId == 1 || receptionView.productTypeId == 3) {
                         holder.setViewText(R.id.tvGrossTitle, getString(R.string.volume_pie));
                         holder.setViewText(R.id.tvGrossVolume, String.valueOf(receptionView.totalVolumePie));
                     } else {
@@ -160,8 +168,19 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            receptionViewModel.load();
-                            Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                            Intent data = result.getData();
+                            if (data != null) {
+                                int savedReceptionId = data.getIntExtra("savedReceptionId", 0);
+                                boolean isClosed = data.getBooleanExtra("isClosed", false);
+                                boolean isOpened = data.getBooleanExtra("isOpened", false);
+                                if (savedReceptionId > 0) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_added_successfully), Toast.LENGTH_SHORT).show();
+                                } else if(isClosed) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_closed_successfully), Toast.LENGTH_SHORT).show();
+                                } else if(isOpened) {
+                                    Toast.makeText(requireContext(), getString(R.string.data_opened_successfully), Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                     }
             );
@@ -171,7 +190,7 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            receptionViewModel.load();
+                            AppLogger.i(getClass(), "Data added");
                         }
                     }
             );
@@ -181,7 +200,6 @@ public class ReceptionFragment extends Fragment {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            receptionViewModel.load();
                             Toast.makeText(requireContext(), getString(R.string.data_updated_successfully), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -221,7 +239,6 @@ public class ReceptionFragment extends Fragment {
                     if (deleted > 0) {
                         Toast.makeText(getContext(), getString(R.string.data_deleted), Toast.LENGTH_SHORT).show();
                         // ✅ Refresh data
-                        receptionViewModel.load();
                     } else {
                         Toast.makeText(getContext(), getString(R.string.data_deleted_failed), Toast.LENGTH_SHORT).show();
                     }
@@ -240,5 +257,55 @@ public class ReceptionFragment extends Fragment {
         } catch (Exception e) {
             AppLogger.e(getClass(), "deleteReception", e);
         }
+    }
+
+    private void bindFilterOption() {
+        try {
+            filterDropDown.setOnClickListener(v -> {
+
+                Context wrapper = new ContextThemeWrapper(requireContext(), R.style.CustomPopupMenu);
+                PopupMenu popupMenu = new PopupMenu(wrapper, filterDropDown);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_status, popupMenu.getMenu());
+
+                // FORCE SHOW ICONS
+                try {
+
+                    Field field = popupMenu.getClass().getDeclaredField("mPopup");
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popupMenu);
+                    Class<?> classPopupHelper = Class.forName(Objects.requireNonNull(menuPopupHelper).getClass().getName());
+                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+
+                } catch (Exception e) {
+                    AppLogger.e(getClass(), "bindFilterOptions", e);
+                }
+
+                popupMenu.setOnMenuItemClickListener(item -> {
+
+                    String selected = Objects.requireNonNull(item.getTitle()).toString();
+                    filterDropDown.setText(selected);
+
+                    if (item.getItemId() == R.id.status_open) {
+                        receptionViewModel.setFilter(false);
+                        return true;
+                    } else if (item.getItemId() == R.id.status_close) {
+                        receptionViewModel.setFilter(true);
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                popupMenu.show();
+            });
+        }catch (Exception e) {
+            AppLogger.e(getClass(), "bindFilterOptions", e);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

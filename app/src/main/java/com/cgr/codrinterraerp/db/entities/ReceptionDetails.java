@@ -39,6 +39,9 @@ public class ReceptionDetails implements Serializable {
     public boolean isEdited = false;
     public long updatedAt = System.currentTimeMillis();
     public String containerReceptionMappingId;
+    public boolean isClosed = false;
+    public int closedBy;
+    public String closedDate;
 
     public long getId() {
         return id;
@@ -208,5 +211,29 @@ public class ReceptionDetails implements Serializable {
 
     public void setContainerReceptionMappingId(String containerReceptionMappingId) {
         this.containerReceptionMappingId = containerReceptionMappingId;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
+    public int getClosedBy() {
+        return closedBy;
+    }
+
+    public void setClosedBy(int closedBy) {
+        this.closedBy = closedBy;
+    }
+
+    public String getClosedDate() {
+        return closedDate;
+    }
+
+    public void setClosedDate(String closedDate) {
+        this.closedDate = closedDate;
     }
 }

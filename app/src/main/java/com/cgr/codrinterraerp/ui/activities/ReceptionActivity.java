@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.ui.activities;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,6 +35,7 @@ import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.db.views.ReceptionView;
+import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.ui.adapters.RecyclerViewAdapter;
 import com.cgr.codrinterraerp.ui.adapters.ViewHolder;
 import com.cgr.codrinterraerp.ui.common.BaseActivity;
@@ -58,6 +61,7 @@ public class ReceptionActivity extends BaseActivity {
             tiWarehouse, tiReceptionDate, tiPurchaseContract, tiTruckNumber, tiTruckDriverName;
     private AppCompatEditText etSupplier, etSupplierProduct, etSupplierProductType, etIca, etMeasurementSystem,
             etWarehouse, etReceptionDate, etPurchaseContract, etTruckNumber, etTruckDriverName;
+    private MaterialButton btnCloseReception, btnOpenReception;
     private AppCompatTextView tvNoDataFound;
     private MaterialCheckBox cbEnableFarm;
     private LinearLayout llFarm;
@@ -119,6 +123,8 @@ public class ReceptionActivity extends BaseActivity {
             llFarm = findViewById(R.id.llFarm);
             btnSubmit = findViewById(R.id.btnSubmit);
             progressBar = findViewById(R.id.progressBar);
+            btnCloseReception = findViewById(R.id.btnCloseReception);
+            btnOpenReception = findViewById(R.id.btnOpenReception);
 
             Bundle bundle = getIntent().getExtras();
 
@@ -183,7 +189,16 @@ public class ReceptionActivity extends BaseActivity {
 
             if (isEdit) {
 
-                if(receptionView.totalPieces > 0) {
+                if(receptionView.isClosed) {
+                    btnOpenReception.setVisibility(View.VISIBLE);
+                    btnCloseReception.setVisibility(View.GONE);
+                } else {
+                    btnCloseReception.setVisibility(View.VISIBLE);
+                    btnOpenReception.setVisibility(View.GONE);
+                }
+
+
+                if (receptionView.totalPieces > 0) {
                     int colorLightGrey = ContextCompat.getColor(this, R.color.colorLightGrey);
 
                     tiSupplier.setEnabled(false);
@@ -201,7 +216,7 @@ public class ReceptionActivity extends BaseActivity {
                     tiSupplierProductType.setAlpha(0.9f);
                     tiMeasurementSystem.setAlpha(0.9f);
 
-                    if(receptionView.isFarmEnabled) {
+                    if (receptionView.isFarmEnabled) {
                         tiPurchaseContract.setEnabled(false);
                         tiPurchaseContract.setBoxBackgroundColor(colorLightGrey);
                         tiPurchaseContract.setAlpha(0.9f);
@@ -287,6 +302,9 @@ public class ReceptionActivity extends BaseActivity {
                 } else {
                     llFarm.setVisibility(View.GONE);
                 }
+            } else {
+                btnCloseReception.setVisibility(View.GONE);
+                btnOpenReception.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             AppLogger.e(getClass(), "fetchData", e);
@@ -320,7 +338,7 @@ public class ReceptionActivity extends BaseActivity {
             cbEnableFarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
 
-                    if(isReceptionEdit && existingReceptionDetail != null) {
+                    if (isReceptionEdit && existingReceptionDetail != null) {
                         purchaseContractsList = masterViewModel.fetchPurchaseContracts(existingReceptionDetail.getSupplierId(), existingReceptionDetail.getProductId(),
                                 existingReceptionDetail.getProductTypeId());
                     }
@@ -341,6 +359,9 @@ public class ReceptionActivity extends BaseActivity {
                 saveOrUpdateReceptionDetails();
             });
 
+            btnCloseReception.setOnClickListener(v -> closeConfirmation(true));
+
+            btnOpenReception.setOnClickListener(v -> closeConfirmation(false));
         } catch (Exception e) {
             AppLogger.e(getClass(), "clickListeners", e);
         }
@@ -1034,5 +1055,58 @@ public class ReceptionActivity extends BaseActivity {
 
     private void enableSubmit() {
         btnSubmit.setEnabled(true);
+    }
+
+    private void closeConfirmation(boolean isClose) {
+        try {
+            LayoutInflater dialogInflater = LayoutInflater.from(this);
+            View dialogView = dialogInflater.inflate(R.layout.custom_dialog, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+
+            AlertDialog dialog = builder.create();
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+            AppCompatTextView dialogHeader = dialogView.findViewById(R.id.dialogHeader);
+            AppCompatTextView dialogBody = dialogView.findViewById(R.id.dialogBody);
+            MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
+            MaterialButton btnOk = dialogView.findViewById(R.id.btnOk);
+
+            dialogHeader.setText(getString(R.string.confirmation));
+
+            if(receptionView.isClosed) {
+                dialogBody.setText(R.string.open_confirmation);
+            } else {
+                dialogBody.setText(R.string.close_confirmation);
+            }
+
+
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+            btnOk.setOnClickListener(v -> {
+                dialog.dismiss();
+                boolean closed = receptionViewModel.closeReceptionDetails(receptionView.tempReceptionId,
+                        CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd/MM/yyyy", getApplicationContext()),
+                        PreferenceManager.INSTANCE.getUserId(), isClose);
+
+                if(closed) {
+                    Intent resultIntent = new Intent();
+                    if(isClose) {
+                        resultIntent.putExtra("isClosed", true);
+                    } else {
+                        resultIntent.putExtra("isOpened", true);
+                    }
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
+            });
+
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        } catch (Exception e) {
+            AppLogger.e(getClass(), "performLogout", e);
+        }
     }
 }

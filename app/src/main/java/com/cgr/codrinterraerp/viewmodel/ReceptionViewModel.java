@@ -21,15 +21,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ReceptionViewModel extends ViewModel {
 
-    private ReceptionRepository receptionRepository;
+    private final ReceptionRepository receptionRepository;
     private long receptionSavedId;
     private final SingleLiveEvent<Boolean> receptionStatus = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
-    private final MutableLiveData<Boolean> receptionDataTrigger = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> filterStatus = new MutableLiveData<>(false);
+    private final LiveData<List<ReceptionView>> receptionList;
 
     @Inject
     public ReceptionViewModel(ReceptionRepository receptionRepository) {
         this.receptionRepository = receptionRepository;
+        receptionList = Transformations.switchMap(filterStatus, this.receptionRepository::getReceptionList);
     }
 
     public void saveReceptionDetails(ReceptionDetails receptionDetails, String oldIca, int oldSupplierId) {
@@ -88,17 +90,9 @@ public class ReceptionViewModel extends ViewModel {
         return receptionRepository.getReceptionInventoryOrdersCountForEdit(inventoryOrder, supplierId, tempReceptionId);
     }
 
-    private final LiveData<List<ReceptionView>> receptionList =
-            Transformations.switchMap(receptionDataTrigger, input ->
-                    receptionRepository.getReceptionList()
-            );
 
     public LiveData<List<ReceptionView>> getReceptionList() {
         return receptionList;
-    }
-
-    public void load() {
-        receptionDataTrigger.setValue(true);
     }
 
     public ReceptionDetails fetchReceptionDetailById(String tempReceptionId) {
@@ -117,6 +111,14 @@ public class ReceptionViewModel extends ViewModel {
 
         progressState.postValue(false);
         return receptionDelete;
+    }
+
+    public boolean closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose) {
+        return receptionRepository.closeReceptionDetails(tempReceptionId, closedDate, closedBy, isClose);
+    }
+
+    public void setFilter(boolean status) {
+        filterStatus.setValue(status);
     }
 
     public LiveData<Boolean> getProgressState() {

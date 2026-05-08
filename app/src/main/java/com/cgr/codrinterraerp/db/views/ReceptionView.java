@@ -10,7 +10,7 @@ import java.io.Serializable;
                 "s.supplierName, m.measurementName, r.receptionDate, " +
                 "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie, " +
                 "IFNULL(ds.totalNetVolume,0) as totalNetVolume, r.measurementSystem, r.productTypeId, p.productName, pt.productTypeName," +
-                "r.isFarmEnabled, pc.contractCode, pc.description, r.supplierId, r.containerReceptionMappingId " +
+                "r.isFarmEnabled, pc.contractCode, pc.description, r.supplierId, r.containerReceptionMappingId, r.isClosed " +
                 "FROM reception_details r " +
                 "INNER JOIN suppliers s ON s.supplierId = r.supplierId " +
                 "INNER JOIN measurement_systems m ON m.id = r.measurementSystem " +
@@ -25,5 +25,5 @@ public class ReceptionView implements Serializable {
     public int id, receptionId, totalPieces, measurementSystem, productTypeId, supplierId;
     public String tempReceptionId, ica, supplierName, measurementName, receptionDate, productName, productTypeName, contractCode, description, containerReceptionMappingId;
     public double totalGrossVolume, totalNetVolume, totalVolumePie;
-    public boolean isFarmEnabled;
+    public boolean isFarmEnabled, isClosed;
 }

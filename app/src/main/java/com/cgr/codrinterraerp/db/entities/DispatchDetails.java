@@ -33,6 +33,8 @@ public class DispatchDetails implements Serializable {
     public boolean isDeleted = false;
     public boolean isEdited = false;
     public long updatedAt = System.currentTimeMillis();
+    public int closedBy;
+    public String closedDate;
 
     public long getId() {
         return id;
@@ -154,5 +156,21 @@ public class DispatchDetails implements Serializable {
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public int getClosedBy() {
+        return closedBy;
+    }
+
+    public void setClosedBy(int closedBy) {
+        this.closedBy = closedBy;
+    }
+
+    public String getClosedDate() {
+        return closedDate;
+    }
+
+    public void setClosedDate(String closedDate) {
+        this.closedDate = closedDate;
     }
 }

@@ -5,6 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/filterDropDown"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_filter_dropdown"
+        android:drawableStart="@drawable/ic_filter"
+        android:layout_marginStart="@dimen/margin_20"
+        android:drawableEnd="@drawable/ic_dropdown_arrow"
+        android:drawablePadding="@dimen/padding_10"
+        android:fontFamily="@font/exo2_semibold"
+        android:padding="@dimen/padding_6"
+        android:text="@string/all"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/text_16"
+        app:layout_constraintBottom_toBottomOf="@id/btnAddDispatch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnAddDispatch"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddDispatch"
         style="@style/Widget.MaterialComponents.Button"

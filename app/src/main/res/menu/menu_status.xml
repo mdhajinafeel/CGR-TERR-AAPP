@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/status_open"
+        android:icon="@drawable/ic_open_clock"
+        android:title="@string/open" />
+
+    <item
+        android:id="@+id/status_close"
+        android:icon="@drawable/ic_close_lock"
+        android:title="@string/close" />
+</menu>

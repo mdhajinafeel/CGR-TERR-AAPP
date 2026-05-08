@@ -19,10 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class AppStatusViewModel extends ViewModel {
 
     private final AppStatusRepository appStatusRepository;
-
-    private final MutableLiveData<String> filterType =
-            new MutableLiveData<>("ALL");
-
+    private final MutableLiveData<String> filterType = new MutableLiveData<>("ALL");
     private final LiveData<List<ApiLogs>> apiLogsList;
 
     @Inject
