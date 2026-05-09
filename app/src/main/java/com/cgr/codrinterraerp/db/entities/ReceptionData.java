@@ -35,6 +35,7 @@ public class ReceptionData implements Serializable {
     private boolean isSynced = false;
     private boolean isDeleted = false;
     private boolean isEdited = false;
+    private long createdAt;
     private long updatedAt = System.currentTimeMillis();
     private String containerReceptionMappingId;
     @Ignore
@@ -190,5 +191,13 @@ public class ReceptionData implements Serializable {
 
     public void setVolumePie(double volumePie) {
         this.volumePie = volumePie;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
     }
 }

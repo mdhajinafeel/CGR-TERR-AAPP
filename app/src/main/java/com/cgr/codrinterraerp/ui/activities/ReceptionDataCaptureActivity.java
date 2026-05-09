@@ -539,6 +539,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 receptionData.setDeleted(false);
                 receptionData.setEdited(false);
                 receptionData.setUpdatedAt(System.currentTimeMillis());
+                receptionData.setCreatedAt(System.currentTimeMillis());
                 receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
                 ContainerData containerData = new ContainerData();
@@ -556,6 +557,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 containerData.setDeleted(false);
                 containerData.setEdited(false);
                 containerData.setUpdatedAt(System.currentTimeMillis());
+                containerData.setCreatedAt(System.currentTimeMillis());
                 containerData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
                 saveMeasurementData(receptionData, containerData);
@@ -630,6 +632,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 receptionData.setDeleted(false);
                 receptionData.setEdited(false);
                 receptionData.setUpdatedAt(System.currentTimeMillis());
+                receptionData.setCreatedAt(System.currentTimeMillis());
                 receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
                 ContainerData containerData = new ContainerData();
@@ -647,6 +650,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 containerData.setDeleted(false);
                 containerData.setEdited(false);
                 containerData.setUpdatedAt(System.currentTimeMillis());
+                containerData.setCreatedAt(System.currentTimeMillis());
                 containerData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
                 saveMeasurementData(receptionData, containerData);
