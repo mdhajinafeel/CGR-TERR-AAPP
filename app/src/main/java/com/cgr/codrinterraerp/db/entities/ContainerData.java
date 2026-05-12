@@ -21,6 +21,7 @@ public class ContainerData implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private String dispatchDataId;
     private String tempReceptionDataId;
     private String tempDispatchId;
     private Integer dispatchId;
@@ -172,5 +173,13 @@ public class ContainerData implements Serializable {
 
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getDispatchDataId() {
+        return dispatchDataId;
+    }
+
+    public void setDispatchDataId(String dispatchDataId) {
+        this.dispatchDataId = dispatchDataId;
     }
 }

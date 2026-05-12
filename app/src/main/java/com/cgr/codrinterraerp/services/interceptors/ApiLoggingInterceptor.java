@@ -2,6 +2,7 @@ package com.cgr.codrinterraerp.services.interceptors;
 
 import androidx.annotation.NonNull;
 
+import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
 import com.cgr.codrinterraerp.utils.AppLogger;
@@ -20,7 +21,6 @@ public class ApiLoggingInterceptor implements Interceptor {
 
     private final ApiLogsDao apiLogDao;
     private static final Executor executor = Executors.newSingleThreadExecutor();
-
     private static final long MAX_RESPONSE_SIZE = 10_000_000L; // 10MB
     private static final int DB_TRUNCATE_LENGTH = 5000;
 
@@ -34,11 +34,8 @@ public class ApiLoggingInterceptor implements Interceptor {
 
         Request request = chain.request();
 
-        // Skip sensitive APIs
-        String url = request.url().encodedPath();
-
-        if (url.contains("auth/refresh_token") ||
-                url.contains("auth/logout")) {
+        // 🔥 Skip logging for specific APIs
+        if (shouldSkipLogging(request)) {
             return chain.proceed(request);
         }
 
@@ -194,5 +191,13 @@ public class ApiLoggingInterceptor implements Interceptor {
         } catch (Exception e) {
             return fullUrl;
         }
+    }
+
+    private boolean shouldSkipLogging(Request request) {
+        String url = request.url().encodedPath();
+        return url.contains(IAPIConstants.REFRESH_TOKEN)
+                || url.contains(IAPIConstants.LOGOUT)
+                || url.contains(IAPIConstants.LOGIN)
+                || url.contains(IAPIConstants.ORIGINS);
     }
 }

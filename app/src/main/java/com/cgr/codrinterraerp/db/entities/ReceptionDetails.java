@@ -42,6 +42,7 @@ public class ReceptionDetails implements Serializable {
     public boolean isClosed = false;
     public int closedBy;
     public String closedDate;
+    public long createdAt;
 
     public long getId() {
         return id;
@@ -217,10 +218,6 @@ public class ReceptionDetails implements Serializable {
         return isClosed;
     }
 
-    public void setClosed(boolean closed) {
-        isClosed = closed;
-    }
-
     public int getClosedBy() {
         return closedBy;
     }
@@ -235,5 +232,13 @@ public class ReceptionDetails implements Serializable {
 
     public void setClosedDate(String closedDate) {
         this.closedDate = closedDate;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
     }
 }

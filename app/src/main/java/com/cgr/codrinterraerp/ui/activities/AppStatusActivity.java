@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -130,8 +131,10 @@ public class AppStatusActivity extends BaseActivity {
                     View vStatusBar = holder.getView(R.id.vStatusBar);
                     LinearLayout expandableContainer = (LinearLayout) holder.getView(R.id.expandableContainer);
 
-                    if (apiLog.success && apiLog.type.equalsIgnoreCase("api")) {
-                        holder.setViewText(R.id.tvTitle, apiLog.endpoint.replace("/", "").toUpperCase());
+                    if (apiLog.type.equalsIgnoreCase("api")) {
+
+                        String cleanEndpoint = getEndpoint(apiLog);
+                        holder.setViewText(R.id.tvTitle, cleanEndpoint);
                     } else {
                         holder.setViewText(R.id.tvTitle, apiLog.exceptionType);
                     }
@@ -300,6 +303,21 @@ public class AppStatusActivity extends BaseActivity {
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
+    }
+
+    @Nullable
+    private static String getEndpoint(ApiLogs apiLog) {
+        String cleanEndpoint = apiLog.endpoint;
+        if (cleanEndpoint != null) {
+            // Remove query params
+            int queryIndex = cleanEndpoint.indexOf("?");
+            if (queryIndex != -1) {
+                cleanEndpoint = cleanEndpoint.substring(0, queryIndex);
+            }
+            // Remove slashes and convert to upper case
+            cleanEndpoint = cleanEndpoint.replace("/", "").toUpperCase();
+        }
+        return cleanEndpoint;
     }
 
     private void bindAppStatusData(List<ApiLogs> list) {

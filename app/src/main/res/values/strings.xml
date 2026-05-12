@@ -184,4 +184,8 @@
     <string name="data_closed_successfully">Reception has been closed successfully</string>
     <string name="data_opened_successfully">Reception has been opened successfully</string>
     <string name="open">Open</string>
+    <string name="sync_completed">Sync Completed</string>
+    <string name="failed_to_sync">Failed to sync</string>
+    <string name="container_photos_sync_failed">Container photos sync failed</string>
+    <string name="data_sync_failed">Data sync failed</string>
 </resources>

@@ -781,8 +781,9 @@ public class DispatchActivity extends BaseActivity {
                 dispatchDetail.setTempDispatchId(existingDispatchDetail.getTempDispatchId());
                 dispatchDetail.setDispatchId(existingDispatchDetail.getDispatchId());
                 dispatchDetail.setEdited(true);
+                dispatchDetail.setCreatedAt(System.currentTimeMillis());
             } else {
-                dispatchDetail.setTempDispatchId("D_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                dispatchDetail.setTempDispatchId("DISP_" + CommonUtils.getCurrentLocalDateTimeStamp());
                 dispatchDetail.setDispatchId(null);
                 dispatchDetail.setEdited(false);
             }

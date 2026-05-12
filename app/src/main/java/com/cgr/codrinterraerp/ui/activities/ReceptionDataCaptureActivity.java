@@ -549,6 +549,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 containerData.setReceptionId(receptionView.receptionId);
                 containerData.setTempReceptionId(receptionView.tempReceptionId);
                 containerData.setReceptionDataId(null);
+                containerData.setDispatchDataId(null);
                 containerData.setPieces(pieces);
                 containerData.setGrossVolume(0);
                 containerData.setNetVolume(netToSave);
@@ -613,7 +614,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
                 double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
 
-                String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                String tempReceptionDataId = "RECDATA_" + CommonUtils.getCurrentLocalDateTimeStamp();
 
                 ReceptionData receptionData = new ReceptionData();
                 receptionData.setTempReceptionDataId(tempReceptionDataId);
@@ -642,6 +643,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 containerData.setReceptionId(receptionView.receptionId);
                 containerData.setTempReceptionId(receptionView.tempReceptionId);
                 containerData.setReceptionDataId(null);
+                containerData.setDispatchDataId(null);
                 containerData.setPieces(pieces);
                 containerData.setGrossVolume(grossToSave);
                 containerData.setNetVolume(netToSave);

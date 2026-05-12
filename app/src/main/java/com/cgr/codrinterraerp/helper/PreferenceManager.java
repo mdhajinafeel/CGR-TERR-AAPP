@@ -31,6 +31,7 @@ public enum PreferenceManager {
     private static final String KEY_FIREBASE_TOKEN = "fbToken";
     private static final String KEY_DOWNLOAD_MASTER_VERSION = "downloadMasterVersion";
     private static final String KEY_LAST_CLEANUP_TIME = "lastCleanupTime";
+    private static final String KEY_LAST_TRANSACTION_SYNC_TIME = "lastTransactionSyncTime";
 
     private final SecuredPreferenceStore prefStore = SecuredPreferenceStore.getSharedInstance();
 
@@ -215,6 +216,15 @@ public enum PreferenceManager {
         return prefStore.getBoolean(KEY_PERMISSION_CAMERA_ASKED, false);
     }
 
+    // ===== LAST TRANSACTION SYNC TIME =====
+    public long getLastTransactionSyncTime() {
+        return prefStore.getLong(KEY_LAST_TRANSACTION_SYNC_TIME, 0);
+    }
+
+    public void setLastTransactionSyncTime(long lastTransactionSyncTime) {
+        prefStore.edit().putLong(KEY_LAST_TRANSACTION_SYNC_TIME, lastTransactionSyncTime).apply();
+    }
+
     public void clearLoginSession() {
         prefStore.edit()
                 .remove(KEY_ACCESS_TOKEN)
@@ -234,6 +244,7 @@ public enum PreferenceManager {
                 .remove(KEY_LOGIN_DETAIL_ID)
                 .remove(KEY_USER_ROLES)
                 .remove(KEY_DOWNLOAD_MASTER_VERSION)
+                .remove(KEY_LAST_TRANSACTION_SYNC_TIME)
                 .apply();
     }
 

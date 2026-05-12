@@ -16,7 +16,7 @@
         android:drawablePadding="@dimen/padding_10"
         android:fontFamily="@font/exo2_semibold"
         android:padding="@dimen/padding_6"
-        android:text="@string/all"
+        android:text="@string/open"
         android:gravity="center_vertical"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/text_16"

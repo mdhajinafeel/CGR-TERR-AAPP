@@ -29,6 +29,7 @@ import com.cgr.codrinterraerp.db.dao.ShippingLinesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.SupplierProductsDao;
 import com.cgr.codrinterraerp.db.dao.SuppliersDao;
+import com.cgr.codrinterraerp.db.dao.SyncDao;
 import com.cgr.codrinterraerp.db.dao.WarehousesDao;
 
 import javax.inject.Singleton;
@@ -210,5 +211,11 @@ public class DBModule {
     @Singleton
     public ContainerImagesDao provideContainerImageDao(CGRTerraERPDatabase db) {
         return db.containerImageDao();
+    }
+
+    @Provides
+    @Singleton
+    public SyncDao provideSyncDao(CGRTerraERPDatabase db) {
+        return db.syncDao();
     }
 }

@@ -2,12 +2,15 @@ package com.cgr.codrinterraerp.db.dao;
 
 import androidx.room.Dao;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.ContainerImages;
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.ReceptionData;
 import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
+import com.cgr.codrinterraerp.model.DispatchDetailsWithTotals;
+import com.cgr.codrinterraerp.model.ReceptionDetailsWithTotals;
 
 import java.util.List;
 
@@ -20,20 +23,34 @@ public interface SyncDao {
     @Query("SELECT * FROM container_images WHERE isDeleted = 0 AND isSynced = 0 ORDER BY createdAt ASC")
     List<ContainerImages> getUnsyncedImages();
 
-    @Query("UPDATE container_images SET serverImageUrl = :url, isSynced=1 WHERE tempContainerImageId=:tempId")
-    void updateImageSync(String tempId, String url);
+    @Query("UPDATE container_images SET serverImageUrl = :url, isSynced=1 WHERE tempDispatchId = :tempDispatchId AND tempContainerImageId=:tempContainerImageId")
+    void updateImageSync(String tempContainerImageId, String tempDispatchId, String url);
 
     @Query("UPDATE container_images SET isSynced=0 WHERE tempContainerImageId = :tempId")
     void markFailed(String tempId);
 
+    @Query("UPDATE container_images SET imagePath = NULL WHERE tempDispatchId = :tempDispatchId AND tempContainerImageId = :tempContainerImageId")
+    void clearLocalFilePath(String tempDispatchId, String tempContainerImageId);
+
     // =====================
     // RECEPTION
     // =====================
-    @Query("SELECT * FROM reception_details WHERE isDeleted = 0 AND isSynced = 0")
-    List<ReceptionDetails> getUnsyncedReceptionDetails();
+    @Transaction
+    @Query(
+            "SELECT " +
+                    "rd.*, " +
+                    "IFNULL(rs.totalPieces, 0) AS totalPieces, " +
+                    "IFNULL(rs.totalGrossVolume, 0) AS totalGrossVolume, " +
+                    "IFNULL(rs.totalNetVolume, 0) AS totalNetVolume, " +
+                    "IFNULL(rs.totalVolumePie, 0) AS totalVolumePie " +
+                    "FROM reception_details rd " +
+                    "LEFT JOIN reception_summary rs " +
+                    "ON rd.tempReceptionId = rs.tempReceptionId WHERE rd.isSynced = 0 AND rd.isDeleted = 0"
+    )
+    List<ReceptionDetailsWithTotals> getUnsyncedReceptionDetails();
 
-    @Query("UPDATE reception_details SET receptionId=:serverId, isSynced=1, isEdited=0 WHERE tempReceptionId=:tempId")
-    void updateReceptionMapping(String tempId,int serverId);
+    @Query("UPDATE reception_details SET receptionId=:receptionId, isSynced=1, isEdited=0 WHERE tempReceptionId=:tempReceptionId")
+    void updateReceptionMapping(String tempReceptionId, int receptionId);
 
     // =====================
     // RECEPTION DATA
@@ -41,21 +58,31 @@ public interface SyncDao {
     @Query("SELECT * FROM reception_data WHERE isDeleted = 0 AND isSynced = 0")
     List<ReceptionData> getUnsyncedReceptionData();
 
-    @Query("UPDATE reception_data SET receptionDataId=:serverId, isSynced=1, isEdited=0 WHERE tempReceptionDataId=:tempId")
-    void updateReceptionDataMapping(String tempId, int serverId);
+    @Query("UPDATE reception_data SET receptionDataId = :receptionDataId, receptionId = :receptionId, " +
+            "containerReceptionMappingId = :receptionContainerMappingId, isSynced=1, isEdited=0 WHERE tempReceptionDataId=:tempReceptionDataId AND tempReceptionId = :tempReceptionId")
+    void updateReceptionDataMapping(String tempReceptionDataId, String tempReceptionId, int receptionDataId, int receptionId, int receptionContainerMappingId);
 
     // =====================
     // DISPATCH
     // =====================
+    @Transaction
+    @Query(
+            "SELECT " +
+                    "dd.*, " +
+                    "IFNULL(ds.totalPieces, 0) AS totalPieces, " +
+                    "IFNULL(ds.totalGrossVolume, 0) AS totalGrossVolume, " +
+                    "IFNULL(ds.totalNetVolume, 0) AS totalNetVolume, " +
+                    "IFNULL(ds.avgGirth, 0) AS avgGirth, " +
+                    "IFNULL(ds.cft, 0) AS cft, " +
+                    "IFNULL(ds.totalVolumePie, 0) AS totalVolumePie " +
+                    "FROM dispatch_details dd " +
+                    "LEFT JOIN dispatch_summary ds " +
+                    "ON dd.tempDispatchId = ds.tempDispatchId WHERE dd.isDeleted = 0 AND dd.isSynced = 0"
+    )
+    List<DispatchDetailsWithTotals> getUnsyncedDispatch();
 
-    @Query("SELECT rd.*, COALESCE(SUM(rdata.grossVolume), 0) AS totalGrossVolume, COALESCE(SUM(rdata.netVolume), 0) AS totalNetVolume, " +
-            "COALESCE(SUM(rdata.volumePie), 0) AS totalVolumePie, COALESCE(SUM(rdata.pieces), 0) AS totalPieces " +
-            "FROM reception_details rd LEFT JOIN reception_data rdata ON (rdata.receptionId = rd.receptionId OR rdata.tempReceptionId = rd.tempReceptionId) " +
-            "AND rdata.isDeleted = 0 WHERE rd.isSynced = 0 GROUP BY rd.id")
-    List<DispatchDetails> getUnsyncedDispatch();
-
-    @Query("UPDATE dispatch_details SET dispatchId=:serverId, isSynced=1, isEdited=0 WHERE tempDispatchId=:tempId")
-    void updateDispatchMapping(String tempId, int serverId);
+    @Query("UPDATE dispatch_details SET dispatchId=:dispatchId, isSynced=1, isEdited=0 WHERE tempDispatchId=:tempDispatchId")
+    void updateDispatchMapping(String tempDispatchId, int dispatchId);
 
     // =====================
     // CONTAINER DATA
@@ -64,6 +91,34 @@ public interface SyncDao {
     @Query("SELECT * FROM container_data WHERE isDeleted = 0 AND isSynced = 0")
     List<ContainerData> getUnsyncedContainerData();
 
-    @Query("UPDATE container_data SET isSynced=1, isEdited=0")
-    void markContainerDataSynced();
+    @Query("UPDATE container_data SET dispatchDataId = :dispatchDataId, receptionDataId = :receptionDataId, receptionId = :receptionId, dispatchId = :dispatchId, " +
+            "containerReceptionMappingId = :containerReceptionMappingId, " +
+            "isSynced=1, isEdited=0 WHERE tempReceptionId = :tempReceptionId AND tempReceptionId = :tempReceptionId " +
+            "AND tempReceptionDataId=:tempReceptionDataId AND tempDispatchId = :tempDispatchId")
+    void updateContainerDataMapping(String tempReceptionDataId, String tempDispatchId, int dispatchDataId, String containerReceptionMappingId, int receptionDataId,
+                                    String tempReceptionId, int receptionId, int dispatchId);
+
+    // ====================
+    // UNSYNCED COUNT
+    // ====================
+    @Query("SELECT COUNT(*) FROM reception_details WHERE isSynced = 0")
+    int getUnsyncedReceptionDetailsCount();
+
+    @Query("SELECT COUNT(*) FROM reception_data WHERE isSynced = 0")
+    int getUnsyncedReceptionDataCount();
+
+    @Query("SELECT COUNT(*) FROM dispatch_details WHERE isSynced = 0")
+    int getUnsyncedDispatchDetailsCount();
+
+    @Query("SELECT COUNT(*) FROM container_data WHERE isSynced = 0")
+    int getUnsyncedContainerDataCount();
+
+    // ====================
+    // RECEPTION SUMMARY
+    // ====================
+    @Query("UPDATE reception_summary SET receptionId = :receptionId WHERE tempReceptionId = :tempReceptionId")
+    void updateReceptionSummaryMapping(String tempReceptionId, int receptionId);
+
+    @Query("UPDATE dispatch_summary SET dispatchId = :dispatchId WHERE tempDispatchId = :tempDispatchId")
+    void updateDispatchSummaryMapping(String tempDispatchId, int dispatchId);
 }

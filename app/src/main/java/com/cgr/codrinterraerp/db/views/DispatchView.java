@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @DatabaseView(
         viewName = "dispatch_view",
-        value = "SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, " +
+        value = "SELECT d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, " +
                 "IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, " +
                 "IFNULL(ds.totalNetVolume,0) as totalNetVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie," +
                 "IFNULL(ds.avgGirth,0) as avgGirth, IFNULL(ds.cft,0) as cft, d.isClosed, d.productTypeId, c.category, d.categoryId " +

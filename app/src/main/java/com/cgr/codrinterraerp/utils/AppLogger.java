@@ -26,6 +26,7 @@ public class AppLogger {
     private static void log(int level, Class<?> cls, String message, Throwable throwable) {
 
         String tag = cls.getSimpleName();
+        boolean shouldSkip =  level == Log.WARN && "ApiLoggingInterceptor".equalsIgnoreCase(tag);
 
         // ✅ Always log to Logcat in debug
         if (BuildConfig.DEBUG) {
@@ -63,7 +64,11 @@ public class AppLogger {
                     log.tag = tag;
                     log.methodName = message;
                     log.success = false;
-                    apiLogsDao.insertApiLogs(log);
+
+                    if (!shouldSkip) {
+                        apiLogsDao.insertApiLogs(log);
+                    }
+
                 } catch (Exception e) {
                     Log.e("AppLogger", "Failed to store log", e);
                 }

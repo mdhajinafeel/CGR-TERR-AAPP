@@ -189,7 +189,7 @@ public class ReceptionActivity extends BaseActivity {
 
             if (isEdit) {
 
-                if(receptionView.isClosed) {
+                if (receptionView.isClosed) {
                     btnOpenReception.setVisibility(View.VISIBLE);
                     btnCloseReception.setVisibility(View.GONE);
                 } else {
@@ -399,7 +399,7 @@ public class ReceptionActivity extends BaseActivity {
             if (tag.equalsIgnoreCase("Supplier")) {
                 dialogTitle.setText(R.string.select_supplier);
 
-                if (suppliersList.isEmpty()) {
+                if (suppliersList != null && suppliersList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -460,7 +460,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 dialogTitle.setText(R.string.select_warehouse);
 
-                if (warehousesList.isEmpty()) {
+                if (warehousesList != null && warehousesList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -506,7 +506,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 dialogTitle.setText(R.string.select_wood);
 
-                if (supplierProductsList.isEmpty()) {
+                if (supplierProductsList != null && supplierProductsList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -567,7 +567,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 dialogTitle.setText(R.string.select_wood_type);
 
-                if (supplierProductTypesList.isEmpty()) {
+                if (supplierProductTypesList != null && supplierProductTypesList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -625,7 +625,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 dialogTitle.setText(R.string.select_measurement_system);
 
-                if (measurementSystemsList.isEmpty()) {
+                if (measurementSystemsList != null && measurementSystemsList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -671,7 +671,7 @@ public class ReceptionActivity extends BaseActivity {
 
                 dialogTitle.setText(R.string.select_purchase_contract);
 
-                if (purchaseContractsList.isEmpty()) {
+                if (purchaseContractsList != null && purchaseContractsList.isEmpty()) {
                     tvNoDataFound.setVisibility(View.VISIBLE);
                 } else {
                     tvNoDataFound.setVisibility(View.GONE);
@@ -994,7 +994,7 @@ public class ReceptionActivity extends BaseActivity {
             if (isReceptionEdit && existingReceptionDetail != null) {
                 mappingId = existingReceptionDetail.getContainerReceptionMappingId();
             } else {
-                mappingId = "M_" + CommonUtils.getTagInt(etSupplier.getTag()) + "_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                mappingId = "MAP_" + CommonUtils.getTagInt(etSupplier.getTag()) + "_" + CommonUtils.getCurrentLocalDateTimeStamp();
             }
 
             receptionDetail.setContainerReceptionMappingId(mappingId);
@@ -1016,9 +1016,10 @@ public class ReceptionActivity extends BaseActivity {
                 receptionDetail.setReceptionId(existingReceptionDetail.getReceptionId());
                 receptionDetail.setEdited(true);
             } else {
-                receptionDetail.setTempReceptionId("R_" + CommonUtils.getCurrentLocalDateTimeStamp());
+                receptionDetail.setTempReceptionId("REC_" + CommonUtils.getCurrentLocalDateTimeStamp());
                 receptionDetail.setReceptionId(null);
                 receptionDetail.setEdited(false);
+                receptionDetail.setCreatedAt(System.currentTimeMillis());
             }
 
             receptionDetail.setSynced(false);
@@ -1075,7 +1076,7 @@ public class ReceptionActivity extends BaseActivity {
 
             dialogHeader.setText(getString(R.string.confirmation));
 
-            if(receptionView.isClosed) {
+            if (receptionView.isClosed) {
                 dialogBody.setText(R.string.open_confirmation);
             } else {
                 dialogBody.setText(R.string.close_confirmation);
@@ -1090,9 +1091,9 @@ public class ReceptionActivity extends BaseActivity {
                         CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd/MM/yyyy", getApplicationContext()),
                         PreferenceManager.INSTANCE.getUserId(), isClose);
 
-                if(closed) {
+                if (closed) {
                     Intent resultIntent = new Intent();
-                    if(isClose) {
+                    if (isClose) {
                         resultIntent.putExtra("isClosed", true);
                     } else {
                         resultIntent.putExtra("isOpened", true);

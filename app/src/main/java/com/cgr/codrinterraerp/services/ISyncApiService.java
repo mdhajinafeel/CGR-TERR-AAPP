@@ -2,8 +2,8 @@ package com.cgr.codrinterraerp.services;
 
 import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.model.request.SyncRequest;
-import com.cgr.codrinterraerp.model.response.ImageUploadResponse;
-import com.cgr.codrinterraerp.model.response.SyncResponse;
+import com.cgr.codrinterraerp.model.response.syncdata.ImageUploadResponse;
+import com.cgr.codrinterraerp.model.response.syncdata.SyncResponse;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

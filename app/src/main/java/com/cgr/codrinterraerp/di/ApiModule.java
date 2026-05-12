@@ -4,6 +4,7 @@ import com.cgr.codrinterraerp.BuildConfig;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.services.IAuthApiService;
 import com.cgr.codrinterraerp.services.IMasterApiService;
+import com.cgr.codrinterraerp.services.ISyncApiService;
 import com.cgr.codrinterraerp.services.interceptors.ApiLoggingInterceptor;
 import com.cgr.codrinterraerp.services.interceptors.DynamicAuthInterceptor;
 import com.cgr.codrinterraerp.utils.AppLogger;
@@ -74,5 +75,11 @@ public class ApiModule {
     @Singleton
     public IMasterApiService provideMasterApiService(Retrofit retrofit) {
         return retrofit.create(IMasterApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public ISyncApiService provideISyncApiService(Retrofit retrofit) {
+        return retrofit.create(ISyncApiService.class);
     }
 }

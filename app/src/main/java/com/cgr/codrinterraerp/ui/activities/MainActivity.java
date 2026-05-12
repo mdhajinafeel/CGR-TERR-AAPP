@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 if (bundle.getBoolean("isFromLogin")) {
-                    syncViewModel.masterDownload();
+                    syncViewModel.masterDownload(true);
                 }
             }
 
@@ -356,10 +356,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 return;
             }
 
-            syncViewModel.masterDownload();
+            syncViewModel.startFullSync();
 
         } else if (selectedType == NavigationType.DATA_BACKUP) {
-
             startActivity(new Intent(MainActivity.this, DataBackupActivity.class));
         } else if (selectedType == NavigationType.APP_STATUS) {
             startActivity(new Intent(MainActivity.this, AppStatusActivity.class));

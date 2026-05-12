@@ -1,13 +1,10 @@
 package com.cgr.codrinterraerp.model.response;
 
 import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductTypesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.PurchaseContractsResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.ReceptionInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ShippingLinesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.SuppliersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.WarehousesResponse;
@@ -22,9 +19,6 @@ public class DownloadMasterDataResponse implements Serializable {
     private List<ShippingLinesResponse> shippingLines;
     private List<MeasurementSystemsResponse> measurementSystems;
     private List<PurchaseContractsResponse> purchaseContracts;
-    private List<FarmInventoryOrdersResponse> farmInventoryOrders;
-    private List<ReceptionInventoryOrdersResponse> receptionInventoryOrders;
-    private List<DispatchContainersResponse> dispatchContainers;
     private List<ProductsResponse> products;
     private List<ProductTypesResponse> productTypes;
     private List<ContainerCategoriesResponse> containerCategories;
@@ -67,30 +61,6 @@ public class DownloadMasterDataResponse implements Serializable {
 
     public void setPurchaseContracts(List<PurchaseContractsResponse> purchaseContracts) {
         this.purchaseContracts = purchaseContracts;
-    }
-
-    public List<FarmInventoryOrdersResponse> getFarmInventoryOrders() {
-        return farmInventoryOrders;
-    }
-
-    public void setFarmInventoryOrders(List<FarmInventoryOrdersResponse> farmInventoryOrders) {
-        this.farmInventoryOrders = farmInventoryOrders;
-    }
-
-    public List<ReceptionInventoryOrdersResponse> getReceptionInventoryOrders() {
-        return receptionInventoryOrders;
-    }
-
-    public void setReceptionInventoryOrders(List<ReceptionInventoryOrdersResponse> receptionInventoryOrders) {
-        this.receptionInventoryOrders = receptionInventoryOrders;
-    }
-
-    public List<DispatchContainersResponse> getDispatchContainers() {
-        return dispatchContainers;
-    }
-
-    public void setDispatchContainers(List<DispatchContainersResponse> dispatchContainers) {
-        this.dispatchContainers = dispatchContainers;
     }
 
     public List<ProductsResponse> getProducts() {

@@ -34,6 +34,7 @@ import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.model.response.DownloadMasterResponse;
+import com.cgr.codrinterraerp.model.response.DownloadTransactionsResponse;
 import com.cgr.codrinterraerp.model.response.OriginsResponse;
 import com.cgr.codrinterraerp.services.IMasterApiService;
 
@@ -95,6 +96,10 @@ public class MasterRepository {
 
     public Call<DownloadMasterResponse> masterDownload() {
         return iMasterApiService.masterDownload();
+    }
+
+    public Call<DownloadTransactionsResponse> transactionDownload(long lastSync) {
+        return iMasterApiService.transactionDownload(lastSync);
     }
 
     public void runInTransaction(Runnable runnable) {

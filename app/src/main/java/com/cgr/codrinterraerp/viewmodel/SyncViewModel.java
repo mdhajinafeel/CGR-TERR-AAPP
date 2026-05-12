@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.constants.SyncResult;
 import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
@@ -25,6 +26,8 @@ import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.model.response.DownloadMasterDataResponse;
 import com.cgr.codrinterraerp.model.response.DownloadMasterResponse;
+import com.cgr.codrinterraerp.model.response.DownloadTransactionsDataResponse;
+import com.cgr.codrinterraerp.model.response.DownloadTransactionsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
@@ -41,6 +44,8 @@ import com.cgr.codrinterraerp.model.response.masterdata.SupplierProductsResponse
 import com.cgr.codrinterraerp.model.response.masterdata.SuppliersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.WarehousesResponse;
 import com.cgr.codrinterraerp.repository.MasterRepository;
+import com.cgr.codrinterraerp.repository.SyncRepository;
+import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.wrapper.SingleLiveEvent;
 
 import java.util.ArrayList;
@@ -58,6 +63,7 @@ import retrofit2.Response;
 public class SyncViewModel extends ViewModel {
 
     private final MasterRepository masterRepository;
+    private final SyncRepository syncRepository;
     private final Context context;
     private final SingleLiveEvent<Boolean> hasUnsyncedData = new SingleLiveEvent<>();
     private final SingleLiveEvent<String> errorTitle = new SingleLiveEvent<>();
@@ -66,14 +72,52 @@ public class SyncViewModel extends ViewModel {
     private final SingleLiveEvent<Boolean> syncStatus = new SingleLiveEvent<>();
 
     @Inject
-    public SyncViewModel(MasterRepository masterRepository, @ApplicationContext Context context) {
+    public SyncViewModel(SyncRepository syncRepository, MasterRepository masterRepository, @ApplicationContext Context context) {
+        this.syncRepository = syncRepository;
         this.masterRepository = masterRepository;
         this.context = context;
     }
 
-    public void masterDownload() {
-
+    public void startFullSync() {
         progressState.postValue(true);
+        syncContainerPhotos();
+    }
+
+    private void syncContainerPhotos() {
+
+        syncRepository.uploadContainerImage(result -> {
+            if (result == SyncResult.FAILED) {
+                progressState.postValue(false);
+                errorTitle.postValue(context.getString(R.string.error));
+                errorMessage.postValue(context.getString(R.string.container_photos_sync_failed));
+                return;
+            }
+
+            // SUCCESS or NO_DATA → next
+            syncData();
+        });
+    }
+
+    private void syncData() {
+
+        syncRepository.syncData(result -> {
+            if (result == SyncResult.FAILED) {
+                progressState.postValue(false);
+                errorTitle.postValue(context.getString(R.string.error));
+                errorMessage.postValue(context.getString(R.string.data_sync_failed));
+                return;
+            }
+
+            // SUCCESS or NO_DATA → next
+            masterDownload(false);
+        });
+    }
+
+    public void masterDownload(boolean isProgressRequired) {
+
+        if (isProgressRequired) {
+            progressState.postValue(true);
+        }
 
         masterRepository.masterDownload().enqueue(new Callback<>() {
 
@@ -89,14 +133,13 @@ public class SyncViewModel extends ViewModel {
                             if (data != null) {
                                 // 🔥 SINGLE TRANSACTION (BIG PERFORMANCE BOOST)
                                 masterRepository.runInTransaction(() -> processAllData(data));
-                                syncStatus.postValue(true);
-                            } else {
-                                syncStatus.postValue(false);
                             }
                         } catch (Exception e) {
+                            AppLogger.e(getClass(), "masterDownload", e);
                             syncStatus.postValue(false);
                         } finally {
-                            progressState.postValue(false);
+                            // ALWAYS continue transaction download
+                            transactionDownload();
                         }
                     }).start();
 
@@ -111,8 +154,11 @@ public class SyncViewModel extends ViewModel {
             @Override
             public void onFailure(@NonNull Call<DownloadMasterResponse> call,
                                   @NonNull Throwable t) {
-                progressState.postValue(false);
-                syncStatus.postValue(false);
+
+                AppLogger.e(getClass(), "masterDownload", t);
+
+                // EVEN IF MASTER FAILED → CONTINUE
+                transactionDownload();
             }
         });
     }
@@ -245,6 +291,90 @@ public class SyncViewModel extends ViewModel {
             masterRepository.insertPurchaseContracts(getPurchaseContracts(contracts));
         }
 
+        // ---------------- PRODUCTS ----------------
+        List<ProductsResponse> product = data.getProducts();
+        if(product != null && !product.isEmpty()) {
+
+            if(!getProducts(product).isEmpty()) {
+                masterRepository.deleteProducts();
+            }
+
+            masterRepository.insertProducts(getProducts(product));
+        }
+
+        // ---------------- PRODUCT TYPES ----------------
+        List<ProductTypesResponse> productType = data.getProductTypes();
+        if(productType != null && !productType.isEmpty()) {
+
+            if(!getProductTypes(productType).isEmpty()) {
+                masterRepository.deleteProductTypes();
+            }
+
+            masterRepository.insertProductTypes(getProductTypes(productType));
+        }
+
+        // ---------------- CONTAINER CATEGORIES ----------------
+        List<ContainerCategoriesResponse> category = data.getContainerCategories();
+        if(category != null && !category.isEmpty()) {
+            if(!getContainerCategories(category).isEmpty()) {
+                masterRepository.deleteContainerCategories();
+            }
+
+            masterRepository.insertContainerCategories(getContainerCategories(category));
+        }
+    }
+
+    public void transactionDownload() {
+
+        long lastSync = PreferenceManager.INSTANCE.getLastTransactionSyncTime();
+
+        masterRepository.transactionDownload(lastSync).enqueue(new Callback<>() {
+
+            @Override
+            public void onResponse(@NonNull Call<DownloadTransactionsResponse> call,
+                                   @NonNull Response<DownloadTransactionsResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        try {
+                            DownloadTransactionsDataResponse data = response.body().getData();
+                            if (data != null) {
+                                // 🔥 SINGLE TRANSACTION (BIG PERFORMANCE BOOST)
+                                masterRepository.runInTransaction(() -> processAllTransactionData(data));
+                                PreferenceManager.INSTANCE.setLastTransactionSyncTime(response.body().getServerTime());
+                                syncStatus.postValue(true);
+                            } else {
+                                syncStatus.postValue(false);
+                            }
+                        } catch (Exception e) {
+                            syncStatus.postValue(false);
+                            AppLogger.e(getClass(), "masterDownload", e);
+                        } finally {
+                            progressState.postValue(false);
+                        }
+                    }).start();
+
+                } else {
+                    progressState.postValue(false);
+                    errorTitle.postValue(context.getString(R.string.error));
+                    errorMessage.postValue(context.getString(R.string.common_error));
+                    syncStatus.postValue(false);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<DownloadTransactionsResponse> call,
+                                  @NonNull Throwable t) {
+                AppLogger.e(getClass(), "masterDownload", t);
+
+                progressState.postValue(false);
+                syncStatus.postValue(false);
+            }
+        });
+    }
+
+    private void processAllTransactionData(DownloadTransactionsDataResponse data) {
+
         // ---------------- FARM ----------------
         List<FarmInventoryOrdersResponse> farm = data.getFarmInventoryOrders();
         if (farm != null && !farm.isEmpty()) {
@@ -276,38 +406,6 @@ public class SyncViewModel extends ViewModel {
             }
 
             masterRepository.insertDispatchContainers(getDispatchContainers(dispatch));
-        }
-
-        // ---------------- PRODUCTS ----------------
-        List<ProductsResponse> product = data.getProducts();
-        if(product != null && !product.isEmpty()) {
-
-            if(!getProducts(product).isEmpty()) {
-                masterRepository.deleteProducts();
-            }
-
-            masterRepository.insertProducts(getProducts(product));
-        }
-
-        // ---------------- PRODUCT TYPES ----------------
-        List<ProductTypesResponse> productType = data.getProductTypes();
-        if(productType != null && !productType.isEmpty()) {
-
-            if(!getProductTypes(productType).isEmpty()) {
-                masterRepository.deleteProductTypes();
-            }
-
-            masterRepository.insertProductTypes(getProductTypes(productType));
-        }
-
-        // ---------------- CONTAINER CATEGORIES ----------------
-        List<ContainerCategoriesResponse> category = data.getContainerCategories();
-        if(category != null && !category.isEmpty()) {
-            if(!getContainerCategories(category).isEmpty()) {
-                masterRepository.deleteContainerCategories();
-            }
-
-            masterRepository.insertContainerCategories(getContainerCategories(category));
         }
     }
 
@@ -508,8 +606,12 @@ public class SyncViewModel extends ViewModel {
 
     public void checkUnsyncedData() {
         new Thread(() -> {
-            //boolean result = expenseRepository.hasUnsyncedData();
-            hasUnsyncedData.postValue(true);
+            boolean result = syncRepository.hasUnsyncedData();
+            if(result) {
+                hasUnsyncedData.postValue(true);
+            } else {
+                hasUnsyncedData.postValue(false);
+            }
         }).start();
     }
 }

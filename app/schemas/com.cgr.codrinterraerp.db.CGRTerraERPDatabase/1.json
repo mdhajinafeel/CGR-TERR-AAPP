@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0164ee41bbb8ad80bc8f18fda080cfba",
+    "identityHash": "a8ffaf719536e0f06ce18d051f2c85cf",
     "entities": [
       {
         "tableName": "origins",
@@ -939,7 +939,7 @@
       },
       {
         "tableName": "reception_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionId` TEXT NOT NULL, `receptionId` INTEGER, `ica` TEXT NOT NULL, `supplierId` INTEGER NOT NULL, `supplierProductId` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `supplierProductTypeId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `measurementSystem` INTEGER NOT NULL, `warehouse` INTEGER NOT NULL, `receptionDate` TEXT, `isFarmEnabled` INTEGER NOT NULL, `purchaseContract` INTEGER NOT NULL, `truckNumber` TEXT, `truckDriverName` TEXT, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT, `isClosed` INTEGER NOT NULL, `closedBy` INTEGER NOT NULL, `closedDate` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionId` TEXT NOT NULL, `receptionId` INTEGER, `ica` TEXT NOT NULL, `supplierId` INTEGER NOT NULL, `supplierProductId` INTEGER NOT NULL, `productId` INTEGER NOT NULL, `supplierProductTypeId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `measurementSystem` INTEGER NOT NULL, `warehouse` INTEGER NOT NULL, `receptionDate` TEXT, `isFarmEnabled` INTEGER NOT NULL, `purchaseContract` INTEGER NOT NULL, `truckNumber` TEXT, `truckDriverName` TEXT, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT, `isClosed` INTEGER NOT NULL, `closedBy` INTEGER NOT NULL, `closedDate` TEXT, `createdAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1078,6 +1078,12 @@
             "fieldPath": "closedDate",
             "columnName": "closedDate",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -1100,7 +1106,7 @@
       },
       {
         "tableName": "dispatch_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempDispatchId` TEXT NOT NULL, `dispatchId` INTEGER, `containerNumber` TEXT NOT NULL, `productId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `warehouseId` INTEGER NOT NULL, `shippingLineId` INTEGER NOT NULL, `dispatchDate` TEXT, `categoryId` INTEGER NOT NULL, `isClosed` INTEGER NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `closedBy` INTEGER NOT NULL, `closedDate` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempDispatchId` TEXT NOT NULL, `dispatchId` INTEGER, `containerNumber` TEXT NOT NULL, `productId` INTEGER NOT NULL, `productTypeId` INTEGER NOT NULL, `warehouseId` INTEGER NOT NULL, `shippingLineId` INTEGER NOT NULL, `dispatchDate` TEXT, `categoryId` INTEGER NOT NULL, `isClosed` INTEGER NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `closedBy` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `closedDate` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1197,6 +1203,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "closedDate",
             "columnName": "closedDate",
             "affinity": "TEXT"
@@ -1222,7 +1234,7 @@
       },
       {
         "tableName": "reception_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionDataId` TEXT, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `circumference` REAL NOT NULL, `length` REAL NOT NULL, `thickness` REAL NOT NULL, `width` REAL NOT NULL, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionDataId` TEXT, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `circumference` REAL NOT NULL, `length` REAL NOT NULL, `thickness` REAL NOT NULL, `width` REAL NOT NULL, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1317,6 +1329,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "updatedAt",
             "columnName": "updatedAt",
             "affinity": "INTEGER",
@@ -1393,13 +1411,18 @@
       },
       {
         "tableName": "container_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tempReceptionDataId` TEXT, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dispatchDataId` TEXT, `tempReceptionDataId` TEXT, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "dispatchDataId",
+            "columnName": "dispatchDataId",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "tempReceptionDataId",
@@ -1470,6 +1493,12 @@
           {
             "fieldPath": "isEdited",
             "columnName": "isEdited",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -2117,12 +2146,12 @@
       },
       {
         "viewName": "dispatch_view",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT  d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie,IFNULL(ds.avgGirth,0) as avgGirth, IFNULL(ds.cft,0) as cft, d.isClosed, d.productTypeId, c.category, d.categoryId FROM dispatch_details d INNER JOIN shipping_lines s ON s.id = d.shippingLineId INNER JOIN container_categories c ON c.id = d.categoryId LEFT JOIN dispatch_summary ds ON (ds.dispatchId = d.dispatchId OR ds.tempDispatchId = d.tempDispatchId) WHERE isDeleted = 0"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT d.id, d.tempDispatchId, d.dispatchId, d.containerNumber, d.dispatchDate, s.shippingLine, IFNULL(ds.totalPieces,0) as totalPieces, IFNULL(ds.totalGrossVolume,0) as totalGrossVolume, IFNULL(ds.totalNetVolume,0) as totalNetVolume, IFNULL(ds.totalVolumePie,0) as totalVolumePie,IFNULL(ds.avgGirth,0) as avgGirth, IFNULL(ds.cft,0) as cft, d.isClosed, d.productTypeId, c.category, d.categoryId FROM dispatch_details d INNER JOIN shipping_lines s ON s.id = d.shippingLineId INNER JOIN container_categories c ON c.id = d.categoryId LEFT JOIN dispatch_summary ds ON (ds.dispatchId = d.dispatchId OR ds.tempDispatchId = d.tempDispatchId) WHERE isDeleted = 0"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0164ee41bbb8ad80bc8f18fda080cfba')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a8ffaf719536e0f06ce18d051f2c85cf')"
     ]
   }
 }

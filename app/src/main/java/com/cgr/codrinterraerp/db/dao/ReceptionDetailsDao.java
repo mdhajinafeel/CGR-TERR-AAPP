@@ -26,6 +26,6 @@ public interface ReceptionDetailsDao {
     @Query("UPDATE reception_details SET isEdited = 1, isSynced = 0, updatedAt = :updatedAt, isDeleted = 1 WHERE tempReceptionId = :tempReceptionId")
     int deleteReceptionDetails(String tempReceptionId, long updatedAt);
 
-    @Query("UPDATE reception_details SET isClosed = :isClose, closedBy = :closedBy, closedDate = :closedDate WHERE tempReceptionId = :tempReceptionId")
+    @Query("UPDATE reception_details SET isSynced = 0, isClosed = :isClose, closedBy = :closedBy, closedDate = :closedDate WHERE tempReceptionId = :tempReceptionId")
     int closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose);
 }
