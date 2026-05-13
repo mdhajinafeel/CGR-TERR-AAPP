@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.db.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -9,16 +10,14 @@ import java.io.Serializable;
 @Entity(
         tableName = "dispatch_summary",
         indices = {
-                @Index(value = {"dispatchId"}, unique = true),
                 @Index(value = {"tempDispatchId"}, unique = true)
         }
 )
 public class DispatchSummary implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-    public Integer dispatchId;       // server ID (after sync)
-    public String tempDispatchId;    // local ID (before sync)
+    @PrimaryKey
+    @NonNull
+    public String tempDispatchId = "";
     public int totalPieces;
     public double totalGrossVolume;
     public double totalNetVolume;
@@ -27,27 +26,12 @@ public class DispatchSummary implements Serializable {
     public double totalVolumePie;
     public long updatedAt;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Integer getDispatchId() {
-        return dispatchId;
-    }
-
-    public void setDispatchId(Integer dispatchId) {
-        this.dispatchId = dispatchId;
-    }
-
+    @NonNull
     public String getTempDispatchId() {
         return tempDispatchId;
     }
 
-    public void setTempDispatchId(String tempDispatchId) {
+    public void setTempDispatchId(@NonNull String tempDispatchId) {
         this.tempDispatchId = tempDispatchId;
     }
 

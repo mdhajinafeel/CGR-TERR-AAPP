@@ -43,6 +43,7 @@ import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -322,6 +323,27 @@ public class AppStatusActivity extends BaseActivity {
 
     private void bindAppStatusData(List<ApiLogs> list) {
         try {
+
+            if (list != null) {
+
+                Iterator<ApiLogs> iterator = list.iterator();
+                while (iterator.hasNext()) {
+                    ApiLogs apiLog = iterator.next();
+                    String endpoint = apiLog.endpoint;
+                    if (!TextUtils.isEmpty(endpoint)) {
+                        endpoint = endpoint.toLowerCase();
+                        boolean shouldSkip = endpoint.contains("/login")
+                                || endpoint.contains("/logout")
+                                || endpoint.contains("refresh")
+                                || endpoint.contains("origins");
+
+                        if (shouldSkip) {
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+
             if (list != null && !list.isEmpty()) {
                 apiLogsRecyclerViewAdapter.setItems(list);
                 rvAppStatusList.setVisibility(View.VISIBLE);

@@ -80,7 +80,7 @@ public interface ContainerDataDao {
     @Query("SELECT tempDispatchId FROM container_data WHERE tempReceptionDataId = :tempReceptionDataId AND tempReceptionId = :tempReceptionId")
     String getAllDispatchId(String tempReceptionId, String tempReceptionDataId);
 
-    @Query("SELECT 0 AS id, 0 AS dispatchId, '' AS tempDispatchId, 0 AS updatedAt, " +
+    @Query("SELECT tempDispatchId AS tempDispatchId, 0 AS updatedAt, " +
             "IFNULL(SUM(r.pieces), 0) AS totalPieces, IFNULL(SUM(r.grossVolume), 0) AS totalGrossVolume, IFNULL(SUM(r.netVolume), 0) AS totalNetVolume, " +
             "IFNULL(SUM(r.volumePie), 0) AS totalVolumePie, (IFNULL(SUM(r.netVolume), 0) / IFNULL(SUM(r.pieces), 0) * 35.315) AS cft, " +
             "IFNULL(ROUND(CASE WHEN SUM(c.pieces) = 0 THEN 0 ELSE SUM(r.circumference * c.pieces) / SUM(c.pieces) END, 3), 0) AS avgGirth " +

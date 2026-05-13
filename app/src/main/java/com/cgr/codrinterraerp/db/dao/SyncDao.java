@@ -6,9 +6,7 @@ import androidx.room.Transaction;
 
 import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.ContainerImages;
-import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.ReceptionData;
-import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
 import com.cgr.codrinterraerp.model.DispatchDetailsWithTotals;
 import com.cgr.codrinterraerp.model.ReceptionDetailsWithTotals;
 
@@ -112,13 +110,4 @@ public interface SyncDao {
 
     @Query("SELECT COUNT(*) FROM container_data WHERE isSynced = 0")
     int getUnsyncedContainerDataCount();
-
-    // ====================
-    // RECEPTION SUMMARY
-    // ====================
-    @Query("UPDATE reception_summary SET receptionId = :receptionId WHERE tempReceptionId = :tempReceptionId")
-    void updateReceptionSummaryMapping(String tempReceptionId, int receptionId);
-
-    @Query("UPDATE dispatch_summary SET dispatchId = :dispatchId WHERE tempDispatchId = :tempDispatchId")
-    void updateDispatchSummaryMapping(String tempDispatchId, int dispatchId);
 }

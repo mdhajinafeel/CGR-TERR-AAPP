@@ -1088,8 +1088,7 @@ public class ReceptionActivity extends BaseActivity {
             btnOk.setOnClickListener(v -> {
                 dialog.dismiss();
                 boolean closed = receptionViewModel.closeReceptionDetails(receptionView.tempReceptionId,
-                        CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd/MM/yyyy", getApplicationContext()),
-                        PreferenceManager.INSTANCE.getUserId(), isClose);
+                        CommonUtils.getCurrentLocalDateTimeStamp(), PreferenceManager.INSTANCE.getUserId(), isClose);
 
                 if (closed) {
                     Intent resultIntent = new Intent();

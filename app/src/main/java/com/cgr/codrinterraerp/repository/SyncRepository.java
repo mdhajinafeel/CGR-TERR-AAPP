@@ -1,8 +1,16 @@
 package com.cgr.codrinterraerp.repository;
 
 import com.cgr.codrinterraerp.constants.SyncResult;
+import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
 import com.cgr.codrinterraerp.db.dao.SyncDao;
 import com.cgr.codrinterraerp.db.entities.ContainerImages;
+import com.cgr.codrinterraerp.db.entities.DispatchSummary;
+import com.cgr.codrinterraerp.db.entities.ReceptionData;
+import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
+import com.cgr.codrinterraerp.db.entities.ReceptionSummary;
 import com.cgr.codrinterraerp.model.request.SyncRequest;
 import com.cgr.codrinterraerp.model.response.syncdata.ContainerDataMappingsResponse;
 import com.cgr.codrinterraerp.model.response.syncdata.DispatchMappingsResponse;
@@ -28,10 +36,23 @@ public class SyncRepository {
 
     private final SyncDao syncDao;
     private final ISyncApiService iSyncApiService;
+    private final ReceptionDetailsDao receptionDetailsDao;
+    private final ReceptionDataDao receptionDataDao;
+    private final ReceptionSummaryDao receptionSummaryDao;
+    private final DispatchSummaryDao dispatchSummaryDao;
 
-    public SyncRepository(SyncDao syncDao, ISyncApiService iSyncApiService) {
+    public SyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, ReceptionDataDao receptionDataDao, ReceptionSummaryDao receptionSummaryDao,
+                          DispatchSummaryDao dispatchSummaryDao, ISyncApiService iSyncApiService) {
         this.syncDao = syncDao;
+        this.receptionDetailsDao = receptionDetailsDao;
+        this.receptionDataDao = receptionDataDao;
+        this.receptionSummaryDao = receptionSummaryDao;
+        this.dispatchSummaryDao = dispatchSummaryDao;
         this.iSyncApiService = iSyncApiService;
+    }
+
+    public List<ContainerImages> getUnsyncedImages() {
+        return syncDao.getUnsyncedImages();
     }
 
     // =====================
@@ -42,7 +63,7 @@ public class SyncRepository {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
-                List<ContainerImages> images = syncDao.getUnsyncedImages();
+                List<ContainerImages> images = getUnsyncedImages();
 
                 if (images == null || images.isEmpty()) {
                     callback.onResult(SyncResult.NO_DATA);
@@ -137,9 +158,6 @@ public class SyncRepository {
                     // RECEPTION
                     for (ReceptionMappingsResponse receptionMappingsResponse : res.receptionMappings) {
                         syncDao.updateReceptionMapping(receptionMappingsResponse.tempReceptionId, receptionMappingsResponse.receptionId);
-
-                        // UPDATE SUMMARY TABLE
-                        syncDao.updateReceptionSummaryMapping(receptionMappingsResponse.tempReceptionId, receptionMappingsResponse.receptionId);
                     }
 
                     // RECEPTION DATA
@@ -151,9 +169,6 @@ public class SyncRepository {
                     // DISPATCH
                     for (DispatchMappingsResponse dispatchMappingsResponse : res.dispatchMappings) {
                         syncDao.updateDispatchMapping(dispatchMappingsResponse.tempDispatchId, dispatchMappingsResponse.dispatchId);
-
-                        // UPDATE SUMMARY TABLE
-                        syncDao.updateDispatchSummaryMapping(dispatchMappingsResponse.tempDispatchId, dispatchMappingsResponse.dispatchId);
                     }
 
                     // CONTAINER DATA
@@ -184,5 +199,25 @@ public class SyncRepository {
         int containerDataCount = syncDao.getUnsyncedContainerDataCount();
 
         return receptionDetailsCount > 0 || dispatchDetailsCount > 0 || receptionDataCount > 0 || containerDataCount > 0;
+    }
+
+    public void deleteOldReceptionDetails(long threeMonthsAgo) {
+        receptionDetailsDao.deleteOldData(threeMonthsAgo);
+    }
+
+    public void upsertReceptionDetails(List<ReceptionDetails> receptionDetailsList) {
+        receptionDetailsDao.upsert(receptionDetailsList);
+    }
+
+    public void upsertReceptionData(List<ReceptionData> receptionDataList) {
+        receptionDataDao.upsert(receptionDataList);
+    }
+
+    public void upsertReceptionSummary(List<ReceptionSummary> receptionSummaries) {
+        receptionSummaryDao.upsert(receptionSummaries);
+    }
+
+    public void upsertDispatchSummary(List<DispatchSummary> dispatchSummaries) {
+        dispatchSummaryDao.upsert(dispatchSummaries);
     }
 }

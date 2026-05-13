@@ -15,29 +15,17 @@ public class ReceptionSummaryHelper {
         this.receptionDataDao = receptionDataDao;
     }
 
-    public ReceptionSummary calculate(Integer receptionId, String tempReceptionId) {
+    public ReceptionSummary calculate(String tempReceptionId) {
 
         ReceptionSummary s = new ReceptionSummary();
 
-        if (receptionId != null && receptionId > 0) {
-            // ✅ ONLY use receptionId
-            s.receptionId = receptionId;
-            s.tempReceptionId = null;
+        // ✅ ONLY use tempReceptionId
+        s.tempReceptionId = tempReceptionId;
 
-            s.totalPieces = receptionDataDao.sumPiecesByReceptionId(receptionId);
-            s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByReceptionId(receptionId), 3);
-            s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByReceptionId(receptionId), 3);
-            s.totalVolumePie = CommonUtils.round(receptionDataDao.sumPieByReceptionId(receptionId), 3);
-        } else {
-            // ✅ ONLY use tempReceptionId
-            s.receptionId = null;
-            s.tempReceptionId = tempReceptionId;
-
-            s.totalPieces = receptionDataDao.sumPiecesByTempReceptionId(tempReceptionId);
-            s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByTempReceptionId(tempReceptionId), 3);
-            s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByTempReceptionId(tempReceptionId), 3);
-            s.totalVolumePie = CommonUtils.round(receptionDataDao.sumPieByTempReceptionId(tempReceptionId), 3);
-        }
+        s.totalPieces = receptionDataDao.sumPiecesByTempReceptionId(tempReceptionId);
+        s.totalGrossVolume = CommonUtils.round(receptionDataDao.sumGrossByTempReceptionId(tempReceptionId), 3);
+        s.totalNetVolume = CommonUtils.round(receptionDataDao.sumNetByTempReceptionId(tempReceptionId), 3);
+        s.totalVolumePie = CommonUtils.round(receptionDataDao.sumPieByTempReceptionId(tempReceptionId), 3);
 
         s.updatedAt = System.currentTimeMillis();
         return s;

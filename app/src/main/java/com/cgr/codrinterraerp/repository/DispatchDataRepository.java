@@ -25,12 +25,8 @@ public class DispatchDataRepository {
         this.receptionRepository = receptionRepository;
     }
 
-    public LiveData<List<ContainerWithReception>> fetchContainerData(Integer dispatchId, String tempDispatchId) {
-        if (dispatchId != null && dispatchId > 0) {
-            return containerDataDao.fetchByDispatchId(dispatchId);
-        } else {
-            return containerDataDao.fetchByTempDispatchId(tempDispatchId);
-        }
+    public LiveData<List<ContainerWithReception>> fetchContainerData(String tempDispatchId) {
+        return containerDataDao.fetchByTempDispatchId(tempDispatchId);
     }
 
     public LiveData<DispatchSummary> getDispatchSummary(String tempDispatchId) {
@@ -43,11 +39,11 @@ public class DispatchDataRepository {
         if(deleteData > 0) {
 
             receptionDataDao.deleteReceptionDataById(tempReceptionDataId, tempReceptionId);
-            dispatchRepository.updateSummary(null, tempDispatchId);
+            dispatchRepository.updateSummary(tempDispatchId);
 
             String getReceptionId = receptionDataDao.getAllReceptionId(tempReceptionId, tempReceptionDataId);
             if(getReceptionId != null && !getReceptionId.isEmpty()) {
-                receptionRepository.updateSummary(null, getReceptionId);
+                receptionRepository.updateSummary(getReceptionId);
             }
         }
 

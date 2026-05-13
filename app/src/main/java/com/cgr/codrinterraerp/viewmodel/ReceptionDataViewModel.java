@@ -41,8 +41,8 @@ public class ReceptionDataViewModel extends ViewModel {
         });
     }
 
-    public LiveData<List<ReceptionWithContainer>> fetchReceptionData(Integer receptionId, String tempReceptionId) {
-        return receptionDataRepository.fetchReceptionData(receptionId, tempReceptionId);
+    public LiveData<List<ReceptionWithContainer>> fetchReceptionData(String tempReceptionId) {
+        return receptionDataRepository.fetchReceptionData(tempReceptionId);
     }
 
     public void deleteReceptionData(String tempReceptionDataId, String tempReceptionId, Callback<Integer> callback) {

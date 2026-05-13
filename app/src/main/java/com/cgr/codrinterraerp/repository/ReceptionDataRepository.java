@@ -45,32 +45,28 @@ public class ReceptionDataRepository {
         boolean isSaved = receptionTransactionDao.saveMeasurementData(receptionData, containerData);
 
         if (isSaved) {
-            receptionRepository.updateSummary(receptionData.getReceptionId(), receptionData.getTempReceptionId());
-            dispatchRepository.updateSummary(containerData.getDispatchId(), containerData.getTempDispatchId());
+            receptionRepository.updateSummary(receptionData.getTempReceptionId());
+            dispatchRepository.updateSummary(containerData.getTempDispatchId());
         }
 
         return isSaved;
     }
 
-    public LiveData<List<ReceptionWithContainer>> fetchReceptionData(Integer receptionId, String tempReceptionId) {
-        if (receptionId != null && receptionId > 0) {
-            return receptionDataDao.fetchByReceptionId(receptionId);
-        } else {
-            return receptionDataDao.fetchByTempReceptionId(tempReceptionId);
-        }
+    public LiveData<List<ReceptionWithContainer>> fetchReceptionData(String tempReceptionId) {
+        return receptionDataDao.fetchByTempReceptionId(tempReceptionId);
     }
 
     public int deleteReceptionDataById(String tempReceptionDataId, String tempReceptionId) {
         int deleteData = receptionDataDao.deleteReceptionDataById(tempReceptionDataId, tempReceptionId);
 
-        if(deleteData > 0) {
+        if (deleteData > 0) {
 
             containerDataDao.deleteByReceptionDataId(tempReceptionDataId, tempReceptionId);
-            receptionRepository.updateSummary(null, tempReceptionId);
+            receptionRepository.updateSummary(tempReceptionId);
 
             String getDispatchId = containerDataDao.getAllDispatchId(tempReceptionId, tempReceptionDataId);
-            if(getDispatchId != null && !getDispatchId.isEmpty()) {
-                dispatchRepository.updateSummary(null, getDispatchId);
+            if (getDispatchId != null && !getDispatchId.isEmpty()) {
+                dispatchRepository.updateSummary(getDispatchId);
             }
         }
 

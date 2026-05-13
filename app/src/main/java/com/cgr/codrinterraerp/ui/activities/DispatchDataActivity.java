@@ -175,7 +175,7 @@ public class DispatchDataActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void observeData() {
-        dispatchDataViewModel.fetchContainerData(dispatchView.dispatchId, dispatchView.tempDispatchId).observe(this, list -> {
+        dispatchDataViewModel.fetchContainerData(dispatchView.tempDispatchId).observe(this, list -> {
             containerWithReceptionList.clear();
             if (list != null && !list.isEmpty()) {
                 containerWithReceptionList.addAll(list);

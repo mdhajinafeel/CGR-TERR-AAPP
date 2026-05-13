@@ -1,4 +1,4 @@
-package com.cgr.codrinterraerp.model.response.masterdata;
+package com.cgr.codrinterraerp.model.response.transactiondata;
 
 import java.io.Serializable;
 

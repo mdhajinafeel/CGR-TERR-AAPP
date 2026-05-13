@@ -12,6 +12,6 @@ import java.util.List;
 public interface ReceptionViewDao {
 
     // Optional (recommended)
-    @Query("SELECT * FROM reception_view WHERE isClosed = :isClosed ORDER BY id DESC")
+    @Query("SELECT * FROM reception_view WHERE isClosed = :isClosed ORDER BY tempReceptionId DESC")
     LiveData<List<ReceptionView>> getReceptionList(boolean isClosed);
 }

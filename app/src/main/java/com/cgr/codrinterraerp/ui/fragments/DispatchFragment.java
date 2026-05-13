@@ -247,7 +247,7 @@ public class DispatchFragment extends Fragment {
 
             btnDelete.setOnClickListener(v -> new Thread(() -> {
 
-                int deleted = dispatchViewModel.deleteDispatchDetails(dispatchView.tempDispatchId, dispatchView.dispatchId, System.currentTimeMillis());
+                int deleted = dispatchViewModel.deleteDispatchDetails(dispatchView.tempDispatchId, System.currentTimeMillis());
 
                 // Switch to main thread safely
                 new Handler(Looper.getMainLooper()).post(() -> {

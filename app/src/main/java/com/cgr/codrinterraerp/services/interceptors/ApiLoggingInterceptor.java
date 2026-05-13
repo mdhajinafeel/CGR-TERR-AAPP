@@ -2,7 +2,6 @@ package com.cgr.codrinterraerp.services.interceptors;
 
 import androidx.annotation.NonNull;
 
-import com.cgr.codrinterraerp.constants.IAPIConstants;
 import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
 import com.cgr.codrinterraerp.db.entities.ApiLogs;
 import com.cgr.codrinterraerp.utils.AppLogger;
@@ -33,12 +32,6 @@ public class ApiLoggingInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
 
         Request request = chain.request();
-
-        // 🔥 Skip logging for specific APIs
-        if (shouldSkipLogging(request)) {
-            return chain.proceed(request);
-        }
-
         long startTime = System.currentTimeMillis();
 
         String requestBodyString = "";
@@ -111,8 +104,8 @@ public class ApiLoggingInterceptor implements Interceptor {
                 ApiLogs apiLog = new ApiLogs();
                 apiLog.endpoint = shortUrl(request.url().toString());
                 apiLog.method = request.method();
-                apiLog.requestBody = requestBody;
-                apiLog.responseBody = responseBody;
+                apiLog.requestBody = requestBody.trim();
+                apiLog.responseBody = responseBody.trim();
                 apiLog.statusCode = statusCode;
                 apiLog.success = success;
                 apiLog.createdAt = System.currentTimeMillis();
@@ -143,7 +136,7 @@ public class ApiLoggingInterceptor implements Interceptor {
                 ApiLogs apiLog = new ApiLogs();
                 apiLog.endpoint = shortUrl(request.url().toString());
                 apiLog.method = request.method();
-                apiLog.requestBody = requestBody;
+                apiLog.requestBody = requestBody.trim();
                 apiLog.responseBody = "";
                 apiLog.statusCode = 0;
                 apiLog.success = false;
@@ -191,13 +184,5 @@ public class ApiLoggingInterceptor implements Interceptor {
         } catch (Exception e) {
             return fullUrl;
         }
-    }
-
-    private boolean shouldSkipLogging(Request request) {
-        String url = request.url().encodedPath();
-        return url.contains(IAPIConstants.REFRESH_TOKEN)
-                || url.contains(IAPIConstants.LOGOUT)
-                || url.contains(IAPIConstants.LOGIN)
-                || url.contains(IAPIConstants.ORIGINS);
     }
 }

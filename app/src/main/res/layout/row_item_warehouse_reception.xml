@@ -279,6 +279,18 @@
                     android:src="@drawable/ic_edit"
                     app:tint="@color/darkGreen" />
 
+                <!-- View Button -->
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btnViewReception"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:visibility="gone"
+                    android:layout_marginEnd="@dimen/margin_6"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/padding_8"
+                    android:src="@drawable/ic_reception_info"
+                    app:tint="@color/darkGreen" />
+
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btnDeleteReception"
                     android:layout_width="40dp"

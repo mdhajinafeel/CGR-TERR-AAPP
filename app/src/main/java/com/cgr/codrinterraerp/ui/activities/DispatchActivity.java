@@ -850,14 +850,12 @@ public class DispatchActivity extends BaseActivity {
                 dialogBody.setText(R.string.close_confirmation);
             }
 
-
             btnCancel.setOnClickListener(v -> dialog.dismiss());
 
             btnOk.setOnClickListener(v -> {
                 dialog.dismiss();
                 boolean closed = dispatchViewModel.closeDispatchDetails(dispatchView.tempDispatchId,
-                        CommonUtils.convertTimeStampToDate(CommonUtils.getCurrentLocalDateTimeStamp(), "dd/MM/yyyy", getApplicationContext()),
-                        PreferenceManager.INSTANCE.getUserId(), isClose);
+                        CommonUtils.getCurrentLocalDateTimeStamp(), PreferenceManager.INSTANCE.getUserId(), isClose);
 
                 if(closed) {
                     Intent resultIntent = new Intent();

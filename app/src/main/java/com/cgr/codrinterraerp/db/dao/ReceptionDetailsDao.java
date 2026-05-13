@@ -4,11 +4,17 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Upsert;
 
 import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
 
+import java.util.List;
+
 @Dao
 public interface ReceptionDetailsDao {
+
+    @Upsert
+    void upsert(List<ReceptionDetails> list);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertOrUpdateReceptionDetails(ReceptionDetails receptionDetails);
@@ -27,5 +33,8 @@ public interface ReceptionDetailsDao {
     int deleteReceptionDetails(String tempReceptionId, long updatedAt);
 
     @Query("UPDATE reception_details SET isSynced = 0, isClosed = :isClose, closedBy = :closedBy, closedDate = :closedDate WHERE tempReceptionId = :tempReceptionId")
-    int closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose);
+    int closeReceptionDetails(String tempReceptionId, long closedDate, int closedBy, boolean isClose);
+
+    @Query("DELETE FROM reception_details WHERE createdAt < :threeMonthsAgo AND isSynced = 1 AND isClosed = 1")
+    void deleteOldData(long threeMonthsAgo);
 }

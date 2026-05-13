@@ -78,9 +78,9 @@ public class ReceptionRepository {
         farmInventoryOrdersDao.insertFarmInventoryOrder(farmInventoryOrder);
     }
 
-    public void updateSummary(Integer receptionId, String tempReceptionId) {
+    public void updateSummary(String tempReceptionId) {
         executor.execute(() -> {
-            ReceptionSummary s = receptionSummaryHelper.calculate(receptionId, tempReceptionId);
+            ReceptionSummary s = receptionSummaryHelper.calculate(tempReceptionId);
             receptionSummaryDao.upsert(s);
         });
     }
@@ -89,7 +89,7 @@ public class ReceptionRepository {
         executor.execute(() -> {
 
             for (String dispatchId : dispatchIds) {
-                DispatchSummary s = dispatchSummaryHelper.calculate(null, dispatchId);
+                DispatchSummary s = dispatchSummaryHelper.calculate(dispatchId);
                 dispatchSummaryDao.upsert(s);
             }
         });
@@ -128,7 +128,7 @@ public class ReceptionRepository {
         return receptionDataDao.getAllDispatchIds(tempReceptionId);
     }
 
-    public boolean closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose) {
+    public boolean closeReceptionDetails(String tempReceptionId, long closedDate, int closedBy, boolean isClose) {
         int closed = receptionDetailsDao.closeReceptionDetails(tempReceptionId, closedDate, closedBy, isClose);
         return closed > 0;
     }

@@ -66,10 +66,7 @@ public class ReceptionViewModel extends ViewModel {
             }
 
             // ================= SUMMARY =================
-            receptionRepository.updateSummary(
-                    receptionDetails.getReceptionId(),
-                    receptionDetails.getTempReceptionId()
-            );
+            receptionRepository.updateSummary(receptionDetails.getTempReceptionId());
 
             setReceptionSavedId(reception);
             progressState.postValue(false);
@@ -99,13 +96,13 @@ public class ReceptionViewModel extends ViewModel {
         return receptionRepository.fetchReceptionDetailById(tempReceptionId);
     }
 
-    public int deleteReceptionDetails(String tempReceptionId, Integer receptionId, long updatedAt) {
+    public int deleteReceptionDetails(String tempReceptionId, long updatedAt) {
         progressState.postValue(true);
 
         List<String> getAllDispatchIds = receptionRepository.getAllDispatchIds(tempReceptionId);
         int receptionDelete = receptionRepository.deleteFullReception(tempReceptionId, updatedAt);
         if(receptionDelete > 0) {
-            receptionRepository.updateSummary(receptionId, tempReceptionId);
+            receptionRepository.updateSummary(tempReceptionId);
             receptionRepository.updateDispatchSummary(getAllDispatchIds);
         }
 
@@ -113,7 +110,7 @@ public class ReceptionViewModel extends ViewModel {
         return receptionDelete;
     }
 
-    public boolean closeReceptionDetails(String tempReceptionId, String closedDate, int closedBy, boolean isClose) {
+    public boolean closeReceptionDetails(String tempReceptionId, long closedDate, int closedBy, boolean isClose) {
         return receptionRepository.closeReceptionDetails(tempReceptionId, closedDate, closedBy, isClose);
     }
 

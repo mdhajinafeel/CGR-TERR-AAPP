@@ -10,13 +10,13 @@ import java.io.Serializable;
 @Entity(
         tableName = "reception_details",
         indices = {
+                @Index(name = "idx_temp_reception_details", value = {"tempReceptionId"}, unique = true),
                 @Index(name = "idx_ica_reception", value = {"ica"}, unique = true)
         }
 )
 public class ReceptionDetails implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+    @PrimaryKey
     @NonNull
     public String tempReceptionId = "";
     public Integer receptionId;
@@ -41,16 +41,8 @@ public class ReceptionDetails implements Serializable {
     public String containerReceptionMappingId;
     public boolean isClosed = false;
     public int closedBy;
-    public String closedDate;
+    public long closedDate;
     public long createdAt;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     @NonNull
     public String getTempReceptionId() {
@@ -218,6 +210,10 @@ public class ReceptionDetails implements Serializable {
         return isClosed;
     }
 
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
     public int getClosedBy() {
         return closedBy;
     }
@@ -226,11 +222,11 @@ public class ReceptionDetails implements Serializable {
         this.closedBy = closedBy;
     }
 
-    public String getClosedDate() {
+    public long getClosedDate() {
         return closedDate;
     }
 
-    public void setClosedDate(String closedDate) {
+    public void setClosedDate(long closedDate) {
         this.closedDate = closedDate;
     }
 

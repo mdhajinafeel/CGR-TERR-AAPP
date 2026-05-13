@@ -17,27 +17,31 @@ import com.cgr.codrinterraerp.db.entities.MeasurementSystems;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
 import com.cgr.codrinterraerp.db.entities.PurchaseContracts;
+import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
 import com.cgr.codrinterraerp.db.entities.ReceptionInventoryOrders;
+import com.cgr.codrinterraerp.db.entities.ReceptionSummary;
 import com.cgr.codrinterraerp.db.entities.ShippingLines;
 import com.cgr.codrinterraerp.db.entities.SupplierProductTypes;
 import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
+import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 import com.cgr.codrinterraerp.model.response.DownloadMasterDataResponse;
 import com.cgr.codrinterraerp.model.response.DownloadMasterResponse;
 import com.cgr.codrinterraerp.model.response.DownloadTransactionsDataResponse;
 import com.cgr.codrinterraerp.model.response.DownloadTransactionsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.DispatchContainersResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.FarmInventoryOrdersResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.DispatchContainersResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulaVariablesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulasResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductTypesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ProductsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.PurchaseContractsResponse;
-import com.cgr.codrinterraerp.model.response.masterdata.ReceptionInventoryOrdersResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.ReceptionDetailsResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.ReceptionInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ShippingLinesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.SupplierProductTypesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.SupplierProductsResponse;
@@ -46,10 +50,15 @@ import com.cgr.codrinterraerp.model.response.masterdata.WarehousesResponse;
 import com.cgr.codrinterraerp.repository.MasterRepository;
 import com.cgr.codrinterraerp.repository.SyncRepository;
 import com.cgr.codrinterraerp.utils.AppLogger;
+import com.cgr.codrinterraerp.wrapper.ReceptionMapper;
 import com.cgr.codrinterraerp.wrapper.SingleLiveEvent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -70,11 +79,14 @@ public class SyncViewModel extends ViewModel {
     private final SingleLiveEvent<String> errorMessage = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> syncStatus = new SingleLiveEvent<>();
+    private final ReceptionSummaryHelper receptionSummaryHelper;
 
     @Inject
-    public SyncViewModel(SyncRepository syncRepository, MasterRepository masterRepository, @ApplicationContext Context context) {
+    public SyncViewModel(SyncRepository syncRepository, MasterRepository masterRepository, ReceptionSummaryHelper receptionSummaryHelper,
+                         @ApplicationContext Context context) {
         this.syncRepository = syncRepository;
         this.masterRepository = masterRepository;
+        this.receptionSummaryHelper = receptionSummaryHelper;
         this.context = context;
     }
 
@@ -85,32 +97,42 @@ public class SyncViewModel extends ViewModel {
 
     private void syncContainerPhotos() {
 
-        syncRepository.uploadContainerImage(result -> {
-            if (result == SyncResult.FAILED) {
-                progressState.postValue(false);
-                errorTitle.postValue(context.getString(R.string.error));
-                errorMessage.postValue(context.getString(R.string.container_photos_sync_failed));
-                return;
-            }
+        if (!syncRepository.getUnsyncedImages().isEmpty()) {
+            syncRepository.uploadContainerImage(result -> {
+                if (result == SyncResult.FAILED) {
+                    progressState.postValue(false);
+                    errorTitle.postValue(context.getString(R.string.error));
+                    errorMessage.postValue(context.getString(R.string.container_photos_sync_failed));
+                    return;
+                }
 
+                // SUCCESS or NO_DATA → next
+                syncData();
+            });
+        } else {
             // SUCCESS or NO_DATA → next
             syncData();
-        });
+        }
     }
 
     private void syncData() {
 
-        syncRepository.syncData(result -> {
-            if (result == SyncResult.FAILED) {
-                progressState.postValue(false);
-                errorTitle.postValue(context.getString(R.string.error));
-                errorMessage.postValue(context.getString(R.string.data_sync_failed));
-                return;
-            }
+        if (syncRepository.hasUnsyncedData()) {
+            syncRepository.syncData(result -> {
+                if (result == SyncResult.FAILED) {
+                    progressState.postValue(false);
+                    errorTitle.postValue(context.getString(R.string.error));
+                    errorMessage.postValue(context.getString(R.string.data_sync_failed));
+                    return;
+                }
 
+                // SUCCESS or NO_DATA → next
+                masterDownload(false);
+            });
+        } else {
             // SUCCESS or NO_DATA → next
             masterDownload(false);
-        });
+        }
     }
 
     public void masterDownload(boolean isProgressRequired) {
@@ -133,6 +155,13 @@ public class SyncViewModel extends ViewModel {
                             if (data != null) {
                                 // 🔥 SINGLE TRANSACTION (BIG PERFORMANCE BOOST)
                                 masterRepository.runInTransaction(() -> processAllData(data));
+
+                                // Handle old data
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                executor.execute(() -> {
+                                    long threeMonthsAgo = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000);
+                                    syncRepository.deleteOldReceptionDetails(threeMonthsAgo);
+                                });
                             }
                         } catch (Exception e) {
                             AppLogger.e(getClass(), "masterDownload", e);
@@ -199,7 +228,7 @@ public class SyncViewModel extends ViewModel {
                 suppliersList.add(supplier);
             }
 
-            if(!suppliersList.isEmpty()) {
+            if (!suppliersList.isEmpty()) {
                 masterRepository.deleteSupplierData();
             }
 
@@ -212,7 +241,7 @@ public class SyncViewModel extends ViewModel {
         List<WarehousesResponse> warehouses = data.getWarehouses();
         if (warehouses != null && !warehouses.isEmpty()) {
 
-            if(!getWarehouses(warehouses).isEmpty()) {
+            if (!getWarehouses(warehouses).isEmpty()) {
                 masterRepository.deleteWarehouseData();
             }
 
@@ -233,12 +262,12 @@ public class SyncViewModel extends ViewModel {
                 measurementSystem.setMeasurementName(measurementSystemsResponse.getMeasurementName());
                 measurementSystem.setProductTypeId(measurementSystemsResponse.getProductTypeId());
 
-                if(measurementSystemsResponse.getFormulas()!= null && !measurementSystemsResponse.getFormulas().isEmpty()) {
+                if (measurementSystemsResponse.getFormulas() != null && !measurementSystemsResponse.getFormulas().isEmpty()) {
                     for (MeasurementSystemFormulasResponse measurementSystemFormulasResponse : measurementSystemsResponse.getFormulas()) {
                         MeasurementSystemFormulas measurementSystemFormula = getMeasurementSystemFormulas(measurementSystemsResponse, measurementSystemFormulasResponse);
 
-                        if(measurementSystemFormulasResponse.getVariables() != null && !measurementSystemFormulasResponse.getVariables().isEmpty()) {
-                            for(MeasurementSystemFormulaVariablesResponse measurementSystemFormulaVariablesResponse : measurementSystemFormulasResponse.getVariables()) {
+                        if (measurementSystemFormulasResponse.getVariables() != null && !measurementSystemFormulasResponse.getVariables().isEmpty()) {
+                            for (MeasurementSystemFormulaVariablesResponse measurementSystemFormulaVariablesResponse : measurementSystemFormulasResponse.getVariables()) {
                                 MeasurementSystemFormulaVariables measurementSystemFormulaVariable = getMeasurementSystemFormulaVariables(measurementSystemsResponse, measurementSystemFormulaVariablesResponse);
 
                                 measurementSystemFormulaVariablesList.add(measurementSystemFormulaVariable);
@@ -252,15 +281,15 @@ public class SyncViewModel extends ViewModel {
                 measurementSystemsList.add(measurementSystem);
             }
 
-            if(!measurementSystemsList.isEmpty()) {
+            if (!measurementSystemsList.isEmpty()) {
                 masterRepository.deleteMeasurementSystems();
             }
 
-            if(!measurementSystemFormulasList.isEmpty()) {
+            if (!measurementSystemFormulasList.isEmpty()) {
                 masterRepository.deleteMeasurementSystemsFormulas();
             }
 
-            if(!measurementSystemFormulaVariablesList.isEmpty()) {
+            if (!measurementSystemFormulaVariablesList.isEmpty()) {
                 masterRepository.deleteMeasurementSystemsFormulaVariables();
             }
 
@@ -273,7 +302,7 @@ public class SyncViewModel extends ViewModel {
         List<ShippingLinesResponse> shipping = data.getShippingLines();
         if (shipping != null && !shipping.isEmpty()) {
 
-            if(!getShippingLines(shipping).isEmpty()) {
+            if (!getShippingLines(shipping).isEmpty()) {
                 masterRepository.deleteShippingLines();
             }
 
@@ -284,7 +313,7 @@ public class SyncViewModel extends ViewModel {
         List<PurchaseContractsResponse> contracts = data.getPurchaseContracts();
         if (contracts != null && !contracts.isEmpty()) {
 
-            if(!getPurchaseContracts(contracts).isEmpty()) {
+            if (!getPurchaseContracts(contracts).isEmpty()) {
                 masterRepository.deletePurchaseContract();
             }
 
@@ -293,9 +322,9 @@ public class SyncViewModel extends ViewModel {
 
         // ---------------- PRODUCTS ----------------
         List<ProductsResponse> product = data.getProducts();
-        if(product != null && !product.isEmpty()) {
+        if (product != null && !product.isEmpty()) {
 
-            if(!getProducts(product).isEmpty()) {
+            if (!getProducts(product).isEmpty()) {
                 masterRepository.deleteProducts();
             }
 
@@ -304,9 +333,9 @@ public class SyncViewModel extends ViewModel {
 
         // ---------------- PRODUCT TYPES ----------------
         List<ProductTypesResponse> productType = data.getProductTypes();
-        if(productType != null && !productType.isEmpty()) {
+        if (productType != null && !productType.isEmpty()) {
 
-            if(!getProductTypes(productType).isEmpty()) {
+            if (!getProductTypes(productType).isEmpty()) {
                 masterRepository.deleteProductTypes();
             }
 
@@ -315,8 +344,8 @@ public class SyncViewModel extends ViewModel {
 
         // ---------------- CONTAINER CATEGORIES ----------------
         List<ContainerCategoriesResponse> category = data.getContainerCategories();
-        if(category != null && !category.isEmpty()) {
-            if(!getContainerCategories(category).isEmpty()) {
+        if (category != null && !category.isEmpty()) {
+            if (!getContainerCategories(category).isEmpty()) {
                 masterRepository.deleteContainerCategories();
             }
 
@@ -379,7 +408,7 @@ public class SyncViewModel extends ViewModel {
         List<FarmInventoryOrdersResponse> farm = data.getFarmInventoryOrders();
         if (farm != null && !farm.isEmpty()) {
 
-            if(!getFarmInventoryOrders(farm).isEmpty()) {
+            if (!getFarmInventoryOrders(farm).isEmpty()) {
                 masterRepository.deleteFarmInventoryOrders();
             }
 
@@ -390,7 +419,7 @@ public class SyncViewModel extends ViewModel {
         List<ReceptionInventoryOrdersResponse> reception = data.getReceptionInventoryOrders();
         if (reception != null && !reception.isEmpty()) {
 
-            if(!getReceptionInventoryOrders(reception).isEmpty()) {
+            if (!getReceptionInventoryOrders(reception).isEmpty()) {
                 masterRepository.deleteReceptionInventoryOrders();
             }
 
@@ -401,11 +430,38 @@ public class SyncViewModel extends ViewModel {
         List<DispatchContainersResponse> dispatch = data.getDispatchContainers();
         if (dispatch != null && !dispatch.isEmpty()) {
 
-            if(!getDispatchContainers(dispatch).isEmpty()) {
+            if (!getDispatchContainers(dispatch).isEmpty()) {
                 masterRepository.deleteDispatchContainers();
             }
 
             masterRepository.insertDispatchContainers(getDispatchContainers(dispatch));
+        }
+
+        // ---------------- RECEPTION DETAILS ----------------
+        List<ReceptionDetailsResponse> receptionDetail = data.getReceptionDetails();
+        if (receptionDetail != null && !receptionDetail.isEmpty()) {
+
+            ReceptionMapper.ReceptionSyncResult receptionSyncResult = ReceptionMapper.getReceptionDetails(receptionDetail);
+            syncRepository.upsertReceptionDetails(receptionSyncResult.receptionDetailsList());
+            syncRepository.upsertReceptionData(receptionSyncResult.receptionDataList());
+
+            // =====================================
+            // CREATE SUMMARIES
+            // =====================================
+            Set<String> tempReceptionIds = new HashSet<>();
+            for (ReceptionDetails details : receptionSyncResult.receptionDetailsList()) {
+                tempReceptionIds.add(details.getTempReceptionId());
+            }
+
+            // =====================================
+            // CALCULATE SUMMARY
+            // =====================================
+            List<ReceptionSummary> summaries = new ArrayList<>();
+            for (String tempReceptionId : tempReceptionIds) {
+                ReceptionSummary summary = receptionSummaryHelper.calculate(tempReceptionId);
+                summaries.add(summary);
+            }
+            syncRepository.upsertReceptionSummary(summaries);
         }
     }
 
@@ -607,7 +663,7 @@ public class SyncViewModel extends ViewModel {
     public void checkUnsyncedData() {
         new Thread(() -> {
             boolean result = syncRepository.hasUnsyncedData();
-            if(result) {
+            if (result) {
                 hasUnsyncedData.postValue(true);
             } else {
                 hasUnsyncedData.postValue(false);

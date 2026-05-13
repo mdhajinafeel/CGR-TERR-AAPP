@@ -100,11 +100,7 @@ public class LoginActivity extends BaseActivity {
 
             btnLogin.setOnClickListener(v -> submitLogin());
 
-            if (new NetworkConnectivity(this).isNetworkAvailable()) {
-                masterViewModel.getOrigins();
-            } else {
-                fetchOrigins();
-            }
+            fetchOrigins();
 
             masterViewModel.getProgressState().observe(this, aBoolean -> {
                 if (aBoolean) {
@@ -168,8 +164,11 @@ public class LoginActivity extends BaseActivity {
 
     private void fetchOrigins() {
         try {
-            originsList = new ArrayList<>();
             originsList = masterViewModel.fetchOrigins();
+
+            if(originsList.isEmpty() && new NetworkConnectivity(this).isNetworkAvailable()) {
+                masterViewModel.getOrigins();
+            }
         } catch (Exception e) {
             AppLogger.e(getClass(), "fetchOrigins", e);
         }

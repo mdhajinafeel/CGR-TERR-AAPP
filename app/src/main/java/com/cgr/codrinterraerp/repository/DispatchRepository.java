@@ -66,9 +66,9 @@ public class DispatchRepository {
         dispatchContainersDao.insertDispatchContainer(dispatchContainer);
     }
 
-    public void updateSummary(Integer dispatchId, String tempDispatchId) {
+    public void updateSummary(String tempDispatchId) {
         executor.execute(() -> {
-            DispatchSummary s = dispatchSummaryHelper.calculate(dispatchId, tempDispatchId);
+            DispatchSummary s = dispatchSummaryHelper.calculate(tempDispatchId);
             dispatchSummaryDao.upsert(s);
         });
     }
@@ -77,7 +77,7 @@ public class DispatchRepository {
         executor.execute(() -> {
 
             for (String receptionId : receptionIds) {
-                ReceptionSummary s = receptionSummaryHelper.calculate(null, receptionId);
+                ReceptionSummary s = receptionSummaryHelper.calculate(receptionId);
                 receptionSummaryDao.upsert(s);
             }
         });
@@ -135,7 +135,7 @@ public class DispatchRepository {
         return containerDataDao.getAllReceptionIds(tempDispatchId);
     }
 
-    public boolean closeDispatchDetails(String tempDispatchId, String closedDate, int closedBy, boolean isClose) {
+    public boolean closeDispatchDetails(String tempDispatchId, long closedDate, int closedBy, boolean isClose) {
         int closed = dispatchDetailsDao.closeDispatchDetails(tempDispatchId, closedDate, closedBy, isClose);
         return closed > 0;
     }

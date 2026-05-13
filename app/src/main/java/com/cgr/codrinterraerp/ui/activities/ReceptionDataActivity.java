@@ -165,7 +165,7 @@ public class ReceptionDataActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void observeData() {
-        receptionDataViewModel.fetchReceptionData(receptionView.receptionId, receptionView.tempReceptionId).observe(this, list -> {
+        receptionDataViewModel.fetchReceptionData(receptionView.tempReceptionId).observe(this, list -> {
             receptionWithContainerList.clear();
             if (list != null && !list.isEmpty()) {
                 receptionWithContainerList.addAll(list);

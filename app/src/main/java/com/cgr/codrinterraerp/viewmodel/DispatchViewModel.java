@@ -59,7 +59,7 @@ public class DispatchViewModel extends ViewModel {
             dispatchRepository.insertDispatchContainer(dispatchContainers);
 
             // ================= SUMMARY =================
-            dispatchRepository.updateSummary(dispatchDetails.getDispatchId(), dispatchDetails.getTempDispatchId());
+            dispatchRepository.updateSummary(dispatchDetails.getTempDispatchId());
 
             setDispatchSavedId(dispatch);
             progressState.postValue(false);
@@ -100,13 +100,13 @@ public class DispatchViewModel extends ViewModel {
         return dispatchRepository.fetchDispatchDetailById(tempDispatchId);
     }
 
-    public int deleteDispatchDetails(String tempDispatchId, Integer dispatchId, long updatedAt) {
+    public int deleteDispatchDetails(String tempDispatchId, long updatedAt) {
         progressState.postValue(true);
 
         List<String> getAllReceptionIds = dispatchRepository.getAllReceptionIds(tempDispatchId);
         int dispatchDelete = dispatchRepository.deleteFullDispatch(tempDispatchId, updatedAt);
         if (dispatchDelete > 0) {
-            dispatchRepository.updateSummary(dispatchId, tempDispatchId);
+            dispatchRepository.updateSummary(tempDispatchId);
             dispatchRepository.updateReceptionSummary(getAllReceptionIds);
         }
 
@@ -146,7 +146,7 @@ public class DispatchViewModel extends ViewModel {
         return containerImagesRepository.softDeleteImage(id);
     }
 
-    public boolean closeDispatchDetails(String tempDispatchId, String closedDate, int closedBy, boolean isClose) {
+    public boolean closeDispatchDetails(String tempDispatchId, long closedDate, int closedBy, boolean isClose) {
         return dispatchRepository.closeDispatchDetails(tempDispatchId, closedDate, closedBy, isClose);
     }
 }

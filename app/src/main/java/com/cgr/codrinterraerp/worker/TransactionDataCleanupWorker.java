@@ -7,22 +7,21 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
-import com.cgr.codrinterraerp.db.dao.ApiLogsDao;
+import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.utils.AppLogger;
 
-public class LogCleanupWorker extends Worker {
+public class TransactionDataCleanupWorker extends Worker {
 
-    private static final String TAG = "LogCleanupWorker";
-
-    private final ApiLogsDao apiLogsDao;
+    private static final String TAG = "TransactionDataCleanupWorker";
+    private final ReceptionDetailsDao receptionDetailsDao;
     private final CGRTerraERPDatabase database;
 
-    public LogCleanupWorker(@NonNull Context context, @NonNull WorkerParameters params) {
+    public TransactionDataCleanupWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
 
         // 🔥 Initialize DB
         database = CGRTerraERPDatabase.getInstance(context);
-        apiLogsDao = database.apiLogsDao();
+        receptionDetailsDao = database.receptionDetailsDao();
     }
 
     @NonNull
@@ -33,19 +32,18 @@ public class LogCleanupWorker extends Worker {
             AppLogger.d(getClass(), "Log cleanup started");
 
             long now = System.currentTimeMillis();
-            long sevenDaysAgo = now - (7L * 24 * 60 * 60 * 1000);
+            long threeMonthsAgo = System.currentTimeMillis() - (90L * 24 * 60 * 60 * 1000);
 
             // 🔥 Run inside transaction (safe + fast)
             database.runInTransaction(() -> {
-                apiLogsDao.deleteOldLogs(sevenDaysAgo);
-                apiLogsDao.keepLast500(); // optional safety limit
+                receptionDetailsDao.deleteOldData(threeMonthsAgo);
             });
 
-            AppLogger.d(getClass(), "Log cleanup completed");
+            AppLogger.d(getClass(), "Transaction data cleanup completed");
             return Result.success();
 
         } catch (Exception e) {
-            AppLogger.d(getClass(), "Log cleanup failed");
+            AppLogger.d(getClass(), "Transaction data cleanup failed");
             return Result.retry();
         }
     }

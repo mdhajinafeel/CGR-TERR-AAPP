@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.db.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
@@ -9,7 +10,7 @@ import java.io.Serializable;
 
 @Entity(tableName = "reception_data",
         indices = {
-                @Index(name = "idx_temp_id_reception_did_data", value = {"tempReceptionDataId"}),
+                @Index(name = "idx_temp_id_reception_did_data", value = {"tempReceptionDataId"}, unique = true),
                 @Index(name = "idx_temp_id_reception_data", value = {"tempReceptionId"}),
                 @Index(name = "idx_reception_id_data", value = {"receptionId"}),
                 @Index(name = "idx_reception_data_id_data", value = {"receptionDataId"}),
@@ -18,9 +19,9 @@ import java.io.Serializable;
         })
 public class ReceptionData implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-    private String tempReceptionDataId;
+    @PrimaryKey
+    @NonNull
+    private String tempReceptionDataId = "";
     private String tempReceptionId;
     private Integer receptionDataId;
     private Integer receptionId;
@@ -40,14 +41,6 @@ public class ReceptionData implements Serializable {
     private String containerReceptionMappingId;
     @Ignore
     private String containerNumber;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTempReceptionId() {
         return tempReceptionId;
@@ -145,11 +138,12 @@ public class ReceptionData implements Serializable {
         this.receptionDataId = receptionDataId;
     }
 
+    @NonNull
     public String getTempReceptionDataId() {
         return tempReceptionDataId;
     }
 
-    public void setTempReceptionDataId(String tempReceptionDataId) {
+    public void setTempReceptionDataId(@NonNull String tempReceptionDataId) {
         this.tempReceptionDataId = tempReceptionDataId;
     }
 

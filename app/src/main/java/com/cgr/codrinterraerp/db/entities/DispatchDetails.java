@@ -10,13 +10,13 @@ import java.io.Serializable;
 @Entity(
         tableName = "dispatch_details",
         indices = {
+                @Index(name = "idx_temp_dispatch_details", value = {"tempDispatchId"}, unique = true),
                 @Index(name = "idx_container_number_dispatch", value = {"containerNumber"}, unique = true)
         }
 )
 public class DispatchDetails implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+    @PrimaryKey()
     @NonNull
     public String tempDispatchId = "";
     public Integer dispatchId;
@@ -36,14 +36,6 @@ public class DispatchDetails implements Serializable {
     public int closedBy;
     public long createdAt;
     public String closedDate;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     @NonNull
     public String getTempDispatchId() {

@@ -356,7 +356,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 return;
             }
 
-            syncViewModel.startFullSync();
+            if(new NetworkConnectivity(getApplicationContext()).isNetworkAvailable()) {
+                syncViewModel.startFullSync();
+            } else {
+                showCustomDialog(getString(R.string.information), getString(R.string.internet_not_available), false);
+            }
 
         } else if (selectedType == NavigationType.DATA_BACKUP) {
             startActivity(new Intent(MainActivity.this, DataBackupActivity.class));

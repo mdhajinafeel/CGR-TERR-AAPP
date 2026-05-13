@@ -26,8 +26,8 @@ public class DispatchDataViewModel extends ViewModel {
         this.dispatchDataRepository = dispatchDataRepository;
     }
 
-    public LiveData<List<ContainerWithReception>> fetchContainerData(Integer dispatchId, String tempDispatchId) {
-        return dispatchDataRepository.fetchContainerData(dispatchId, tempDispatchId);
+    public LiveData<List<ContainerWithReception>> fetchContainerData(String tempDispatchId) {
+        return dispatchDataRepository.fetchContainerData(tempDispatchId);
     }
 
     public LiveData<DispatchSummary> getDispatchSummary(String tempDispatchId) {

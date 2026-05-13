@@ -15,6 +15,7 @@ import com.cgr.codrinterraerp.db.entities.ApiLogs;
 import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.utils.CommonUtils;
 import com.cgr.codrinterraerp.worker.LogCleanupWorker;
+import com.cgr.codrinterraerp.worker.TransactionDataCleanupWorker;
 
 import java.security.KeyStore;
 import java.util.List;
@@ -36,6 +37,9 @@ public class CodrinTerraErpApplication extends Application {
 
         // Log Cleanup
         scheduleLogCleanup(this);
+
+        // Transaction Cleanup
+        scheduleReceptionCleanup(this);
 
         // Initialize Logger
         CGRTerraERPDatabase db = CGRTerraERPDatabase.getInstance(this);
@@ -184,6 +188,24 @@ public class CodrinTerraErpApplication extends Application {
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 "log_cleanup",
+                ExistingPeriodicWorkPolicy.KEEP,
+                work
+        );
+    }
+
+    private void scheduleReceptionCleanup(Context context) {
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .build();
+
+        PeriodicWorkRequest work =
+                new PeriodicWorkRequest.Builder(TransactionDataCleanupWorker.class, 1, TimeUnit.DAYS)
+                        .setConstraints(constraints)
+                        .setInitialDelay(2, TimeUnit.HOURS).build();
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "transaction_cleanup",
                 ExistingPeriodicWorkPolicy.KEEP,
                 work
         );

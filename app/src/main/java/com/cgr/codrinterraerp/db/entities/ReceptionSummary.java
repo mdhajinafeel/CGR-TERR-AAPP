@@ -1,51 +1,37 @@
 package com.cgr.codrinterraerp.db.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnull;
+
 @Entity(
         tableName = "reception_summary",
         indices = {
-                @Index(value = {"receptionId"}, unique = true),
                 @Index(value = {"tempReceptionId"}, unique = true)
         }
 )
 public class ReceptionSummary implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-    public Integer receptionId;
-    public String tempReceptionId;
+    @PrimaryKey
+    @NonNull
+    public String tempReceptionId = "";
     public int totalPieces;
     public double totalGrossVolume;
     public double totalNetVolume;
     public double totalVolumePie;
     public long updatedAt;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Integer getReceptionId() {
-        return receptionId;
-    }
-
-    public void setReceptionId(Integer receptionId) {
-        this.receptionId = receptionId;
-    }
-
+    @NonNull
     public String getTempReceptionId() {
         return tempReceptionId;
     }
 
-    public void setTempReceptionId(String tempReceptionId) {
+    public void setTempReceptionId(@NonNull String tempReceptionId) {
         this.tempReceptionId = tempReceptionId;
     }
 

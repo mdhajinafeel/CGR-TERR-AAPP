@@ -27,5 +27,5 @@ public interface DispatchDetailsDao {
     int deleteDispatch(String tempDispatchId, long updatedAt);
 
     @Query("UPDATE dispatch_details SET isSynced = 0, isClosed = :isClose, closedBy = :closedBy, closedDate = :closedDate WHERE tempDispatchId = :tempDispatchId")
-    int closeDispatchDetails(String tempDispatchId, String closedDate, int closedBy, boolean isClose);
+    int closeDispatchDetails(String tempDispatchId, long closedDate, int closedBy, boolean isClose);
 }
