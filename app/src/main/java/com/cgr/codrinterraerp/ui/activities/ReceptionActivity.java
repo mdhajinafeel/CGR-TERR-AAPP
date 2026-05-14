@@ -994,7 +994,7 @@ public class ReceptionActivity extends BaseActivity {
             if (isReceptionEdit && existingReceptionDetail != null) {
                 mappingId = existingReceptionDetail.getContainerReceptionMappingId();
             } else {
-                mappingId = "MAP_" + CommonUtils.getTagInt(etSupplier.getTag()) + "_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                mappingId = "MAP_" + CommonUtils.getCurrentLocalDateTimeStamp();
             }
 
             receptionDetail.setContainerReceptionMappingId(mappingId);

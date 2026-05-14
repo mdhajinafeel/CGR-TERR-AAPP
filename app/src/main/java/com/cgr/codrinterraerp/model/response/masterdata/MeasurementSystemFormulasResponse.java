@@ -6,7 +6,7 @@ import java.util.List;
 public class MeasurementSystemFormulasResponse implements Serializable {
 
     private String formula, roundingType, context;
-    private int formulaMasterId, roundPrecision;
+    private int formulaMasterId, roundPrecision, sortOrder;
     private List<MeasurementSystemFormulaVariablesResponse> variables;
 
     public String getFormula() {
@@ -55,5 +55,13 @@ public class MeasurementSystemFormulasResponse implements Serializable {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

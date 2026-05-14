@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Upsert;
 
 import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.DispatchSummary;
@@ -14,6 +15,9 @@ import java.util.List;
 
 @Dao
 public interface ContainerDataDao {
+
+    @Upsert
+    void upsert(List<ContainerData> list);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertContainerData(List<ContainerData> containerDataList);

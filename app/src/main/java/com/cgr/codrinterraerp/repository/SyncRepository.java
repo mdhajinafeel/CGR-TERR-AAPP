@@ -1,12 +1,16 @@
 package com.cgr.codrinterraerp.repository;
 
 import com.cgr.codrinterraerp.constants.SyncResult;
+import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
+import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
 import com.cgr.codrinterraerp.db.dao.SyncDao;
+import com.cgr.codrinterraerp.db.entities.ContainerData;
 import com.cgr.codrinterraerp.db.entities.ContainerImages;
+import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 import com.cgr.codrinterraerp.db.entities.DispatchSummary;
 import com.cgr.codrinterraerp.db.entities.ReceptionData;
 import com.cgr.codrinterraerp.db.entities.ReceptionDetails;
@@ -37,15 +41,20 @@ public class SyncRepository {
     private final SyncDao syncDao;
     private final ISyncApiService iSyncApiService;
     private final ReceptionDetailsDao receptionDetailsDao;
+    private final DispatchDetailsDao dispatchDetailsDao;
     private final ReceptionDataDao receptionDataDao;
+    private final ContainerDataDao containerDataDao;
     private final ReceptionSummaryDao receptionSummaryDao;
     private final DispatchSummaryDao dispatchSummaryDao;
 
-    public SyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, ReceptionDataDao receptionDataDao, ReceptionSummaryDao receptionSummaryDao,
-                          DispatchSummaryDao dispatchSummaryDao, ISyncApiService iSyncApiService) {
+    public SyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, DispatchDetailsDao dispatchDetailsDao,
+                          ReceptionDataDao receptionDataDao, ContainerDataDao containerDataDao, ReceptionSummaryDao receptionSummaryDao,
+                          DispatchSummaryDao dispatchSummaryDao,  ISyncApiService iSyncApiService) {
         this.syncDao = syncDao;
         this.receptionDetailsDao = receptionDetailsDao;
+        this.dispatchDetailsDao = dispatchDetailsDao;
         this.receptionDataDao = receptionDataDao;
+        this.containerDataDao = containerDataDao;
         this.receptionSummaryDao = receptionSummaryDao;
         this.dispatchSummaryDao = dispatchSummaryDao;
         this.iSyncApiService = iSyncApiService;
@@ -211,6 +220,14 @@ public class SyncRepository {
 
     public void upsertReceptionData(List<ReceptionData> receptionDataList) {
         receptionDataDao.upsert(receptionDataList);
+    }
+
+    public void upsertDispatchDetails(List<DispatchDetails> dispatchDetailsList) {
+        dispatchDetailsDao.upsert(dispatchDetailsList);
+    }
+
+    public void upsertContainerData(List<ContainerData> containerDataList) {
+        containerDataDao.upsert(containerDataList);
     }
 
     public void upsertReceptionSummary(List<ReceptionSummary> receptionSummaries) {

@@ -1,6 +1,7 @@
 package com.cgr.codrinterraerp.model.response;
 
 import com.cgr.codrinterraerp.model.response.transactiondata.DispatchContainersResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.DispatchDetailsResponse;
 import com.cgr.codrinterraerp.model.response.transactiondata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.transactiondata.ReceptionDetailsResponse;
 import com.cgr.codrinterraerp.model.response.transactiondata.ReceptionInventoryOrdersResponse;
@@ -14,6 +15,7 @@ public class DownloadTransactionsDataResponse implements Serializable {
     private List<ReceptionInventoryOrdersResponse> receptionInventoryOrders;
     private List<DispatchContainersResponse> dispatchContainers;
     private List<ReceptionDetailsResponse> receptionDetails;
+    private List<DispatchDetailsResponse> dispatchDetails;
 
     public List<FarmInventoryOrdersResponse> getFarmInventoryOrders() {
         return farmInventoryOrders;
@@ -45,5 +47,13 @@ public class DownloadTransactionsDataResponse implements Serializable {
 
     public void setReceptionDetails(List<ReceptionDetailsResponse> receptionDetails) {
         this.receptionDetails = receptionDetails;
+    }
+
+    public List<DispatchDetailsResponse> getDispatchDetails() {
+        return dispatchDetails;
+    }
+
+    public void setDispatchDetails(List<DispatchDetailsResponse> dispatchDetails) {
+        this.dispatchDetails = dispatchDetails;
     }
 }

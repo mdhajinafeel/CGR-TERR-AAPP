@@ -10,6 +10,8 @@ import com.cgr.codrinterraerp.R;
 import com.cgr.codrinterraerp.constants.SyncResult;
 import com.cgr.codrinterraerp.db.entities.ContainerCategories;
 import com.cgr.codrinterraerp.db.entities.DispatchContainers;
+import com.cgr.codrinterraerp.db.entities.DispatchDetails;
+import com.cgr.codrinterraerp.db.entities.DispatchSummary;
 import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulas;
@@ -25,6 +27,7 @@ import com.cgr.codrinterraerp.db.entities.SupplierProductTypes;
 import com.cgr.codrinterraerp.db.entities.SupplierProducts;
 import com.cgr.codrinterraerp.db.entities.Suppliers;
 import com.cgr.codrinterraerp.db.entities.Warehouses;
+import com.cgr.codrinterraerp.helper.DispatchSummaryHelper;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.helper.ReceptionSummaryHelper;
 import com.cgr.codrinterraerp.model.response.DownloadMasterDataResponse;
@@ -33,6 +36,7 @@ import com.cgr.codrinterraerp.model.response.DownloadTransactionsDataResponse;
 import com.cgr.codrinterraerp.model.response.DownloadTransactionsResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.ContainerCategoriesResponse;
 import com.cgr.codrinterraerp.model.response.transactiondata.DispatchContainersResponse;
+import com.cgr.codrinterraerp.model.response.transactiondata.DispatchDetailsResponse;
 import com.cgr.codrinterraerp.model.response.transactiondata.FarmInventoryOrdersResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulaVariablesResponse;
 import com.cgr.codrinterraerp.model.response.masterdata.MeasurementSystemFormulasResponse;
@@ -50,6 +54,7 @@ import com.cgr.codrinterraerp.model.response.masterdata.WarehousesResponse;
 import com.cgr.codrinterraerp.repository.MasterRepository;
 import com.cgr.codrinterraerp.repository.SyncRepository;
 import com.cgr.codrinterraerp.utils.AppLogger;
+import com.cgr.codrinterraerp.wrapper.DispatchMapper;
 import com.cgr.codrinterraerp.wrapper.ReceptionMapper;
 import com.cgr.codrinterraerp.wrapper.SingleLiveEvent;
 
@@ -80,13 +85,15 @@ public class SyncViewModel extends ViewModel {
     private final SingleLiveEvent<Boolean> progressState = new SingleLiveEvent<>();
     private final SingleLiveEvent<Boolean> syncStatus = new SingleLiveEvent<>();
     private final ReceptionSummaryHelper receptionSummaryHelper;
+    private final DispatchSummaryHelper dispatchSummaryHelper;
 
     @Inject
     public SyncViewModel(SyncRepository syncRepository, MasterRepository masterRepository, ReceptionSummaryHelper receptionSummaryHelper,
-                         @ApplicationContext Context context) {
+                         DispatchSummaryHelper dispatchSummaryHelper, @ApplicationContext Context context) {
         this.syncRepository = syncRepository;
         this.masterRepository = masterRepository;
         this.receptionSummaryHelper = receptionSummaryHelper;
+        this.dispatchSummaryHelper = dispatchSummaryHelper;
         this.context = context;
     }
 
@@ -463,6 +470,33 @@ public class SyncViewModel extends ViewModel {
             }
             syncRepository.upsertReceptionSummary(summaries);
         }
+
+        // ---------------- DISPATCH DETAILS ----------------
+        List<DispatchDetailsResponse> dispatchDetail = data.getDispatchDetails();
+        if (dispatchDetail != null && !dispatchDetail.isEmpty()) {
+
+            DispatchMapper.DispatchSyncResult dispatchSyncResult = DispatchMapper.getDispatchDetails(dispatchDetail);
+            syncRepository.upsertDispatchDetails(dispatchSyncResult.dispatchDetailsList());
+            syncRepository.upsertContainerData(dispatchSyncResult.containerDataList());
+
+            // =====================================
+            // CREATE SUMMARIES
+            // =====================================
+            Set<String> tempDispatchIds = new HashSet<>();
+            for (DispatchDetails details : dispatchSyncResult.dispatchDetailsList()) {
+                tempDispatchIds.add(details.getTempDispatchId());
+            }
+
+            // =====================================
+            // CALCULATE SUMMARY
+            // =====================================
+            List<DispatchSummary> summaries = new ArrayList<>();
+            for (String tempDispatchId : tempDispatchIds) {
+                DispatchSummary summary = dispatchSummaryHelper.calculate(tempDispatchId);
+                summaries.add(summary);
+            }
+            syncRepository.upsertDispatchSummary(summaries);
+        }
     }
 
     @NonNull
@@ -601,6 +635,7 @@ public class SyncViewModel extends ViewModel {
         measurementSystemFormula.setRoundPrecision(measurementSystemFormulasResponse.getRoundPrecision());
         measurementSystemFormula.setRoundingType(measurementSystemFormulasResponse.getRoundingType());
         measurementSystemFormula.setContext(measurementSystemFormulasResponse.getContext());
+        measurementSystemFormula.setSortOrder(measurementSystemFormulasResponse.getSortOrder());
         return measurementSystemFormula;
     }
 

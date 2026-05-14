@@ -27,6 +27,7 @@ public class MeasurementSystemFormulas implements Serializable {
     private int roundPrecision;
     private String roundingType;
     private String context;
+    private int sortOrder;
 
     public int getId() {
         return id;
@@ -82,5 +83,13 @@ public class MeasurementSystemFormulas implements Serializable {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

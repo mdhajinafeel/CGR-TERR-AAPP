@@ -477,6 +477,11 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 int pieces = Integer.parseInt(Objects.requireNonNull(etPiecesSquare.getText()).toString());
 
                 double volumePie = 0;
+                double widthExport = 0;
+                double thicknessExport = 0;
+                double lengthExport = 0;
+                double grossVolume = 0;
+                double netVolume = 0;
 
                 for (FormulaWithVariables f : formulaData) {
                     // ✅ Build variable map
@@ -491,6 +496,15 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                                 break;
                             case "l":
                                 inputValues.put("l", l);
+                                break;
+                            case "WIDEXP":
+                                inputValues.put("WIDEXP", widthExport);
+                                break;
+                            case "THKEXP":
+                                inputValues.put("THKEXP", thicknessExport);
+                                break;
+                            case "LENEXP":
+                                inputValues.put("LENEXP", lengthExport);
                                 break;
                         }
                     }
@@ -508,19 +522,36 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                     // ✅ Separate by context
                     if ("PIE".equalsIgnoreCase(f.formula.getContext())) {
                         volumePie = finalValue;
+                    } else if ("GROSS".equalsIgnoreCase(f.formula.getContext())) {
+                        grossVolume = finalValue;
+                    } else if ("WIDEXP".equalsIgnoreCase(f.formula.getContext())) {
+                        widthExport = finalValue;
+                    } else if ("THKEXP".equalsIgnoreCase(f.formula.getContext())) {
+                        thicknessExport = finalValue;
+                    } else if ("LENEXP".equalsIgnoreCase(f.formula.getContext())) {
+                        lengthExport = finalValue;
+                    } else if ("NET".equalsIgnoreCase(f.formula.getContext())) {
+                        netVolume = finalValue;
                     }
                 }
 
                 // ✅ Multiply by pieces
-                double totalNet = volumePie * pieces;
+                double totalPie = volumePie * pieces;
+                double totalGross = grossVolume * pieces;
+                double totalNet = netVolume * pieces;
 
-                BigDecimal pie = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
+                BigDecimal pie = BigDecimal.valueOf(totalPie).setScale(3, RoundingMode.HALF_UP);
                 double pieToSave = Math.round(pie.doubleValue() * 1000.0) / 1000.0;
 
-                double net = pieToSave / 424;
-                double netToSave = Math.round(net * 1000.0) / 1000.0;
+                BigDecimal gross = BigDecimal.valueOf(totalGross).setScale(3, RoundingMode.HALF_UP);
+                double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
 
-                String tempReceptionDataId = "TRD_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                BigDecimal net = BigDecimal.valueOf(totalNet).setScale(3, RoundingMode.HALF_UP);
+                double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
+
+                long currentTime = CommonUtils.getCurrentLocalDateTimeStamp();
+                String tempReceptionDataId = "RECDATA_" + currentTime;
+                String tempDispatchDataId = "DISPDATA_" + currentTime;
 
                 ReceptionData receptionData = new ReceptionData();
                 receptionData.setTempReceptionDataId(tempReceptionDataId);
@@ -532,7 +563,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 receptionData.setThickness(t);
                 receptionData.setWidth(w);
                 receptionData.setPieces(pieces);
-                receptionData.setGrossVolume(0);
+                receptionData.setGrossVolume(grossToSave);
                 receptionData.setNetVolume(netToSave);
                 receptionData.setVolumePie(pieToSave);
                 receptionData.setSynced(false);
@@ -543,6 +574,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 receptionData.setContainerReceptionMappingId(receptionView.containerReceptionMappingId);
 
                 ContainerData containerData = new ContainerData();
+                containerData.setTempDispatchDataId(tempDispatchDataId);
                 containerData.setTempReceptionDataId(tempReceptionDataId);
                 containerData.setTempDispatchId(selectedContainer.tempDispatchId);
                 containerData.setDispatchId(selectedContainer.dispatchId);
@@ -551,7 +583,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 containerData.setReceptionDataId(null);
                 containerData.setDispatchDataId(null);
                 containerData.setPieces(pieces);
-                containerData.setGrossVolume(0);
+                containerData.setGrossVolume(grossToSave);
                 containerData.setNetVolume(netToSave);
                 containerData.setVolumePie(pieToSave);
                 containerData.setSynced(false);
@@ -614,7 +646,9 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
                 double netToSave = Math.round(net.doubleValue() * 1000.0) / 1000.0;
                 double grossToSave = Math.round(gross.doubleValue() * 1000.0) / 1000.0;
 
-                String tempReceptionDataId = "RECDATA_" + CommonUtils.getCurrentLocalDateTimeStamp();
+                long currentTime = CommonUtils.getCurrentLocalDateTimeStamp();
+                String tempReceptionDataId = "RECDATA_" + currentTime;
+                String tempDispatchDataId = "DISPDATA_" + currentTime;
 
                 ReceptionData receptionData = new ReceptionData();
                 receptionData.setTempReceptionDataId(tempReceptionDataId);
@@ -638,6 +672,7 @@ public class ReceptionDataCaptureActivity extends BaseActivity {
 
                 ContainerData containerData = new ContainerData();
                 containerData.setTempReceptionDataId(tempReceptionDataId);
+                containerData.setTempDispatchDataId(tempDispatchDataId);
                 containerData.setTempDispatchId(selectedContainer.tempDispatchId);
                 containerData.setDispatchId(selectedContainer.dispatchId);
                 containerData.setReceptionId(receptionView.receptionId);

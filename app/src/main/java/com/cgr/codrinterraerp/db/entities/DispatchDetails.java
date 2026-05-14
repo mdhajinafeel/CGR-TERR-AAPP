@@ -107,6 +107,10 @@ public class DispatchDetails implements Serializable {
         return isClosed;
     }
 
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
     public boolean isSynced() {
         return isSynced;
     }

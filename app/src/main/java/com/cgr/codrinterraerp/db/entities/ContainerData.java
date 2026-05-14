@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.db.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 
 @Entity(tableName = "container_data",
         indices = {
+                @Index(name = "idx_temp_dispatch_data_id_cd", value = {"tempDispatchDataId"}, unique = true),
                 @Index(name = "idx_dispatch_id_cd", value = {"dispatchId"}),
                 @Index(name = "idx_temp_dispatch_id_cd", value = {"tempDispatchId"}),
                 @Index(name = "idx_reception_data_id_cd", value = {"receptionDataId"}),
@@ -19,9 +21,10 @@ import java.io.Serializable;
         })
 public class ContainerData implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-    private String dispatchDataId;
+    @PrimaryKey
+    @NonNull
+    private String tempDispatchDataId = "";
+    private Integer dispatchDataId;
     private String tempReceptionDataId;
     private String tempDispatchId;
     private Integer dispatchId;
@@ -39,12 +42,13 @@ public class ContainerData implements Serializable {
     private long updatedAt = System.currentTimeMillis();
     private String containerReceptionMappingId;
 
-    public int getId() {
-        return id;
+    @NonNull
+    public String getTempDispatchDataId() {
+        return tempDispatchDataId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTempDispatchDataId(@NonNull String tempDispatchDataId) {
+        this.tempDispatchDataId = tempDispatchDataId;
     }
 
     public String getTempDispatchId() {
@@ -175,11 +179,11 @@ public class ContainerData implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getDispatchDataId() {
+    public Integer getDispatchDataId() {
         return dispatchDataId;
     }
 
-    public void setDispatchDataId(String dispatchDataId) {
+    public void setDispatchDataId(Integer dispatchDataId) {
         this.dispatchDataId = dispatchDataId;
     }
 }

@@ -4,11 +4,17 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Upsert;
 
 import com.cgr.codrinterraerp.db.entities.DispatchDetails;
 
+import java.util.List;
+
 @Dao
 public interface DispatchDetailsDao {
+
+    @Upsert
+    void upsert(List<DispatchDetails> list);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertOrUpdateDispatchDetails(DispatchDetails dispatchDetails);

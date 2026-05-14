@@ -122,8 +122,10 @@ public class RepoModule {
 
     @Provides
     @Singleton
-    SyncRepository provideSyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, ReceptionDataDao receptionDataDao, ReceptionSummaryDao receptionSummaryDao,
+    SyncRepository provideSyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, DispatchDetailsDao dispatchDetailsDao,
+                                         ReceptionDataDao receptionDataDao, ContainerDataDao containerDataDao, ReceptionSummaryDao receptionSummaryDao,
                                          DispatchSummaryDao dispatchSummaryDao, ISyncApiService iSyncApiService) {
-        return new SyncRepository(syncDao, receptionDetailsDao, receptionDataDao, receptionSummaryDao, dispatchSummaryDao, iSyncApiService);
+        return new SyncRepository(syncDao, receptionDetailsDao, dispatchDetailsDao, receptionDataDao, containerDataDao, receptionSummaryDao,
+                dispatchSummaryDao, iSyncApiService);
     }
 }

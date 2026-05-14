@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b53c13982e074718baddb7027dc953e8",
+    "identityHash": "3fd74ff3362760b1b1f0871bc6d3c8dd",
     "entities": [
       {
         "tableName": "origins",
@@ -1413,18 +1413,18 @@
       },
       {
         "tableName": "container_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dispatchDataId` TEXT, `tempReceptionDataId` TEXT, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tempDispatchDataId` TEXT NOT NULL, `dispatchDataId` INTEGER, `tempReceptionDataId` TEXT, `tempDispatchId` TEXT, `dispatchId` INTEGER, `tempReceptionId` TEXT, `receptionDataId` INTEGER, `receptionId` INTEGER, `pieces` INTEGER NOT NULL, `grossVolume` REAL NOT NULL, `netVolume` REAL NOT NULL, `volumePie` REAL NOT NULL, `isSynced` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `isEdited` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `containerReceptionMappingId` TEXT, PRIMARY KEY(`tempDispatchDataId`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "tempDispatchDataId",
+            "columnName": "tempDispatchDataId",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "dispatchDataId",
             "columnName": "dispatchDataId",
-            "affinity": "TEXT"
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "tempReceptionDataId",
@@ -1517,12 +1517,21 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "tempDispatchDataId"
           ]
         },
         "indices": [
+          {
+            "name": "idx_temp_dispatch_data_id_cd",
+            "unique": true,
+            "columnNames": [
+              "tempDispatchDataId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `idx_temp_dispatch_data_id_cd` ON `${TABLE_NAME}` (`tempDispatchDataId`)"
+          },
           {
             "name": "idx_dispatch_id_cd",
             "unique": false,
@@ -1908,7 +1917,7 @@
       },
       {
         "tableName": "measurement_system_formulas",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `formulaMasterId` INTEGER NOT NULL, `measurementSystemId` INTEGER NOT NULL, `formula` TEXT, `roundPrecision` INTEGER NOT NULL, `roundingType` TEXT, `context` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `formulaMasterId` INTEGER NOT NULL, `measurementSystemId` INTEGER NOT NULL, `formula` TEXT, `roundPrecision` INTEGER NOT NULL, `roundingType` TEXT, `context` TEXT, `sortOrder` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1948,6 +1957,12 @@
             "fieldPath": "context",
             "columnName": "context",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -2115,7 +2130,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b53c13982e074718baddb7027dc953e8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3fd74ff3362760b1b1f0871bc6d3c8dd')"
     ]
   }
 }
