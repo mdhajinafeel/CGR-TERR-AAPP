@@ -19,6 +19,7 @@ import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
+import com.cgr.codrinterraerp.db.dao.PushNotificationsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
@@ -180,6 +181,12 @@ public class DBModule {
     @Singleton
     public MeasurementSystemFormulaVariablesDao provideMeasurementSystemFormulaVariablesDao(CGRTerraERPDatabase db) {
         return db.measurementSystemFormulaVariablesDao();
+    }
+
+    @Provides
+    @Singleton
+    public PushNotificationsDao providePushNotificationsDao(CGRTerraERPDatabase db) {
+        return db.pushNotificationsDao();
     }
 
     // VIEWS

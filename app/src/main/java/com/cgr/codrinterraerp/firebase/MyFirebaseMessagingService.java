@@ -1,5 +1,6 @@
 package com.cgr.codrinterraerp.firebase;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,34 +11,45 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.cgr.codrinterraerp.BuildConfig;
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
+import com.cgr.codrinterraerp.db.entities.PushNotifications;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.cgr.codrinterraerp.ui.activities.MainActivity;
-import com.cgr.codrinterraerp.utils.AppLogger;
+import com.cgr.codrinterraerp.ui.activities.SplashActivity;
+import com.cgr.codrinterraerp.utils.CommonUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String CHANNEL_ID = "fcm_default_channel";  // Consistent channel ID
+    private static final String CHANNEL_ID = "fcm_default_channel";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // =====================================
+        // CREATE CHANNEL ONCE
+        // =====================================
+        createNotificationChannel();
+    }
 
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        AppLogger.d(getClass(), "New FCM Token: " + token);
-        // Save token for later use, such as sending notifications from your server
         PreferenceManager.INSTANCE.setFirebaseToken(token);
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        AppLogger.d(getClass(), "Message received: " + remoteMessage.getData());
 
         if (!remoteMessage.getData().isEmpty()) {
-            // If the message contains data payload
             sendNotification(remoteMessage.getData());
         }
     }
@@ -46,55 +58,115 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String notificationTitle = "";
         String notificationContent = "";
         String notificationType = "";
+        String notificationStatus = "";
 
-        // Check if data contains necessary fields
-        if (data.containsKey("title") && data.containsKey("body") && data.containsKey("type")) {
+        // =====================================
+        // READ PAYLOAD
+        // =====================================
+        if (data.containsKey("title") && data.containsKey("body") && data.containsKey("type") && data.containsKey("status")) {
             notificationTitle = data.get("title");
             notificationContent = data.get("body");
             notificationType = data.get("type");
+            notificationStatus = data.get("status");
         }
 
-        // Create the intent to open the DashboardActivity
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("IsNotificationClicked", true);
-        intent.putExtra("NotificationType", notificationType);
+        // =====================================
+        // SAVE LOCALLY
+        // =====================================
+        saveNotificationLocally(notificationTitle, notificationContent, notificationType, notificationStatus);
 
-        // Create PendingIntent to launch activity on notification click
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                (int) System.currentTimeMillis(),
-                intent,
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
-        );
+        // =====================================
+        // INTENT
+        // =====================================
+        Intent intent = getIntent(notificationType);
 
-        // Build the notification
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent,
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+
+        // =====================================
+        // NOTIFICATION
+        // =====================================
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle(notificationTitle)
-                .setContentText(notificationContent)
+                .setContentTitle(CommonUtils.getLocalizedString(getApplicationContext(), notificationTitle))
+                .setContentText(CommonUtils.getLocalizedString(getApplicationContext(), notificationContent))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
 
-        // Get system NotificationManager
+        // =====================================
+        // SHOW
+        // =====================================
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Create Notification Channel (for Android O and above)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "FCM Notifications",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription(notificationContent);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-
-        // Show the notification
         if (notificationManager != null) {
             notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
         }
+    }
+
+    @NonNull
+    private Intent getIntent(String notificationType) {
+        Intent intent;
+
+        if (isAppInForeground()) {
+            // =====================================
+            // APP OPEN
+            // =====================================
+            intent = new Intent(this, MainActivity.class);
+        } else {
+            // =====================================
+            // APP CLOSED/KILLED
+            // =====================================
+            intent = new Intent(this, SplashActivity.class);
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("IsNotificationClicked", true);
+        intent.putExtra("NotificationType", notificationType);
+        return intent;
+    }
+
+    private void createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager == null) {
+                return;
+            }
+
+            NotificationChannel existing = manager.getNotificationChannel(CHANNEL_ID);
+
+            // =====================================
+            // ALREADY EXISTS
+            // =====================================
+            if (existing != null) {
+                return;
+            }
+
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "FCM Notifications", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription(BuildConfig.APPLICATION_NAME);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void saveNotificationLocally(String title, String body, String type, String status) {
+
+        Executors.newSingleThreadExecutor()
+                .execute(() -> {
+                    PushNotifications entity = new PushNotifications();
+                    entity.title = title;
+                    entity.message = body;
+                    entity.type = type;
+                    entity.status = status;
+                    CGRTerraERPDatabase.getInstance(this).pushNotificationsDao().insert(entity);
+                });
+    }
+
+    private boolean isAppInForeground() {
+        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+        ActivityManager.getMyMemoryState(appProcessInfo);
+        return appProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND ||
+                appProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
     }
 }

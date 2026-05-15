@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3fd74ff3362760b1b1f0871bc6d3c8dd",
+    "identityHash": "805c2b2e9f4590b28ad6badbd9c1dd74",
     "entities": [
       {
         "tableName": "origins",
@@ -2116,6 +2116,112 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `idx_sort_order_variable` ON `${TABLE_NAME}` (`sortOrder`)"
           }
         ]
+      },
+      {
+        "tableName": "push_notifications",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `message` TEXT, `type` TEXT, `status` TEXT, `isRead` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isRead",
+            "columnName": "isRead",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idx_id_notifications",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_id_notifications` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "idx_title_notifications",
+            "unique": false,
+            "columnNames": [
+              "title"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_title_notifications` ON `${TABLE_NAME}` (`title`)"
+          },
+          {
+            "name": "idx_type_notifications",
+            "unique": false,
+            "columnNames": [
+              "type"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_type_notifications` ON `${TABLE_NAME}` (`type`)"
+          },
+          {
+            "name": "idx_message_notifications",
+            "unique": false,
+            "columnNames": [
+              "message"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_message_notifications` ON `${TABLE_NAME}` (`message`)"
+          },
+          {
+            "name": "idx_status_notifications",
+            "unique": false,
+            "columnNames": [
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_status_notifications` ON `${TABLE_NAME}` (`status`)"
+          },
+          {
+            "name": "idx_read_notifications",
+            "unique": false,
+            "columnNames": [
+              "isRead"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idx_read_notifications` ON `${TABLE_NAME}` (`isRead`)"
+          }
+        ]
       }
     ],
     "views": [
@@ -2130,7 +2236,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3fd74ff3362760b1b1f0871bc6d3c8dd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '805c2b2e9f4590b28ad6badbd9c1dd74')"
     ]
   }
 }

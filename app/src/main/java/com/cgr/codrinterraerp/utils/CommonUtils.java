@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
 import com.cgr.codrinterraerp.R;
+import com.cgr.codrinterraerp.firebase.NotificationStringMapper;
 import com.cgr.codrinterraerp.helper.PreferenceManager;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
@@ -333,5 +334,17 @@ public class CommonUtils {
             return str;
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static String getLocalizedString(Context context, String key) {
+        try {
+            Integer resourceId = NotificationStringMapper.STRING_MAP.get(key);
+            if (resourceId != null) {
+                return context.getString(resourceId);
+            }
+        } catch (Exception e) {
+            AppLogger.e(context.getClass(), "getLocalizedString", e);
+        }
+        return key;
     }
 }

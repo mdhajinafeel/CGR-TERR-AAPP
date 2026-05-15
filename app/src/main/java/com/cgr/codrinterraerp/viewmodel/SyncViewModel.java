@@ -125,7 +125,7 @@ public class SyncViewModel extends ViewModel {
     private void syncData() {
 
         if (syncRepository.hasUnsyncedData()) {
-            syncRepository.syncData(result -> {
+            syncRepository.syncData(context, result -> {
                 if (result == SyncResult.FAILED) {
                     progressState.postValue(false);
                     errorTitle.postValue(context.getString(R.string.error));
@@ -704,5 +704,9 @@ public class SyncViewModel extends ViewModel {
                 hasUnsyncedData.postValue(false);
             }
         }).start();
+    }
+
+    public LiveData<Integer> getUnreadCount() {
+        return syncRepository.getUnreadCount();
     }
 }

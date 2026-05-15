@@ -12,14 +12,9 @@ import java.util.List;
 
 public class SyncRequest implements Serializable {
 
+    public String deviceId;
     public List<ReceptionDetailsWithTotals> receptionDetails;
     public List<ReceptionData> receptionData;
     public List<DispatchDetailsWithTotals> dispatchDetails;
     public List<ContainerData> containerData;
-
-    // DELETED
-    public List<ReceptionDetails> deletedReceptionDetails;
-    public List<ReceptionData> deletedReceptionData;
-    public List<DispatchDetails> deletedDispatchDetails;
-    public List<ContainerData> deletedContainerData;
 }

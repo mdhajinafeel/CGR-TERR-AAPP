@@ -17,6 +17,7 @@ import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.ProductsDao;
 import com.cgr.codrinterraerp.db.dao.PurchaseContractDao;
+import com.cgr.codrinterraerp.db.dao.PushNotificationsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionInventoryOrdersDao;
@@ -124,8 +125,8 @@ public class RepoModule {
     @Singleton
     SyncRepository provideSyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, DispatchDetailsDao dispatchDetailsDao,
                                          ReceptionDataDao receptionDataDao, ContainerDataDao containerDataDao, ReceptionSummaryDao receptionSummaryDao,
-                                         DispatchSummaryDao dispatchSummaryDao, ISyncApiService iSyncApiService) {
+                                         DispatchSummaryDao dispatchSummaryDao, PushNotificationsDao pushNotificationsDao, ISyncApiService iSyncApiService) {
         return new SyncRepository(syncDao, receptionDetailsDao, dispatchDetailsDao, receptionDataDao, containerDataDao, receptionSummaryDao,
-                dispatchSummaryDao, iSyncApiService);
+                dispatchSummaryDao, pushNotificationsDao, iSyncApiService);
     }
 }

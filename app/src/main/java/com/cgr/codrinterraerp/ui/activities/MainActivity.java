@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -64,8 +65,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    private AppCompatTextView tvVersion, tvGreeting, tvName, tvNameMenu, tvOriginName, tvLogout;
-    private AppCompatImageView ivOriginIcon, imgClose;
+    private AppCompatTextView tvVersion, tvGreeting, tvName, tvNameMenu, tvOriginName, tvLogout, tvNotificationBadge;
+    private AppCompatImageView ivOriginIcon;
+    private AppCompatImageView imgClose;
     private DrawerLayout drawerLayout;
     private Toolbar toolBar;
     private ListView lstMenu;
@@ -76,6 +78,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private FrameLayout progressBar;
     private SyncViewModel syncViewModel;
     private AuthViewModel authViewModel;
+    private long lastBackPressedTime = 0;
+    private static final long EXIT_INTERVAL = 2000; // 2 seconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             tvLogout = findViewById(R.id.tvLogout);
             gridDashboardMenu = findViewById(R.id.gridDashboardMenu);
             progressBar = findViewById(R.id.progressBar);
+            FrameLayout frameNotification = findViewById(R.id.frameNotification);
+            tvNotificationBadge = findViewById(R.id.tvNotificationBadge);
 
             syncViewModel = new ViewModelProvider(this).get(SyncViewModel.class);
             authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
@@ -150,6 +156,25 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     showUnsyncedWarningDialog();
                 } else {
                     forceLogout();
+                }
+            });
+
+            frameNotification.setOnClickListener(view -> Toast.makeText(getApplicationContext(), "Click notifications", Toast.LENGTH_SHORT).show());
+
+            observeNotificationCount();
+
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+
+                    // If Home → press again to exit
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastBackPressedTime < EXIT_INTERVAL) {
+                        finish(); // Exit app
+                    } else {
+                        lastBackPressedTime = currentTime;
+                        Toast.makeText(getApplicationContext(), getString(R.string.press_again_to_exit), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         } catch (Exception e) {
@@ -356,7 +381,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 return;
             }
 
-            if(new NetworkConnectivity(getApplicationContext()).isNetworkAvailable()) {
+            if (new NetworkConnectivity(getApplicationContext()).isNetworkAvailable()) {
                 syncViewModel.startFullSync();
             } else {
                 showCustomDialog(getString(R.string.information), getString(R.string.internet_not_available), false);
@@ -528,6 +553,34 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
         // 4️⃣ Navigate to Login
         new Handler(Looper.getMainLooper()).postDelayed(this::performLogout, 300);
+    }
+
+    private void observeNotificationCount() {
+
+        syncViewModel.getUnreadCount().observe(this, unreadCount -> {
+
+            if (unreadCount == null) {
+                unreadCount = 0;
+            }
+
+            updateNotificationBadge(unreadCount);
+        });
+    }
+
+    private void updateNotificationBadge(int count) {
+
+        if (count <= 0) {
+            tvNotificationBadge.setVisibility(View.GONE);
+            return;
+        }
+
+        tvNotificationBadge.setVisibility(View.VISIBLE);
+
+        if (count > 9) {
+            tvNotificationBadge.setText("9+");
+        } else {
+            tvNotificationBadge.setText(String.valueOf(count));
+        }
     }
 
     @Override

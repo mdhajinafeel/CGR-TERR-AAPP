@@ -20,6 +20,7 @@ import com.cgr.codrinterraerp.db.dao.FarmInventoryOrdersDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulaVariablesDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemFormulasDao;
 import com.cgr.codrinterraerp.db.dao.MeasurementSystemsDao;
+import com.cgr.codrinterraerp.db.dao.PushNotificationsDao;
 import com.cgr.codrinterraerp.db.dao.OriginsDao;
 import com.cgr.codrinterraerp.db.dao.ProductTypesDao;
 import com.cgr.codrinterraerp.db.dao.ProductsDao;
@@ -47,6 +48,7 @@ import com.cgr.codrinterraerp.db.entities.FarmInventoryOrders;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulaVariables;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystemFormulas;
 import com.cgr.codrinterraerp.db.entities.MeasurementSystems;
+import com.cgr.codrinterraerp.db.entities.PushNotifications;
 import com.cgr.codrinterraerp.db.entities.Origins;
 import com.cgr.codrinterraerp.db.entities.ProductTypes;
 import com.cgr.codrinterraerp.db.entities.Products;
@@ -66,7 +68,7 @@ import com.cgr.codrinterraerp.db.views.ReceptionView;
 @Database(entities = {Origins.class, ApiLogs.class, Suppliers.class, SupplierProducts.class, SupplierProductTypes.class, MeasurementSystems.class, PurchaseContracts.class,
         ShippingLines.class, Warehouses.class, FarmInventoryOrders.class, ReceptionInventoryOrders.class, DispatchContainers.class, Products.class, ProductTypes.class,
         ReceptionDetails.class, DispatchDetails.class, ReceptionData.class, ContainerData.class, ContainerCategories.class, ContainerImages.class,
-        DispatchSummary.class, ReceptionSummary.class, MeasurementSystemFormulas.class, MeasurementSystemFormulaVariables.class},
+        DispatchSummary.class, ReceptionSummary.class, MeasurementSystemFormulas.class, MeasurementSystemFormulaVariables.class, PushNotifications.class},
         views = {ReceptionView.class, DispatchView.class},
         version = 1)
 public abstract class CGRTerraERPDatabase extends RoomDatabase {
@@ -120,6 +122,8 @@ public abstract class CGRTerraERPDatabase extends RoomDatabase {
     public abstract ContainerCategoriesDao containerCategoriesDao();
 
     public abstract ContainerImagesDao containerImageDao();
+
+    public abstract PushNotificationsDao pushNotificationsDao();
 
     //VIEWS
     public abstract ReceptionViewDao receptionViewDao();

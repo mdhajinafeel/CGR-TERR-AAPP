@@ -1,9 +1,14 @@
 package com.cgr.codrinterraerp.repository;
 
+import android.content.Context;
+
+import androidx.lifecycle.LiveData;
+
 import com.cgr.codrinterraerp.constants.SyncResult;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
+import com.cgr.codrinterraerp.db.dao.PushNotificationsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDataDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionDetailsDao;
 import com.cgr.codrinterraerp.db.dao.ReceptionSummaryDao;
@@ -25,6 +30,7 @@ import com.cgr.codrinterraerp.model.response.syncdata.SyncResponse;
 import com.cgr.codrinterraerp.services.ISyncApiService;
 import com.cgr.codrinterraerp.services.SyncCallback;
 import com.cgr.codrinterraerp.utils.AppLogger;
+import com.cgr.codrinterraerp.utils.CommonUtils;
 
 import java.io.File;
 import java.util.List;
@@ -46,10 +52,11 @@ public class SyncRepository {
     private final ContainerDataDao containerDataDao;
     private final ReceptionSummaryDao receptionSummaryDao;
     private final DispatchSummaryDao dispatchSummaryDao;
+    private final PushNotificationsDao pushNotificationsDao;
 
     public SyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, DispatchDetailsDao dispatchDetailsDao,
                           ReceptionDataDao receptionDataDao, ContainerDataDao containerDataDao, ReceptionSummaryDao receptionSummaryDao,
-                          DispatchSummaryDao dispatchSummaryDao,  ISyncApiService iSyncApiService) {
+                          DispatchSummaryDao dispatchSummaryDao, PushNotificationsDao pushNotificationsDao, ISyncApiService iSyncApiService) {
         this.syncDao = syncDao;
         this.receptionDetailsDao = receptionDetailsDao;
         this.dispatchDetailsDao = dispatchDetailsDao;
@@ -57,6 +64,7 @@ public class SyncRepository {
         this.containerDataDao = containerDataDao;
         this.receptionSummaryDao = receptionSummaryDao;
         this.dispatchSummaryDao = dispatchSummaryDao;
+        this.pushNotificationsDao = pushNotificationsDao;
         this.iSyncApiService = iSyncApiService;
     }
 
@@ -142,7 +150,7 @@ public class SyncRepository {
     // =====================
     // MAIN SYNC
     // =====================
-    public void syncData(SyncCallback callback) {
+    public void syncData(Context context, SyncCallback callback) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -152,6 +160,7 @@ public class SyncRepository {
                 // REQUEST
                 // =================
                 SyncRequest request = new SyncRequest();
+                request.deviceId = CommonUtils.getDeviceId(context);
                 request.receptionDetails = syncDao.getUnsyncedReceptionDetails();
                 request.receptionData = syncDao.getUnsyncedReceptionData();
                 request.dispatchDetails = syncDao.getUnsyncedDispatch();
@@ -236,5 +245,9 @@ public class SyncRepository {
 
     public void upsertDispatchSummary(List<DispatchSummary> dispatchSummaries) {
         dispatchSummaryDao.upsert(dispatchSummaries);
+    }
+
+    public LiveData<Integer> getUnreadCount() {
+        return pushNotificationsDao.getUnreadCount();
     }
 }
