@@ -192,4 +192,8 @@
     <string name="data_sync_failed">Data sync failed</string>
     <string name="closed_date">Closed Date</string>
     <string name="data_sync_successfully">Data synced successfully</string>
+    <string name="sync_reminder">Sync Reminder</string>
+    <string name="sync_overdue_please_sync_your_pending_data_immediately">Sync overdue. Please sync your pending data immediately.</string>
+    <string name="your_data_has_not_been_synced_for_several_hours">Your data has not been synced for several hours.</string>
+    <string name="you_have_pending_data_waiting_for_sync">You have pending data waiting for sync.</string>
 </resources>

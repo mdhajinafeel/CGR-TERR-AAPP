@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 
 import com.cgr.codrinterraerp.constants.SyncResult;
+import com.cgr.codrinterraerp.db.CGRTerraERPDatabase;
 import com.cgr.codrinterraerp.db.dao.ContainerDataDao;
 import com.cgr.codrinterraerp.db.dao.DispatchDetailsDao;
 import com.cgr.codrinterraerp.db.dao.DispatchSummaryDao;
@@ -53,6 +54,19 @@ public class SyncRepository {
     private final ReceptionSummaryDao receptionSummaryDao;
     private final DispatchSummaryDao dispatchSummaryDao;
     private final PushNotificationsDao pushNotificationsDao;
+
+    public SyncRepository(Context context) {
+        CGRTerraERPDatabase db = CGRTerraERPDatabase.getInstance(context);
+        this.syncDao = db.syncDao();
+        this.receptionDetailsDao = db.receptionDetailsDao();
+        this.dispatchDetailsDao = db.dispatchDetailsDao();
+        this.receptionDataDao = db.receptionDataDao();
+        this.containerDataDao = db.containerDataDao();
+        this.receptionSummaryDao = db.receptionSummaryDao();
+        this.dispatchSummaryDao = db.dispatchSummaryDao();
+        this.pushNotificationsDao = db.pushNotificationsDao();
+        this.iSyncApiService = null;
+    }
 
     public SyncRepository(SyncDao syncDao, ReceptionDetailsDao receptionDetailsDao, DispatchDetailsDao dispatchDetailsDao,
                           ReceptionDataDao receptionDataDao, ContainerDataDao containerDataDao, ReceptionSummaryDao receptionSummaryDao,
@@ -216,7 +230,9 @@ public class SyncRepository {
         int receptionDataCount = syncDao.getUnsyncedReceptionDataCount();
         int containerDataCount = syncDao.getUnsyncedContainerDataCount();
 
-        return receptionDetailsCount > 0 || dispatchDetailsCount > 0 || receptionDataCount > 0 || containerDataCount > 0;
+        int totalUnsyncedData = receptionDetailsCount + dispatchDetailsCount + receptionDataCount + containerDataCount;
+
+        return totalUnsyncedData > 0;
     }
 
     public void deleteOldReceptionDetails(long threeMonthsAgo) {

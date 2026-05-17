@@ -12,7 +12,6 @@ import com.cgr.codrinterraerp.utils.AppLogger;
 
 public class TransactionDataCleanupWorker extends Worker {
 
-    private static final String TAG = "TransactionDataCleanupWorker";
     private final ReceptionDetailsDao receptionDetailsDao;
     private final CGRTerraERPDatabase database;
 

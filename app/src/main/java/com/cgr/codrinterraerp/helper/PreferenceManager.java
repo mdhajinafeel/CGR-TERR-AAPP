@@ -32,6 +32,8 @@ public enum PreferenceManager {
     private static final String KEY_DOWNLOAD_MASTER_VERSION = "downloadMasterVersion";
     private static final String KEY_LAST_CLEANUP_TIME = "lastCleanupTime";
     private static final String KEY_LAST_TRANSACTION_SYNC_TIME = "lastTransactionSyncTime";
+    private static final String KEY_LAST_SYNC_TIME = "lastSyncTime";
+    private static final String KEY_LAST_REMINDER_TIME = "lastReminderTime";
 
     private final SecuredPreferenceStore prefStore = SecuredPreferenceStore.getSharedInstance();
 
@@ -225,6 +227,24 @@ public enum PreferenceManager {
         prefStore.edit().putLong(KEY_LAST_TRANSACTION_SYNC_TIME, lastTransactionSyncTime).apply();
     }
 
+    // ===== LAST SYNC TIME =====
+    public long getLastSyncTime() {
+        return prefStore.getLong(KEY_LAST_SYNC_TIME, 0);
+    }
+
+    public void setLastSyncTime(long lastSyncTime) {
+        prefStore.edit().putLong(KEY_LAST_SYNC_TIME, lastSyncTime).apply();
+    }
+
+    // ===== LAST REMINDER TIME =====
+    public void setLastReminderTime(long time) {
+        prefStore.edit().putLong(KEY_LAST_REMINDER_TIME, time).apply();
+    }
+
+    public long getLastReminderTime() {
+        return prefStore.getLong(KEY_LAST_REMINDER_TIME, 0);
+    }
+
     public void clearLoginSession() {
         prefStore.edit()
                 .remove(KEY_ACCESS_TOKEN)
@@ -245,6 +265,8 @@ public enum PreferenceManager {
                 .remove(KEY_USER_ROLES)
                 .remove(KEY_DOWNLOAD_MASTER_VERSION)
                 .remove(KEY_LAST_TRANSACTION_SYNC_TIME)
+                .remove(KEY_LAST_REMINDER_TIME)
+                .remove(KEY_LAST_SYNC_TIME)
                 .apply();
     }
 

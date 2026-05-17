@@ -12,8 +12,6 @@ import com.cgr.codrinterraerp.utils.AppLogger;
 
 public class LogCleanupWorker extends Worker {
 
-    private static final String TAG = "LogCleanupWorker";
-
     private final ApiLogsDao apiLogsDao;
     private final CGRTerraERPDatabase database;
 

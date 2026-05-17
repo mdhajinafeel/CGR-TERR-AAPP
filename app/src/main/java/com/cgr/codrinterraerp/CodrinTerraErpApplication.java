@@ -15,6 +15,7 @@ import com.cgr.codrinterraerp.db.entities.ApiLogs;
 import com.cgr.codrinterraerp.utils.AppLogger;
 import com.cgr.codrinterraerp.utils.CommonUtils;
 import com.cgr.codrinterraerp.worker.LogCleanupWorker;
+import com.cgr.codrinterraerp.worker.SyncReminderWorker;
 import com.cgr.codrinterraerp.worker.TransactionDataCleanupWorker;
 
 import java.security.KeyStore;
@@ -40,6 +41,9 @@ public class CodrinTerraErpApplication extends Application {
 
         // Transaction Cleanup
         scheduleReceptionCleanup(this);
+
+        // Sync Reminder
+        startSyncReminderWorker();
 
         // Initialize Logger
         CGRTerraERPDatabase db = CGRTerraERPDatabase.getInstance(this);
@@ -209,5 +213,11 @@ public class CodrinTerraErpApplication extends Application {
                 ExistingPeriodicWorkPolicy.KEEP,
                 work
         );
+    }
+
+    private void startSyncReminderWorker() {
+        PeriodicWorkRequest request =
+                new PeriodicWorkRequest.Builder(SyncReminderWorker.class, 1, TimeUnit.HOURS).build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("SYNC_REMINDER_WORK", ExistingPeriodicWorkPolicy.KEEP, request);
     }
 }

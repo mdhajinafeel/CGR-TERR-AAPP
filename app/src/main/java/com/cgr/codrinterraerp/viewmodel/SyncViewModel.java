@@ -134,6 +134,7 @@ public class SyncViewModel extends ViewModel {
                 }
 
                 // SUCCESS or NO_DATA → next
+                PreferenceManager.INSTANCE.setLastSyncTime(System.currentTimeMillis());
                 masterDownload(false);
             });
         } else {
